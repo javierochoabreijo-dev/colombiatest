@@ -48,3 +48,33 @@ autoevaluación, acorde con el formato del examen real (Resolución 3596 de 2020
 2. En Vercel: New Project → importa el repo.
 3. Framework preset: **Vite**. Build: `npm run build`. Output: `dist`.
 4. Deploy.
+
+## Infraestructura (preparada para Claude Code)
+
+### Supabase
+1. Crea un proyecto en supabase.com.
+2. En el SQL Editor, ejecuta `supabase/schema.sql` (crea las tablas `areas` y
+   `preguntas` con RLS de lectura pública, y siembra las 80 preguntas).
+3. Copia `.env.example` a `.env.local` y rellena `VITE_SUPABASE_URL` y
+   `VITE_SUPABASE_ANON_KEY` (Project Settings → API).
+
+La app funciona **sin Supabase** usando `src/data/bancoLocal.js` como fallback.
+En cuanto definas las variables de entorno, `src/data/preguntas.js` leerá de
+Supabase automáticamente. (Falta cablear `cargarBanco()` en `App.jsx`: es la
+primera tarea sugerida para Claude Code.)
+
+### Estructura de datos añadida
+```
+src/
+├─ lib/supabase.js        # cliente (null si no hay env → usa fallback)
+├─ data/
+│  ├─ bancoLocal.js       # las 80 preguntas como módulo JS (fallback)
+│  └─ preguntas.js        # cargarBanco(): Supabase con fallback a local
+supabase/
+└─ schema.sql             # tablas + RLS + seed de 80 preguntas
+```
+
+### Despliegue en Vercel
+- `vercel.json` ya incluye el preset Vite y el rewrite SPA.
+- En Vercel, añade las mismas variables de entorno (`VITE_SUPABASE_URL`,
+  `VITE_SUPABASE_ANON_KEY`) en Project Settings → Environment Variables.

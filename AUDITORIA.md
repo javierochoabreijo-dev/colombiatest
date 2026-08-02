@@ -201,3 +201,50 @@ visuales antes de implementar.
 - Reglas de contenido que no deben romperse: 5 regiones naturales (nunca 6); el examen real
   es de respuesta escrita (nunca opción múltiple en el simulacro); la independencia se
   consolida en Boyacá (1819); 4 áreas × 20 preguntas = 80.
+
+---
+
+## Estado al 2 de agosto de 2026
+
+Todo el trabajo vive en la rama **`feat/datos-imagenes-layout`** (4 commits, working tree
+limpio). No está pusheada ni fusionada a `master`.
+
+### Dirección visual: decidida
+
+Se compararon tres direcciones y **se eligió «Vueltiao»**, con el requisito añadido de
+tema claro + oscuro y botón de cambio en una esquina.
+
+- Comparativa de las tres: https://claude.ai/code/artifact/05b317b4-91f7-45e3-ba1f-bd4e1d7a4523
+- Espécimen de Vueltiao con los dos temas: https://claude.ai/code/artifact/d7159e49-5e10-43d6-8906-759ff71f1029
+
+Decisiones de color ya cerradas (los valores completos están en la tabla del segundo enlace):
+
+- Los dos temas salen del propio tejido: oscuro `#17120E` (fibra negra), claro `#F2EADB`
+  (caña flecha). No es una inversión mecánica.
+- **La acción primaria cambia de tono entre temas**: amarillo `#F2B705` en oscuro, negro
+  tejido `#1F1712` en claro. El amarillo rellena bien sobre oscuro pero pierde contraste
+  sobre caña.
+- **Cada área necesita tres valores, no uno**: relleno, texto sobre el relleno, y tono para
+  texto sobre el fondo. En claro los tres coinciden; en oscuro divergen. Salió de medir: el
+  magenta de Cultura con texto oscuro daba 3,22:1 y los contornos de Constitución y Cultura
+  2,88 y 4,07 sobre superficie oscura.
+- Verificado por medición: paridad exacta de 28 tokens en los tres bloques de tema y los
+  16 pares de contraste por encima de 4,5:1.
+
+**Sin verificar visualmente.** El panel de navegador dejó de responder durante la sesión, así
+que el espécimen no se ha visto renderizado. Falta comprobar a ojo el peso de la tipografía
+en mayúsculas y si el tema claro conserva la energía del oscuro.
+
+### Siguiente paso
+
+Extraer tokens y componentes sobre Vueltiao y subirlos a un proyecto nuevo de Claude Design
+(la cuenta ya tiene acceso; existe otro proyecto, «JaviFinance Design System», que no se toca).
+Componentes candidatos, varios ya duplicados en el código: pill de filtro (copiado en 4
+módulos), tarjeta expandible, barra de progreso, botón, modal/lightbox y pantalla de
+resultados. `shuffle()` también está definido dos veces.
+
+Decisión pendiente: guardar el tema elegido sería lo único que la app almacenaría en el
+navegador. Sigue sin haber cuentas ni datos personales, pero conviene confirmarlo.
+
+Ojo: el sistema vive como HTML en Claude Design, así que portar las decisiones a los
+componentes React es un paso manual.

@@ -6,7 +6,8 @@
 móvil (375×812) y escritorio (903×694). Las cifras que aparecen abajo están medidas,
 no estimadas.
 
-**Estado:** informe. No se ha modificado nada de código a raíz de esta auditoría.
+**Estado:** los puntos **1 y 2 están resueltos** (Opción A, commit `47c7980`). Los puntos
+3, 4, 5 y 6 siguen abiertos.
 
 ---
 
@@ -23,7 +24,12 @@ a apariencia.
 
 ---
 
-## 1. Shell duplicado — el problema de fondo
+## 1. Shell duplicado — el problema de fondo · ✅ RESUELTO
+
+> Resuelto en `47c7980`. Los módulos ya no traen envoltorio propio; el ancho lo decide
+> `App` vía `MODULOS[].ancho`. Medido: mapa 266×282 → **458×485 px**, contenido móvil
+> 311 → **343 px**, `min-h-screen` 2 → **1**, scroll anidado 1 → **0**, cabecera
+> duplicada eliminada. Lo de abajo queda como registro del diagnóstico original.
 
 `App` ya define el envoltorio de página (`min-h-screen` + fondo + `max-w-2xl` + `px-4 py-6`)
 en `src/App.jsx:310-312`. Cada módulo vuelve a definir el suyo dentro:
@@ -64,7 +70,10 @@ superior del viewport sin margen.
 
 ---
 
-## 2. Áreas táctiles por debajo del mínimo
+## 2. Áreas táctiles por debajo del mínimo · ✅ RESUELTO
+
+> Resuelto en `47c7980`. Los 8 CTAs del hub pasan a 44 px de alto y "Test" a 51 px de
+> ancho; cero objetivos por debajo de 44 px en el hub.
 
 Medido en móvil (375 px) en el hub:
 
@@ -161,7 +170,7 @@ Arreglo mínimo: sustituir la bandera por un SVG propio (ya hay uno hecho,
 
 ## Opciones de mejora
 
-### Opción A — Solo fundaciones (recomendada para empezar)
+### Opción A — Solo fundaciones · ✅ HECHA (`47c7980`)
 Arreglar el punto 1 (shell duplicado, mapa a ancho real, cabeceras, scroll anidado) y el
 punto 2 (CTAs a 44 px). Sin tocar color ni tipografía: el look queda igual pero deja de
 estar roto. Riesgo bajo y es lo que más se nota.

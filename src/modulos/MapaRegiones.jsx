@@ -1,4 +1,6 @@
 import React, { useState, useRef, useLayoutEffect } from "react";
+import ImagenAtribuida from "../components/ImagenAtribuida";
+import { FAUNA_IMAGENES } from "../data/faunaImagenes";
 
 /* ============================================================
    DATOS — extraídos y resumidos de la Guía Cancillería (cap. Geografía)
@@ -353,10 +355,12 @@ function ColombiaMap({ selected, hovered, pinnedDept, onSelect, onHover }) {
    ============================================================ */
 function DetailPanel({ regionKey, onClose }) {
   const [tab, setTab] = useState("geografia");
+  const [especieAbierta, setEspecieAbierta] = useState(null);
   if (!regionKey) return null;
   const r = REGIONS[regionKey];
 
   return (
+    <>
     <div
       className="rounded-2xl overflow-hidden shadow-xl border animate-[fadeIn_.25s_ease-out]"
       style={{ borderColor: r.color, backgroundColor: "#FFFDF8" }}
@@ -450,16 +454,30 @@ function DetailPanel({ regionKey, onClose }) {
                   <span className="text-base">{cat.icono}</span> {cat.categoria}
                 </p>
                 <div className="grid grid-cols-3 gap-2">
-                  {cat.items.map((sp) => (
-                    <div
-                      key={sp.nombre}
-                      className="rounded-xl p-2 flex flex-col items-center text-center gap-1 transition-transform active:scale-95"
-                      style={{ backgroundColor: r.soft }}
-                    >
-                      <span className="text-2xl leading-none">{sp.icono}</span>
-                      <p className="text-xs font-medium text-stone-700 leading-tight">{sp.nombre}</p>
-                    </div>
-                  ))}
+                  {cat.items.map((sp) => {
+                    const img = FAUNA_IMAGENES[sp.nombre];
+                    const Wrapper = img ? "button" : "div";
+                    return (
+                      <Wrapper
+                        key={sp.nombre}
+                        onClick={img ? () => setEspecieAbierta(sp.nombre) : undefined}
+                        className="rounded-xl p-2 flex flex-col items-center text-center gap-1 transition-transform active:scale-95"
+                        style={{ backgroundColor: r.soft }}
+                      >
+                        {img ? (
+                          <img
+                            src={img.url}
+                            alt={sp.nombre}
+                            loading="lazy"
+                            className="w-9 h-9 rounded-full object-cover border border-white"
+                          />
+                        ) : (
+                          <span className="text-2xl leading-none">{sp.icono}</span>
+                        )}
+                        <p className="text-xs font-medium text-stone-700 leading-tight">{sp.nombre}</p>
+                      </Wrapper>
+                    );
+                  })}
                 </div>
                 {cat.nota && <p className="text-xs text-stone-500 italic mt-1.5">💡 {cat.nota}</p>}
               </div>
@@ -470,6 +488,25 @@ function DetailPanel({ regionKey, onClose }) {
         {tab === "gente" && <p className="text-stone-700 leading-relaxed">{r.gente}</p>}
       </div>
     </div>
+
+    {especieAbierta && FAUNA_IMAGENES[especieAbierta] && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
+          onClick={() => setEspecieAbierta(null)}
+        >
+          <div
+            className="bg-white rounded-2xl p-4 max-w-sm w-full animate-[fadeIn_.2s_ease-out]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-2">
+              <p className="font-bold text-stone-800" style={{ fontFamily: "Georgia, serif" }}>{especieAbierta}</p>
+              <button onClick={() => setEspecieAbierta(null)} className="text-stone-400 hover:text-stone-600 text-2xl leading-none px-1" aria-label="Cerrar">×</button>
+            </div>
+            <ImagenAtribuida imagen={FAUNA_IMAGENES[especieAbierta]} alt={especieAbierta} />
+          </div>
+        </div>
+    )}
+    </>
   );
 }
 

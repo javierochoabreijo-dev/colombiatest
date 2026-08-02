@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import ImagenAtribuida from "../components/ImagenAtribuida";
 
 /* ============================================================
    ColombiaTest · Módulo Cultura y Sociedad
@@ -52,18 +53,36 @@ const SIMBOLOS = [
     resumen: "La orquídea Cattleya trianae (\"flor de mayo\").",
     detalle: "Lleva su nombre en honor al naturalista colombiano José Jerónimo Triana. La Academia Colombiana de Historia estableció su relevancia como flor nacional en 1936. Es originaria de los pisos térmicos templados (1.000–2.000 m, 17–24 °C).",
     destacado: "Cattleya trianae, en honor a José Jerónimo Triana.",
+    imagen: {
+      url: "https://commons.wikimedia.org/wiki/Special:FilePath/Cattleya_trianae,_Flor_Nacional_de_Colombia.jpg",
+      autor: "Mario Carvajal",
+      licencia: "CC BY 2.0",
+      fuente: "https://commons.wikimedia.org/wiki/File:Cattleya_trianae,_Flor_Nacional_de_Colombia.jpg",
+    },
   },
   {
     titulo: "Árbol nacional", icono: "🌴",
     resumen: "La Palma de Cera del Quindío.",
     detalle: "Científicamente Ceroxylon quindiuense, alcanza hasta 70 metros de altura. Fue elegida en 1949 durante la comisión preparatoria del III Congreso Suramericano de Botánica. La Ley 61 de 1985 le otorgó el estatus de Árbol Nacional y ordenó protegerla en su hábitat.",
     destacado: "Palma de Cera del Quindío (Ceroxylon quindiuense), hasta 70 m.",
+    imagen: {
+      url: "https://commons.wikimedia.org/wiki/Special:FilePath/Palma_de_cera_del_Quind%C3%ADo_(Ceroxylon_quindiuense)_(14748688243).jpg",
+      autor: "Alejandro Bayer Tamayo",
+      licencia: "CC BY-SA 2.0",
+      fuente: "https://commons.wikimedia.org/wiki/File:Palma_de_cera_del_Quind%C3%ADo_(Ceroxylon_quindiuense)_(14748688243).jpg",
+    },
   },
   {
     titulo: "Símbolo cultural", icono: "👒",
     resumen: "El sombrero vueltiao.",
     detalle: "Pieza artesanal de las sabanas del Caribe, con raíces en la cultura Zenú. Fue declarado Símbolo Cultural de la Nación por la Ley 908 del 8 de septiembre de 2004. Otros símbolos: la ruana cundiboyacense, el carriel antioqueño y las mochilas arhuacas y wayúu.",
     destacado: "Sombrero vueltiao, cultura Zenú, Ley 908 de 2004.",
+    imagen: {
+      url: "https://commons.wikimedia.org/wiki/Special:FilePath/Sombrero_vueltiao.jpg",
+      autor: "Jdvillalobos",
+      licencia: "Dominio público",
+      fuente: "https://commons.wikimedia.org/wiki/File:Sombrero_vueltiao.jpg",
+    },
   },
   {
     titulo: "Moneda", icono: "💵",
@@ -76,22 +95,46 @@ const SIMBOLOS = [
 const GASTRONOMIA = [
   { titulo: "Región Caribe", icono: "🦐", region: true,
     detalle: "Costa y tierras fértiles con gran variedad de frutos del mar y pescados (bacalao, pargo rojo, bocachico, camarones, ostras). Platos: pescado frito, arroz con coco, sancocho de rabo (cola) y carne en posta.",
-    platos: [{ n: "Pargo rojo", i: "🐟" }, { n: "Arroz con coco", i: "🥥" }, { n: "Sancocho de rabo", i: "🍲" }] },
+    platos: [{ n: "Pargo rojo", i: "🐟" }, { n: "Arroz con coco", i: "🥥" }, { n: "Sancocho de rabo", i: "🍲" }],
+    imagen: {
+      url: "https://commons.wikimedia.org/wiki/Special:FilePath/Arroz_con_coco,_pescado_frito_y_patacones.jpg",
+      autor: "ProtoplasmaKid",
+      licencia: "CC BY-SA 4.0",
+      fuente: "https://commons.wikimedia.org/wiki/File:Arroz_con_coco,_pescado_frito_y_patacones.jpg",
+    } },
   { titulo: "Región Insular (San Andrés)", icono: "🏝️", region: true,
     detalle: "Cocina isleña con frutos de mar. El plato más típico es el Rondón, cuyo nombre viene de \"run down\": pescado, cangrejo, colita de cerdo, plátano, yuca, ñame y domplines cocidos en leche de coco.",
     platos: [{ n: "El Rondón", i: "🥘" }],
     destacado: "El plato típico del archipiélago de San Andrés es el Rondón." },
   { titulo: "Región Pacífica", icono: "🌊", region: true,
     detalle: "Herencia africana y biodiversidad de mar y ríos. Platos: sancocho de gallina, bocachico frito, chuleta de cerdo (valluna) y aborrajados.",
-    platos: [{ n: "Sancocho de gallina", i: "🍲" }, { n: "Bocachico frito", i: "🐟" }, { n: "Aborrajados", i: "🍌" }] },
+    platos: [{ n: "Sancocho de gallina", i: "🍲" }, { n: "Bocachico frito", i: "🐟" }, { n: "Aborrajados", i: "🍌" }],
+    imagen: {
+      url: "https://commons.wikimedia.org/wiki/Special:FilePath/Sancocho_de_gallina_criolla.jpg",
+      autor: "WIKIRAICES",
+      licencia: "CC BY-SA 4.0",
+      fuente: "https://commons.wikimedia.org/wiki/File:Sancocho_de_gallina_criolla.jpg",
+    } },
   { titulo: "Región Andina", icono: "⛰️", region: true,
     detalle: "La de mayor tradición gastronómica; base en la papa, legumbres, queso y carnes. Aquí nacieron la bandeja paisa (arroz, frijoles, carne, chorizo, huevo, plátano, arepa y aguacate; de Antioquia), el ajiaco (sopa de papas, pollo, mazorca y guascas; de Bogotá), el puchero santafereño, los tamales, la lechona tolimense y el mute santandereano.",
     platos: [{ n: "Bandeja paisa", i: "🍛" }, { n: "Ajiaco", i: "🥣" }, { n: "Mute", i: "🌽" }],
-    destacado: "Bandeja paisa = Antioquia · Ajiaco = Bogotá · Mute = Santander." },
+    destacado: "Bandeja paisa = Antioquia · Ajiaco = Bogotá · Mute = Santander.",
+    imagen: {
+      url: "https://commons.wikimedia.org/wiki/Special:FilePath/Bandeja_paisa_antioque%C3%B1a,_Colombia.jpg",
+      autor: "Matt Lemmon",
+      licencia: "CC BY-SA 2.0",
+      fuente: "https://commons.wikimedia.org/wiki/File:Bandeja_paisa_antioque%C3%B1a,_Colombia.jpg",
+    } },
   { titulo: "Región Orinoquía (Llanos)", icono: "🐄", region: true,
     detalle: "Zona ganadera; carnes rojas de calidad. El plato insignia es la mamona (o ternera a la llanera / becerra asada): ternera joven asada al aire libre solo con sal y fuego lento.",
     platos: [{ n: "Mamona (ternera a la llanera)", i: "🥩" }],
-    destacado: "El plato típico de los Llanos es la mamona o ternera a la llanera." },
+    destacado: "El plato típico de los Llanos es la mamona o ternera a la llanera.",
+    imagen: {
+      url: "https://commons.wikimedia.org/wiki/Special:FilePath/Ternera_a_la_llanera.jpg",
+      autor: "Danilo Sarmiento (Dansar)",
+      licencia: "CC BY-SA 3.0",
+      fuente: "https://commons.wikimedia.org/wiki/File:Ternera_a_la_llanera.jpg",
+    } },
   { titulo: "Región Amazónica", icono: "🌳", region: true,
     detalle: "Frutos exóticos (copoazú, arazá, camu-camu) y base en pescado y yuca. Plato típico: chicharrones de pirarucú (pez también llamado bacalao), servidos en hoja de plátano con fariña y cazabe.",
     platos: [{ n: "Chicharrones de pirarucú", i: "🐟" }] },
@@ -101,28 +144,76 @@ const GASTRONOMIA = [
 const FIESTAS = [
   { titulo: "Carnaval de Barranquilla", icono: "🎭", lugar: "Barranquilla (Atlántico)", cuando: "Febrero",
     detalle: "Uno de los carnavales más importantes del mundo, declarado Patrimonio Cultural Inmaterial de la Humanidad por la UNESCO. Reúne música tradicional como la cumbia y el vallenato.",
-    destacado: "Patrimonio de la Humanidad (UNESCO). Se celebra en febrero." },
+    destacado: "Patrimonio de la Humanidad (UNESCO). Se celebra en febrero.",
+    imagen: {
+      url: "https://commons.wikimedia.org/wiki/Special:FilePath/Garabato_Carnaval_de_Barranquilla.jpg",
+      autor: "Jdvillalobos",
+      licencia: "CC BY 3.0",
+      fuente: "https://commons.wikimedia.org/wiki/File:Garabato_Carnaval_de_Barranquilla.jpg",
+    } },
   { titulo: "Carnaval de Negros y Blancos", icono: "🎨", lugar: "San Juan de Pasto (Nariño)", cuando: "Inicio de año",
     detalle: "Mezcla de tradiciones indígenas (Los Pastos y Quillacingas) y la evangelización europea. Se celebra en vísperas de año nuevo en el suroeste del país.",
-    destacado: "Se celebra en Pasto (Nariño)." },
+    destacado: "Se celebra en Pasto (Nariño).",
+    imagen: {
+      url: "https://commons.wikimedia.org/wiki/Special:FilePath/Epifan%C3%ADa_Carroza_Carnaval_de_Negros_y_Blancos_2024.jpg",
+      autor: "Jhonsca",
+      licencia: "CC BY-SA 4.0",
+      fuente: "https://commons.wikimedia.org/wiki/File:Epifan%C3%ADa_Carroza_Carnaval_de_Negros_y_Blancos_2024.jpg",
+    } },
   { titulo: "Feria de las Flores", icono: "🌺", lugar: "Medellín (Antioquia)", cuando: "Agosto",
     detalle: "Festividad emblemática de Medellín, famosa por el desfile de silleteros, conciertos y ferias gastronómicas.",
-    destacado: "Feria de las Flores = Medellín, con el desfile de silleteros." },
+    destacado: "Feria de las Flores = Medellín, con el desfile de silleteros.",
+    imagen: {
+      url: "https://commons.wikimedia.org/wiki/Special:FilePath/Desfile_de_Silleteros2007-(21)Medellin.JPG",
+      autor: "SajoR",
+      licencia: "CC BY-SA 2.5",
+      fuente: "https://commons.wikimedia.org/wiki/File:Desfile_de_Silleteros2007-(21)Medellin.JPG",
+    } },
   { titulo: "Festival de la Leyenda Vallenata", icono: "🪗", lugar: "Valledupar (Cesar)", cuando: "Abril",
     detalle: "Resalta el género musical vallenato. Reúne a los mejores acordeoneros para coronar al Rey Vallenato, con conciertos y desfiles.",
-    destacado: "Valledupar, capital del vallenato. Corona al Rey Vallenato." },
+    destacado: "Valledupar, capital del vallenato. Corona al Rey Vallenato.",
+    imagen: {
+      url: "https://commons.wikimedia.org/wiki/Special:FilePath/Festival_vallenato.jpg",
+      autor: "Jdvillalobos",
+      licencia: "CC BY 3.0",
+      fuente: "https://commons.wikimedia.org/wiki/File:Festival_vallenato.jpg",
+    } },
   { titulo: "Festival y Torneo Internacional del Joropo", icono: "🎻", lugar: "Villavicencio (Meta)", cuando: "Octubre",
     detalle: "Desde 1962, incentiva la música y el baile tradicional de los llanos orientales. Incluye el \"joropódromo\" con torneos de joropo, baile que comparte raíces con Venezuela.",
-    destacado: "El Festival del Joropo se celebra en Villavicencio (Meta)." },
+    destacado: "El Festival del Joropo se celebra en Villavicencio (Meta).",
+    imagen: {
+      url: "https://commons.wikimedia.org/wiki/Special:FilePath/Joropódromo_en_2023_(1).jpg",
+      autor: "Canal Global Televisión",
+      licencia: "CC BY 3.0",
+      fuente: "https://commons.wikimedia.org/wiki/File:Joropódromo_en_2023_(1).jpg",
+    } },
   { titulo: "Festival Petronio Álvarez", icono: "🥁", lugar: "Cali (Valle del Cauca)", cuando: "Agosto",
     detalle: "Desde 1997, en homenaje al músico Petronio Álvarez. Es el festival más importante de la música tradicional del Pacífico colombiano (chirimías, marimba, violines caucanos).",
     destacado: "El festival más importante de la música del Pacífico." },
   { titulo: "Feria de Manizales", icono: "☕", lugar: "Manizales (Caldas)", cuando: "Enero",
-    detalle: "Su temática principal es el café. De origen español, se inspira en la Feria de Sevilla; ofrece formación en cata de café." },
+    detalle: "Su temática principal es el café. De origen español, se inspira en la Feria de Sevilla; ofrece formación en cata de café.",
+    imagen: {
+      url: "https://commons.wikimedia.org/wiki/Special:FilePath/Reinado_internacional_del_caf%C3%A9_feria_de_manizales_Colombia.jpg",
+      autor: "Anonimo18121991",
+      licencia: "CC BY-SA 4.0",
+      fuente: "https://commons.wikimedia.org/wiki/File:Reinado_internacional_del_caf%C3%A9_feria_de_manizales_Colombia.jpg",
+    } },
   { titulo: "Semana Santa de Popayán", icono: "🕯️", lugar: "Popayán (Cauca)", cuando: "Semana Santa",
-    detalle: "Una de las celebraciones religiosas más tradicionales del país: procesiones por las calles empedradas con música sacra." },
+    detalle: "Una de las celebraciones religiosas más tradicionales del país: procesiones por las calles empedradas con música sacra.",
+    imagen: {
+      url: "https://commons.wikimedia.org/wiki/Special:FilePath/Semana_Santa_en_Popay%C3%A1n_(13903409316).jpg",
+      autor: "Policía Nacional de Colombia",
+      licencia: "CC BY-SA 2.0",
+      fuente: "https://commons.wikimedia.org/wiki/File:Semana_Santa_en_Popay%C3%A1n_(13903409316).jpg",
+    } },
   { titulo: "Hay Festival", icono: "📚", lugar: "Cartagena (Bolívar)", cuando: "Enero",
-    detalle: "\"La fiesta de las ideas y las palabras\": festival internacional de literatura, historia y pensamiento." },
+    detalle: "\"La fiesta de las ideas y las palabras\": festival internacional de literatura, historia y pensamiento.",
+    imagen: {
+      url: "https://commons.wikimedia.org/wiki/Special:FilePath/Ciudad_Amurallada_Cartagena.JPG",
+      autor: "Davidsan181",
+      licencia: "CC BY-SA 3.0",
+      fuente: "https://commons.wikimedia.org/wiki/File:Ciudad_Amurallada_Cartagena.JPG",
+    } },
 ];
 
 /* ---------------- MÚSICA Y ARTE ---------------- */
@@ -134,9 +225,21 @@ const ARTE = [
     detalle: "En el siglo XX la música tradicional se fusionó con rock, salsa y pop. Artistas reconocidos mundialmente: Carlos Vives, Shakira, Totó la Momposina y Juanes." },
   { titulo: "Literatura", icono: "📖",
     detalle: "Gabriel García Márquez (\"Gabo\") ganó el Premio Nobel en 1982 con Cien años de soledad; también escribió El amor en los tiempos del cólera y Crónica de una muerte anunciada. Otros: Jorge Isaacs (La María), José Eustasio Rivera (La Vorágine, 1924) y Tomás Carrasquilla.",
-    destacado: "García Márquez: Nobel de Literatura 1982, por Cien años de soledad." },
+    destacado: "García Márquez: Nobel de Literatura 1982, por Cien años de soledad.",
+    imagen: {
+      url: "https://commons.wikimedia.org/wiki/Special:FilePath/Gabriel_Garcia_Marquez.jpg",
+      autor: "Jose Lara",
+      licencia: "CC BY-SA 2.0",
+      fuente: "https://commons.wikimedia.org/wiki/File:Gabriel_Garcia_Marquez.jpg",
+    } },
   { titulo: "Artes plásticas", icono: "🖼️",
-    detalle: "En el siglo XX destacan Fernando Botero, Alejandro Obregón, Omar Rayo, Beatriz González y Débora Arango. En la época colonial sobresalió el pintor Gregorio Vásquez de Arce y Ceballos." },
+    detalle: "En el siglo XX destacan Fernando Botero, Alejandro Obregón, Omar Rayo, Beatriz González y Débora Arango. En la época colonial sobresalió el pintor Gregorio Vásquez de Arce y Ceballos.",
+    imagen: {
+      url: "https://commons.wikimedia.org/wiki/Special:FilePath/Esfinge_by_Fernando_Botero_-_Plaza_Botero_-_Medell%C3%ADn_-_Colombia_2024.jpg",
+      autor: "José Luiz Bernardes Ribeiro",
+      licencia: "CC BY-SA 4.0",
+      fuente: "https://commons.wikimedia.org/wiki/File:Esfinge_by_Fernando_Botero_-_Plaza_Botero_-_Medell%C3%ADn_-_Colombia_2024.jpg",
+    } },
   { titulo: "Cine y televisión", icono: "📺",
     detalle: "Una de las telenovelas colombianas más famosas del mundo es Yo soy Betty, la fea, creada por Fernando Gaitán en 1999." },
   { titulo: "Radio", icono: "📻",
@@ -147,7 +250,13 @@ const ARTE = [
 const DEPORTE = [
   { titulo: "Ciclismo — el deporte rey", icono: "🚴",
     detalle: "El ciclismo es el deporte más importante del país; las montañas son ideales para entrenar a los \"escarabajos\". Grandes ciclistas: Lucho Herrera, Rigoberto Urán, Nairo Quintana y Egan Bernal (y de antaño Martín \"Cochise\" Rodríguez, Ramón Hoyos, Rafael Niño).",
-    destacado: "El ciclismo es el \"deporte rey\" de Colombia." },
+    destacado: "El ciclismo es el \"deporte rey\" de Colombia.",
+    imagen: {
+      url: "https://commons.wikimedia.org/wiki/Special:FilePath/Cl%C3%A1sica_de_ciclismo_El_carmen_de_viboral_-_panoramio.jpg",
+      autor: "Fernando Gallo B",
+      licencia: "CC BY 3.0",
+      fuente: "https://commons.wikimedia.org/wiki/File:Cl%C3%A1sica_de_ciclismo_El_carmen_de_viboral_-_panoramio.jpg",
+    } },
   { titulo: "Otras figuras del deporte", icono: "🏅",
     detalle: "Edgar Rentería (béisbol), Juan Pablo Montoya (automovilismo), Fabiola Zuluaga (tenis), María Isabel Urrutia (levantamiento de pesas) y Catherine Ibargüen (triple salto)." },
 ];
@@ -155,13 +264,37 @@ const DEPORTE = [
 /* ---------------- TURISMO ---------------- */
 const TURISMO = [
   { titulo: "Turismo litoral", icono: "🏖️",
-    detalle: "Playas de ciudades como Santa Marta, donde está el Parque Nacional Natural Tayrona." },
+    detalle: "Playas de ciudades como Santa Marta, donde está el Parque Nacional Natural Tayrona.",
+    imagen: {
+      url: "https://commons.wikimedia.org/wiki/Special:FilePath/Playa_La_Arenilla,_Parque_Nacional_Natural_Tayrona.JPG",
+      autor: "Karolynaroca",
+      licencia: "CC BY-SA 3.0",
+      fuente: "https://commons.wikimedia.org/wiki/File:Playa_La_Arenilla,_Parque_Nacional_Natural_Tayrona.JPG",
+    } },
   { titulo: "Turismo de naturaleza", icono: "🐋",
-    detalle: "Senderismo, avistamiento de aves, buceo, rafting y avistamiento de ballenas. Incluye parques como Los Nevados." },
+    detalle: "Senderismo, avistamiento de aves, buceo, rafting y avistamiento de ballenas. Incluye parques como Los Nevados.",
+    imagen: {
+      url: "https://commons.wikimedia.org/wiki/Special:FilePath/Laguna_negra,_parque_nacional_los_nevados,_colombia.JPG",
+      autor: "Kamilokardona",
+      licencia: "Dominio público",
+      fuente: "https://commons.wikimedia.org/wiki/File:Laguna_negra,_parque_nacional_los_nevados,_colombia.JPG",
+    } },
   { titulo: "Turismo rural", icono: "🚜",
-    detalle: "Contacto con el campo, con parapente, escalada, canopy; incluye las haciendas y plantaciones de café." },
+    detalle: "Contacto con el campo, con parapente, escalada, canopy; incluye las haciendas y plantaciones de café.",
+    imagen: {
+      url: "https://commons.wikimedia.org/wiki/Special:FilePath/Valle_de_Cocora_banner.jpg",
+      autor: "Peterfitzgerald",
+      licencia: "CC BY-SA 3.0",
+      fuente: "https://commons.wikimedia.org/wiki/File:Valle_de_Cocora_banner.jpg",
+    } },
   { titulo: "Turismo académico y cultural", icono: "🏛️",
-    detalle: "Museos, galerías de arte y sitios arqueológicos. Las ciudades más visitadas son Bogotá, Medellín y Cali." },
+    detalle: "Museos, galerías de arte y sitios arqueológicos. Las ciudades más visitadas son Bogotá, Medellín y Cali.",
+    imagen: {
+      url: "https://commons.wikimedia.org/wiki/Special:FilePath/Calle_de_La_Candelaria_Bogot%C3%A1.JPG",
+      autor: "Javier Benítez",
+      licencia: "CC BY-SA 3.0",
+      fuente: "https://commons.wikimedia.org/wiki/File:Calle_de_La_Candelaria_Bogot%C3%A1.JPG",
+    } },
 ];
 
 const DATA = { simbolos: SIMBOLOS, gastronomia: GASTRONOMIA, fiestas: FIESTAS, arte: ARTE, deporte: DEPORTE, turismo: TURISMO };
@@ -278,6 +411,7 @@ function Tarjeta({ item, color, soft }) {
         <div className="mt-3 pt-3 border-t space-y-2.5" style={{ borderColor: soft }}>
           {item.svg === "bandera" && <div className="flex justify-center py-1"><BanderaSVG /></div>}
           {item.svg === "escudo" && <div className="flex justify-center py-1"><EscudoSVG /></div>}
+          <ImagenAtribuida imagen={item.imagen} alt={item.titulo} />
           {item.lugar && (
             <div className="flex flex-wrap gap-2 text-xs">
               <span className="px-2 py-0.5 rounded-full" style={{ backgroundColor: soft, color }}>📍 {item.lugar}</span>

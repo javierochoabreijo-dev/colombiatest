@@ -380,16 +380,10 @@ export default function LineaTiempo() {
     : eventosOrdenados.filter((e) => e.era === filtroEra);
 
   return (
-    <div className="min-h-screen w-full" style={{ backgroundColor: "#FAF7EF" }}>
-      <div className="max-w-2xl mx-auto px-4 py-6">
-        <header className="mb-4">
-          <h1 className="text-2xl font-bold text-stone-800" style={{ fontFamily: "Georgia, serif" }}>
-            🕰️ Historia de Colombia
-          </h1>
-          <p className="text-stone-500 text-sm mt-1">
-            Recorre la línea de tiempo. Toca cualquier evento para ver el detalle. Filtra por era para estudiar por partes.
-          </p>
-        </header>
+    <>
+        <p className="text-stone-500 text-sm mb-4">
+          Recorre la línea de tiempo. Toca cualquier evento para ver el detalle. Filtra por era para estudiar por partes.
+        </p>
 
         {/* filtros de era */}
         <div className="flex flex-wrap gap-2 mb-5 sticky top-0 py-2 z-20" style={{ backgroundColor: "#FAF7EF" }}>
@@ -445,7 +439,6 @@ export default function LineaTiempo() {
         <footer className="text-center text-xs text-stone-400 mt-6 pb-4">
           Contenido basado en la guía oficial de estudio · {EVENTOS.length} eventos
         </footer>
-      </div>
-    </div>
+    </>
   );
 }

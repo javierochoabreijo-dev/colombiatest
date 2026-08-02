@@ -291,17 +291,10 @@ export default function Constitucion() {
   const sec = SECCIONES.find((s) => s.key === seccion);
 
   return (
-    <div className="min-h-screen w-full" style={{ backgroundColor: "#FAF7EF" }}>
-      <style>{`@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }`}</style>
-      <div className="max-w-2xl mx-auto px-4 py-6">
-        <header className="mb-4">
-          <h1 className="text-2xl font-bold text-stone-800" style={{ fontFamily: "Georgia, serif" }}>
-            ⚖️ Constitución Política de 1991
-          </h1>
-          <p className="text-stone-500 text-sm mt-1">
-            Explora los principios, derechos, mecanismos y la estructura del Estado. Toca cualquier tarjeta para ver el detalle.
-          </p>
-        </header>
+    <>
+        <p className="text-stone-500 text-sm mb-4">
+          Explora los principios, derechos, mecanismos y la estructura del Estado. Toca cualquier tarjeta para ver el detalle.
+        </p>
 
         {/* navegación de secciones */}
         <div className="flex flex-wrap gap-2 mb-5 sticky top-0 py-2 z-20" style={{ backgroundColor: "#FAF7EF" }}>
@@ -358,7 +351,6 @@ export default function Constitucion() {
         <footer className="text-center text-xs text-stone-400 mt-6 pb-4">
           Contenido basado en la guía oficial de estudio · Constitución Política de 1991
         </footer>
-      </div>
-    </div>
+    </>
   );
 }

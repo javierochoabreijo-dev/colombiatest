@@ -32,6 +32,8 @@ const MODULOS = [
   {
     key: "geografia", nombre: "Geografía", icono: "🗺️", color: "#1E7F8C", soft: "#DCEEF0",
     desc: "Regiones, relieve, clima, flora, fauna y demografía.",
+    // el mapa + panel necesitan más ancho que el resto de vistas
+    ancho: "64rem",
     component: <MapaRegiones />,
   },
   {
@@ -246,10 +248,10 @@ function Inicio({ irAModulo, irATest, irASimulacro }) {
             <h2 className="font-bold text-stone-800 mt-1.5 text-[15px]" style={{ fontFamily: "Georgia, serif" }}>{m.nombre}</h2>
             <p className="text-xs text-stone-500 mt-0.5 flex-1 leading-snug">{m.desc}</p>
             <div className="flex gap-1.5 mt-3">
-              <button onClick={() => irAModulo(m.key)} className="flex-1 text-xs font-semibold py-1.5 rounded-lg text-white" style={{ backgroundColor: m.color }}>
+              <button onClick={() => irAModulo(m.key)} className="flex-1 min-h-[44px] flex items-center justify-center text-sm font-semibold px-3 rounded-lg text-white" style={{ backgroundColor: m.color }}>
                 Estudiar
               </button>
-              <button onClick={() => irATest(m.key)} className="text-xs font-semibold py-1.5 px-2.5 rounded-lg border" style={{ borderColor: m.color, color: m.color }}>
+              <button onClick={() => irATest(m.key)} className="min-h-[44px] min-w-[44px] flex items-center justify-center text-sm font-semibold px-4 rounded-lg border" style={{ borderColor: m.color, color: m.color }}>
                 Test
               </button>
             </div>
@@ -295,6 +297,11 @@ export default function App() {
 
   const volver = () => setVista({ tipo: "inicio" });
 
+  // El ancho lo decide el shell, no cada módulo: solo Geografía necesita más.
+  // Va como estilo inline (no clase) porque es un valor dirigido por datos.
+  const ancho =
+    (vista.tipo === "modulo" && MODULOS.find((m) => m.key === vista.area)?.ancho) || "42rem";
+
   if (!banco) {
     return (
       <div className="min-h-screen w-full flex items-center justify-center" style={{ backgroundColor: "#FAF7EF" }}>
@@ -309,7 +316,7 @@ export default function App() {
   return (
     <div className="min-h-screen w-full" style={{ backgroundColor: "#FAF7EF" }}>
       <style>{`@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }`}</style>
-      <div className="max-w-2xl mx-auto px-4 py-6">
+      <div className="mx-auto px-4 py-6" style={{ maxWidth: ancho }}>
 
         {/* barra superior de navegación (excepto en inicio) */}
         {vista.tipo !== "inicio" && (

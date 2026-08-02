@@ -568,21 +568,12 @@ export default function CulturaSociedad() {
   const c = CATS.find((x) => x.key === cat);
 
   return (
-    <div className="min-h-screen w-full" style={{ backgroundColor: "#FAF7EF" }}>
-      <style>{`@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }`}</style>
-      <div className="max-w-2xl mx-auto px-4 py-6">
-        <header className="mb-4 flex items-start justify-between gap-3">
-          <div>
-            <h1 className="text-2xl font-bold text-stone-800" style={{ fontFamily: "Georgia, serif" }}>
-              🎭 Cultura y Sociedad
-            </h1>
-            <p className="text-stone-500 text-sm mt-1">
-              {modo === "explorar"
-                ? "Explora por categoría y toca cada tarjeta. Cuando te sientas listo, ponte a prueba."
-                : "Retrieval practice: intenta responder antes de revelar."}
-            </p>
-          </div>
-        </header>
+    <>
+        <p className="text-stone-500 text-sm mb-4">
+          {modo === "explorar"
+            ? "Explora por categoría y toca cada tarjeta. Cuando te sientas listo, ponte a prueba."
+            : "Retrieval practice: intenta responder antes de revelar."}
+        </p>
 
         {/* conmutador de modo */}
         <div className="grid grid-cols-2 gap-2 mb-5">
@@ -637,7 +628,6 @@ export default function CulturaSociedad() {
         <footer className="text-center text-xs text-stone-400 mt-6 pb-4">
           Contenido basado en la guía oficial de estudio · Cultura y Sociedad
         </footer>
-      </div>
-    </div>
+    </>
   );
 }

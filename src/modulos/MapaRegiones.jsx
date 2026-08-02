@@ -398,7 +398,7 @@ function DetailPanel({ regionKey, onClose }) {
         ))}
       </div>
 
-      <div className="px-5 py-4 space-y-3 max-h-[360px] overflow-y-auto">
+      <div className="px-5 py-4 space-y-3">
         {tab === "geografia" && (
           <>
             <p className="text-stone-700 leading-relaxed">{r.geografia}</p>
@@ -524,43 +524,34 @@ export default function MapaRegiones() {
   };
 
   return (
-    <div className="min-h-screen w-full" style={{ backgroundColor: "#FAF7EF" }}>
-      <style>{`@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }`}</style>
+    <>
+      <p className="text-stone-500 text-sm mb-4">Toca una región del mapa para explorar su geografía, flora, fauna y gente.</p>
 
-      <div className="max-w-5xl mx-auto px-4 py-6">
-        <header className="mb-5">
-          <h1 className="text-2xl font-bold text-stone-800" style={{ fontFamily: "Georgia, serif" }}>
-            🗺️ Regiones de Colombia
-          </h1>
-          <p className="text-stone-500 text-sm mt-1">Toca una región del mapa para explorar su geografía, flora, fauna y gente.</p>
-        </header>
-
-        <div className="flex flex-wrap gap-2 mb-4">
-          {Object.entries(REGIONS).map(([key, r]) => (
-            <button
-              key={key}
-              onClick={() => { setSelected(key); setPinnedDept(null); }}
-              onMouseEnter={() => setHovered(key)}
-              onMouseLeave={() => setHovered(null)}
-              className="px-3 py-1.5 rounded-full text-sm font-medium border transition-all"
-              style={
-                selected === key
-                  ? { backgroundColor: r.color, color: "white", borderColor: r.color }
-                  : { backgroundColor: "white", color: r.color, borderColor: r.color }
-              }
-            >
-              {r.name.replace("Región ", "")}
-            </button>
-          ))}
-        </div>
-
-        <div className="grid md:grid-cols-2 gap-6 items-start">
-          <div className="bg-white rounded-2xl border border-stone-200 p-3">
-            <ColombiaMap selected={selected} hovered={hovered} pinnedDept={pinnedDept} onSelect={handleMapSelect} onHover={setHovered} />
-          </div>
-          <DetailPanel regionKey={selected} onClose={() => { setSelected(null); setPinnedDept(null); }} />
-        </div>
+      <div className="flex flex-wrap gap-2 mb-4">
+        {Object.entries(REGIONS).map(([key, r]) => (
+          <button
+            key={key}
+            onClick={() => { setSelected(key); setPinnedDept(null); }}
+            onMouseEnter={() => setHovered(key)}
+            onMouseLeave={() => setHovered(null)}
+            className="px-3 py-1.5 rounded-full text-sm font-medium border transition-all"
+            style={
+              selected === key
+                ? { backgroundColor: r.color, color: "white", borderColor: r.color }
+                : { backgroundColor: "white", color: r.color, borderColor: r.color }
+            }
+          >
+            {r.name.replace("Región ", "")}
+          </button>
+        ))}
       </div>
-    </div>
+
+      <div className="grid md:grid-cols-2 gap-6 items-start">
+        <div className="bg-white rounded-2xl border border-stone-200 p-3">
+          <ColombiaMap selected={selected} hovered={hovered} pinnedDept={pinnedDept} onSelect={handleMapSelect} onHover={setHovered} />
+        </div>
+        <DetailPanel regionKey={selected} onClose={() => { setSelected(null); setPinnedDept(null); }} />
+      </div>
+    </>
   );
 }

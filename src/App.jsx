@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import MapaRegiones from "./modulos/MapaRegiones";
 import LineaTiempo from "./modulos/LineaTiempo";
 import Constitucion from "./modulos/Constitucion";
 import CulturaSociedad from "./modulos/CulturaSociedad";
+import { cargarBanco } from "./data/preguntas";
 
 /* ============================================================
    ColombiaTest · HUB / SHELL DE NAVEGACIÓN
@@ -50,104 +51,6 @@ const MODULOS = [
   },
 ];
 
-/* ============================================================
-   BANCO DE PREGUNTAS (respuesta escrita / completar)
-   ------------------------------------------------------------
-   Cada pregunta: área, enunciado, respuesta(s) aceptada(s) y
-   una explicación breve para autoevaluarse. La calificación es
-   por autoevaluación (como el examen real: no es opción múltiple).
-   'aceptadas' se usa solo como ayuda de comparación / pista.
-   ============================================================ */
-const BANCO = [
-  // ============ GEOGRAFÍA (20) ============
-  { area: "geografia", q: "¿Cuántas regiones naturales (biogeográficas) tiene Colombia y cuáles son?", a: "5: Caribe, Andina, Pacífica, Orinoquía y Amazónica.", aceptadas: ["5", "cinco"] },
-  { area: "geografia", q: "¿Cuál es el pico más alto de Colombia y dónde está?", a: "El Pico Cristóbal Colón (5.775 m), en la Sierra Nevada de Santa Marta (región Caribe).", aceptadas: ["cristóbal colón", "cristobal colon"] },
-  { area: "geografia", q: "¿Cuántas cordilleras atraviesan el territorio y cómo se llaman?", a: "Tres: Occidental, Central y Oriental.", aceptadas: ["3", "tres"] },
-  { area: "geografia", q: "Completa: la región ___ ocupa cerca del 42% del territorio y es la más biodiversa.", a: "Amazónica (Amazonía).", aceptadas: ["amazónica", "amazonia", "amazonía"] },
-  { area: "geografia", q: "¿Qué región es la más poblada del país (≈40%)?", a: "La región Andina.", aceptadas: ["andina"] },
-  { area: "geografia", q: "¿Qué región es una de las más lluviosas del mundo?", a: "La región Pacífica (el Chocó puede superar los 10.000 mm de lluvia al año).", aceptadas: ["pacífica", "pacifica"] },
-  { area: "geografia", q: "¿Cómo se llaman las llanuras planas de la Orinoquía?", a: "Los Llanos Orientales.", aceptadas: ["llanos"] },
-  { area: "geografia", q: "¿Qué piso térmico corresponde a temperaturas entre 18 y 24 °C?", a: "El piso térmico templado (entre 1.000 y 2.000 m).", aceptadas: ["templado"] },
-  { area: "geografia", q: "¿Cómo se llama el piso térmico de más de 3.000 m con temperaturas bajo 10 °C?", a: "El páramo.", aceptadas: ["páramo", "paramo"] },
-  { area: "geografia", q: "¿Cuál es la capital y ciudad más poblada de Colombia?", a: "Bogotá.", aceptadas: ["bogotá", "bogota"] },
-  { area: "geografia", q: "¿En qué región están las tres cordilleras y los grandes nevados?", a: "En la región Andina.", aceptadas: ["andina"] },
-  { area: "geografia", q: "¿Qué formación aislada de la Orinoquía alberga a Caño Cristales?", a: "La Serranía de La Macarena.", aceptadas: ["macarena"] },
-  { area: "geografia", q: "¿Qué archipiélago del Caribe forma parte del territorio colombiano?", a: "San Andrés, Providencia y Santa Catalina.", aceptadas: ["san andrés", "san andres", "providencia"] },
-  { area: "geografia", q: "Completa: los páramos son considerados las \"fábricas de ___\" del país.", a: "Agua.", aceptadas: ["agua"] },
-  { area: "geografia", q: "¿Qué pueblos indígenas habitan la Sierra Nevada de Santa Marta?", a: "Los kogui, arhuaco, wiwa y kankuamo.", aceptadas: ["kogui", "arhuaco", "wiwa", "kankuamo"] },
-  { area: "geografia", q: "¿Cuál es el roedor más grande del mundo, típico de la Orinoquía?", a: "El capibara (chigüiro).", aceptadas: ["capibara", "chigüiro", "chiguiro"] },
-  { area: "geografia", q: "¿Qué región tiene clima ecuatorial húmedo y frontera con Ecuador, Perú y Brasil?", a: "La región Amazónica.", aceptadas: ["amazónica", "amazonica", "amazonía", "amazonia"] },
-  { area: "geografia", q: "¿Qué piso térmico corresponde a menos de 1.000 m y 24–28 °C?", a: "El piso térmico cálido.", aceptadas: ["cálido", "calido"] },
-  { area: "geografia", q: "¿Qué región es reconocida por sus manglares, sabanas y la Sierra Nevada?", a: "La región Caribe.", aceptadas: ["caribe"] },
-  { area: "geografia", q: "¿Cómo se llama el ecosistema de alta montaña con frailejones?", a: "El páramo.", aceptadas: ["páramo", "paramo"] },
-
-  // ============ HISTORIA (20) ============
-  { area: "historia", q: "¿Por dónde llegaron los primeros pobladores a América hace ~16.000 años?", a: "Por el estrecho de Beringia y luego el Darién.", aceptadas: ["beringia"] },
-  { area: "historia", q: "¿Cuáles fueron las tres lenguas madre de los pueblos prehispánicos?", a: "Chibcha, arawak y caribe.", aceptadas: ["chibcha", "arawak", "caribe"] },
-  { area: "historia", q: "¿Quién fundó Santa Fe de Bogotá en 1538?", a: "Gonzalo Jiménez de Quesada.", aceptadas: ["jiménez de quesada", "jimenez de quesada", "quesada"] },
-  { area: "historia", q: "¿En qué año se fundó el Virreinato de la Nueva Granada?", a: "En 1717.", aceptadas: ["1717"] },
-  { area: "historia", q: "¿Cómo se llamó la rebelión de 1780–1781 contra el alza de impuestos?", a: "La Revolución de los Comuneros.", aceptadas: ["comuneros"] },
-  { area: "historia", q: "¿Quién escribió el Memorial de Agravios en 1809?", a: "Camilo Torres.", aceptadas: ["camilo torres", "torres"] },
-  { area: "historia", q: "¿Qué se conmemora el 20 de julio de 1810?", a: "El Grito de Independencia y la Junta Suprema de Gobierno en Bogotá.", aceptadas: ["grito de independencia", "junta"] },
-  { area: "historia", q: "¿Con qué batalla se consolidó la independencia y en qué fecha?", a: "La Batalla de Boyacá, el 7 de agosto de 1819.", aceptadas: ["boyacá", "boyaca", "1819"] },
-  { area: "historia", q: "Completa: la República creada en Angostura (1819), hoy llamada ___ Colombia.", a: "Gran Colombia.", aceptadas: ["gran"] },
-  { area: "historia", q: "¿En qué año se disolvió la Gran Colombia?", a: "En 1831.", aceptadas: ["1831"] },
-  { area: "historia", q: "¿Qué dos partidos surgieron en la etapa de la Nueva Granada?", a: "El Liberal y el Conservador.", aceptadas: ["liberal", "conservador"] },
-  { area: "historia", q: "¿En qué año se promulgó la Constitución centralista anterior a la de 1991?", a: "En 1886.", aceptadas: ["1886"] },
-  { area: "historia", q: "¿Qué conflicto ocurrió entre 1899 y 1902?", a: "La Guerra de los Mil Días.", aceptadas: ["mil días", "mil dias"] },
-  { area: "historia", q: "¿Qué territorio se separó de Colombia en 1903?", a: "Panamá.", aceptadas: ["panamá", "panama"] },
-  { area: "historia", q: "¿Qué ocurrió el 9 de abril de 1948?", a: "El asesinato de Jorge Eliécer Gaitán, que desató el Bogotazo.", aceptadas: ["gaitán", "gaitan", "bogotazo"] },
-  { area: "historia", q: "¿En qué año votaron por primera vez las mujeres en Colombia?", a: "En el plebiscito de 1957.", aceptadas: ["1957"] },
-  { area: "historia", q: "¿Cómo se llamó el acuerdo de alternancia entre liberales y conservadores (1958–1974)?", a: "El Frente Nacional.", aceptadas: ["frente nacional"] },
-  { area: "historia", q: "¿En qué años se fundaron el ELN, las FARC y el EPL?", a: "ELN en 1962, FARC en 1965 y EPL en 1967.", aceptadas: ["1962", "1965", "1967"] },
-  { area: "historia", q: "¿En qué año se firmó el acuerdo de paz con las FARC?", a: "En 2016 (negociado en La Habana).", aceptadas: ["2016"] },
-  { area: "historia", q: "¿Qué mecanismos de justicia transicional creó el acuerdo de 2016?", a: "La JEP (Jurisdicción Especial para la Paz) y la Comisión de la Verdad.", aceptadas: ["jep", "comisión de la verdad", "comision de la verdad"] },
-
-  // ============ CONSTITUCIÓN (20) ============
-  { area: "constitucion", q: "¿En qué año fue promulgada la Constitución vigente?", a: "En 1991.", aceptadas: ["1991"] },
-  { area: "constitucion", q: "Completa: la Constitución define a Colombia como un Estado ___ de derecho.", a: "Social.", aceptadas: ["social"] },
-  { area: "constitucion", q: "¿Cuáles son los tres tipos de descentralización?", a: "Territorial, por servicios y por colaboración.", aceptadas: ["territorial", "servicios", "colaboración", "colaboracion"] },
-  { area: "constitucion", q: "Se dice que la Constitución es \"norma de ___\".", a: "Normas.", aceptadas: ["normas"] },
-  { area: "constitucion", q: "¿En qué artículos están los derechos fundamentales?", a: "Del artículo 11 al 44.", aceptadas: ["11", "44"] },
-  { area: "constitucion", q: "¿Qué mecanismo protege los derechos fundamentales de forma inmediata?", a: "La acción de tutela.", aceptadas: ["tutela"] },
-  { area: "constitucion", q: "¿Qué acción es PREVENTIVA y la puede interponer una sola persona?", a: "La acción popular (protege derechos colectivos).", aceptadas: ["popular"] },
-  { area: "constitucion", q: "¿Qué acción es INDEMNIZATORIA y requiere mínimo 20 personas?", a: "La acción de grupo.", aceptadas: ["grupo"] },
-  { area: "constitucion", q: "¿Qué acción tutela la libertad personal ante una detención ilegal?", a: "El habeas corpus.", aceptadas: ["habeas corpus", "hábeas corpus"] },
-  { area: "constitucion", q: "¿En qué artículo está el derecho de petición?", a: "En el artículo 23.", aceptadas: ["23"] },
-  { area: "constitucion", q: "¿Cuál es el principal mecanismo de participación ciudadana?", a: "El voto.", aceptadas: ["voto", "sufragio"] },
-  { area: "constitucion", q: "¿Qué mecanismo permite terminar el mandato de un alcalde o gobernador?", a: "La revocatoria del mandato.", aceptadas: ["revocatoria"] },
-  { area: "constitucion", q: "¿Cuáles son las tres ramas del poder público?", a: "Ejecutiva, Legislativa y Judicial.", aceptadas: ["ejecutiva", "legislativa", "judicial"] },
-  { area: "constitucion", q: "¿Quién está a la cabeza de la rama ejecutiva?", a: "El Presidente de la República.", aceptadas: ["presidente"] },
-  { area: "constitucion", q: "¿Qué dos cámaras integran el Congreso?", a: "El Senado y la Cámara de Representantes.", aceptadas: ["senado", "cámara", "camara"] },
-  { area: "constitucion", q: "¿Qué órgano ejerce el control fiscal del Estado?", a: "La Contraloría General de la República.", aceptadas: ["contraloría", "contraloria"] },
-  { area: "constitucion", q: "¿Qué órgano ejerce el control disciplinario de los servidores públicos?", a: "La Procuraduría General de la Nación.", aceptadas: ["procuraduría", "procuraduria"] },
-  { area: "constitucion", q: "¿Qué entidades conforman la organización electoral?", a: "El Consejo Nacional Electoral y la Registraduría Nacional del Estado Civil.", aceptadas: ["consejo nacional electoral", "registraduría", "registraduria"] },
-  { area: "constitucion", q: "¿Cuál es el banco central y órgano autónomo del Estado?", a: "El Banco de la República.", aceptadas: ["banco de la república", "banco de la republica"] },
-  { area: "constitucion", q: "¿Qué tribunal integra la Jurisdicción Constitucional?", a: "La Corte Constitucional.", aceptadas: ["corte constitucional"] },
-
-  // ============ CULTURA (20) ============
-  { area: "cultura", q: "¿Cuáles son los colores de la bandera, de arriba a abajo?", a: "Amarillo, azul y rojo.", aceptadas: ["amarillo", "azul", "rojo"] },
-  { area: "cultura", q: "¿Qué representa el color amarillo de la bandera?", a: "La riqueza del suelo (también armonía y justicia).", aceptadas: ["riqueza", "suelo", "oro"] },
-  { area: "cultura", q: "¿Cuál es el lema nacional que aparece en el escudo?", a: "\"Libertad y Orden\".", aceptadas: ["libertad y orden"] },
-  { area: "cultura", q: "¿Quién diseñó el escudo nacional y en qué año?", a: "Francisco de Paula Santander, en 1834.", aceptadas: ["santander", "1834"] },
-  { area: "cultura", q: "¿Quién escribió la letra del himno nacional?", a: "El presidente Rafael Núñez (música de Oreste Síndici).", aceptadas: ["núñez", "nuñez", "nunez"] },
-  { area: "cultura", q: "¿En qué año se proclamó oficialmente el himno nacional?", a: "En 1920.", aceptadas: ["1920"] },
-  { area: "cultura", q: "¿Cuál es el ave nacional de Colombia?", a: "El cóndor de los Andes.", aceptadas: ["cóndor", "condor"] },
-  { area: "cultura", q: "¿Cuál es la flor nacional de Colombia?", a: "La orquídea Cattleya trianae.", aceptadas: ["cattleya", "trianae"] },
-  { area: "cultura", q: "¿Cuál es el árbol nacional de Colombia?", a: "La Palma de Cera del Quindío.", aceptadas: ["palma de cera", "quindío", "quindio"] },
-  { area: "cultura", q: "¿Cuál es el símbolo cultural de la nación (Ley 908 de 2004)?", a: "El sombrero vueltiao (cultura Zenú).", aceptadas: ["sombrero vueltiao", "vueltiao"] },
-  { area: "cultura", q: "¿Cuál es la moneda oficial de Colombia?", a: "El peso colombiano (COP).", aceptadas: ["peso"] },
-  { area: "cultura", q: "¿Cuál es el plato típico del archipiélago de San Andrés?", a: "El Rondón.", aceptadas: ["rondón", "rondon"] },
-  { area: "cultura", q: "¿De qué región es originaria la bandeja paisa?", a: "De la región Andina (Antioquia).", aceptadas: ["andina", "antioquia"] },
-  { area: "cultura", q: "¿Cuál es el plato típico de los Llanos (Orinoquía)?", a: "La mamona o ternera a la llanera.", aceptadas: ["mamona", "ternera a la llanera"] },
-  { area: "cultura", q: "¿Qué carnaval es Patrimonio de la Humanidad de la UNESCO?", a: "El Carnaval de Barranquilla.", aceptadas: ["barranquilla"] },
-  { area: "cultura", q: "¿En qué ciudad se celebra el Carnaval de Negros y Blancos?", a: "En San Juan de Pasto (Nariño).", aceptadas: ["pasto"] },
-  { area: "cultura", q: "¿En qué ciudad es la Feria de las Flores con el desfile de silleteros?", a: "En Medellín.", aceptadas: ["medellín", "medellin"] },
-  { area: "cultura", q: "¿Qué música tradicional es característica de los Llanos Orientales?", a: "El joropo.", aceptadas: ["joropo"] },
-  { area: "cultura", q: "¿Quién ganó el Nobel de Literatura en 1982 y con qué obra?", a: "Gabriel García Márquez, con Cien años de soledad.", aceptadas: ["garcía márquez", "garcia marquez", "cien años de soledad"] },
-  { area: "cultura", q: "¿Cuál es considerado el \"deporte rey\" de Colombia?", a: "El ciclismo.", aceptadas: ["ciclismo"] },
-];
-
 function shuffle(arr) {
   const a = [...arr];
   for (let i = a.length - 1; i > 0; i--) {
@@ -160,7 +63,7 @@ function shuffle(arr) {
 /* ============================================================
    TEST DE PRÁCTICA (respuesta escrita autoevaluada)
    ============================================================ */
-function Test({ area, onSalir }) {
+function Test({ area, banco, onSalir }) {
   const esSimulacro = area === "simulacro20" || area === "simulacro80";
   const areaInfo = esSimulacro
     ? { nombre: area === "simulacro80" ? "Simulacro completo" : "Simulacro breve", icono: "📋", color: "#3a3327", soft: "#EDE9DE" }
@@ -169,16 +72,16 @@ function Test({ area, onSalir }) {
   const preguntas = React.useMemo(() => {
     if (area === "simulacro80") {
       // réplica del examen: las 80 preguntas (20 por área), barajadas
-      return shuffle(BANCO);
+      return shuffle(banco);
     }
     if (area === "simulacro20") {
       // versión breve: 5 aleatorias por área (rotan entre intentos)
       return shuffle(
-        MODULOS.flatMap((m) => shuffle(BANCO.filter((b) => b.area === m.key)).slice(0, 5))
+        MODULOS.flatMap((m) => shuffle(banco.filter((b) => b.area === m.key)).slice(0, 5))
       );
     }
-    return shuffle(BANCO.filter((b) => b.area === area));
-  }, [area]);
+    return shuffle(banco.filter((b) => b.area === area));
+  }, [area, banco]);
 
   const [i, setI] = useState(0);
   const [entrada, setEntrada] = useState("");
@@ -384,8 +287,24 @@ function Inicio({ irAModulo, irATest, irASimulacro }) {
    ============================================================ */
 export default function App() {
   const [vista, setVista] = useState({ tipo: "inicio" });
+  const [banco, setBanco] = useState(null);
+
+  useEffect(() => {
+    cargarBanco().then(setBanco);
+  }, []);
 
   const volver = () => setVista({ tipo: "inicio" });
+
+  if (!banco) {
+    return (
+      <div className="min-h-screen w-full flex items-center justify-center" style={{ backgroundColor: "#FAF7EF" }}>
+        <div className="text-center">
+          <div className="text-4xl mb-2">🇨🇴</div>
+          <p className="text-stone-500 text-sm">Cargando banco de preguntas…</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen w-full" style={{ backgroundColor: "#FAF7EF" }}>
@@ -423,7 +342,7 @@ export default function App() {
           );
         })()}
 
-        {vista.tipo === "test" && <Test area={vista.area} onSalir={volver} />}
+        {vista.tipo === "test" && <Test area={vista.area} banco={banco} onSalir={volver} />}
       </div>
     </div>
   );

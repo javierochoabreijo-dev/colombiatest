@@ -1,16 +1,23 @@
 import React, { useState } from "react";
+import TarjetaExpandible from "../components/TarjetaExpandible";
+import Pill, { BarraPills } from "../components/Pill";
 
 /* ============================================================
    DATOS — extraídos del capítulo "Constitución Política"
    de la Guía Cancillería (Constitución de 1991).
    ============================================================ */
 
+/* Las secciones ya NO llevan color propio. Antes cada una traía el suyo y
+   acababa chocando: el mismo morado significaba "Constitución", "Principios",
+   "Rama Judicial", "Música y arte" e "Historia contemporánea" a la vez. El
+   color identifica el área; dentro del módulo la sección se distingue por
+   estado (rellena si está activa, contorno si no). */
 const SECCIONES = [
-  { key: "principios", label: "Principios", icono: "🏛️", color: "#5B4B8A", soft: "#E5E0F0" },
-  { key: "derechos", label: "Derechos", icono: "🛡️", color: "#1E7F8C", soft: "#DCEEF0" },
-  { key: "proteccion", label: "Protección", icono: "⚖️", color: "#8C3B3B", soft: "#F0DADA" },
-  { key: "participacion", label: "Participación", icono: "🗳️", color: "#4A7C3F", soft: "#E1EBDD" },
-  { key: "estado", label: "Estado", icono: "🏢", color: "#A0522D", soft: "#F0E0D6" },
+  { key: "principios", label: "Principios", icono: "🏛️" },
+  { key: "derechos", label: "Derechos", icono: "🛡️" },
+  { key: "proteccion", label: "Protección", icono: "⚖️" },
+  { key: "participacion", label: "Participación", icono: "🗳️" },
+  { key: "estado", label: "Estado", icono: "🏢" },
 ];
 
 const PRINCIPIOS = [
@@ -131,21 +138,21 @@ const PARTICIPACION = [
 
 const RAMAS = [
   {
-    key: "ejecutiva", titulo: "Rama Ejecutiva", icono: "🏛️", color: "#A0522D",
+    key: "ejecutiva", titulo: "Rama Ejecutiva", icono: "🏛️",
     cabeza: "Presidente de la República",
     funcion: "Ejecuta las actividades administrativas al servicio de los intereses generales; gestiona las políticas y administra los recursos de la nación.",
     detalle: "Está en cabeza del Presidente de la República, quien simboliza la unidad nacional y es a la vez jefe de Estado, jefe de Gobierno y suprema autoridad administrativa. El gobierno nacional lo conforman el Presidente, los ministros y los directores de departamentos administrativos. Tiene tres niveles: nacional, departamental y municipal.",
     destacado: "El Presidente es 3 cosas a la vez: jefe de Estado, jefe de Gobierno y suprema autoridad administrativa.",
   },
   {
-    key: "legislativa", titulo: "Rama Legislativa", icono: "📜", color: "#4A7C3F",
+    key: "legislativa", titulo: "Rama Legislativa", icono: "📜",
     cabeza: "Congreso de la República (Senado + Cámara)",
     funcion: "Reformar la Constitución, hacer las leyes y ejercer control político sobre el Gobierno.",
     detalle: "Está en cabeza del Congreso de la República, sistema bicameral: cámara alta (Senado) y cámara baja (Cámara de Representantes). Funciones: (1) reformar la Constitución mediante actos legislativos; (2) elaborar, interpretar, reformar y derogar leyes y códigos; (3) convocar a ministros y autoridades para conocer acusaciones contra funcionarios. El Senado tramita proyectos de ley, hace control político y elige altos dignatarios. La Cámara elige al Defensor del Pueblo y examina la cuenta general del presupuesto que presenta el Contralor.",
     destacado: "Sistema bicameral: Senado (alta) + Cámara de Representantes (baja).",
   },
   {
-    key: "judicial", titulo: "Rama Judicial", icono: "⚖️", color: "#5B4B8A",
+    key: "judicial", titulo: "Rama Judicial", icono: "⚖️",
     cabeza: "Altas cortes y jueces",
     funcion: "Administrar justicia: resolver conflictos entre ciudadanos y entre estos y el Estado.",
     detalle: "Resuelve conflictos mediante sentencias, fallos o autos, con base en la Constitución. Jurisdicción Ordinaria: Corte Suprema de Justicia, Tribunales Superiores de Distrito Judicial y juzgados (civiles, laborales, penales, de familia, etc.). Jurisdicción de lo Contencioso Administrativo: Consejo de Estado, Tribunales y Juzgados Administrativos. Jurisdicción Constitucional: Corte Constitucional. También: Jurisdicción de Paz (jueces de paz), Fiscalía General de la Nación y Consejo Superior de la Judicatura.",
@@ -175,42 +182,30 @@ const CONTROL = [
 /* ============================================================
    COMPONENTES
    ============================================================ */
-function TarjetaExpandible({ item, color, soft, defaultCampos }) {
-  const [abierto, setAbierto] = useState(false);
-  return (
-    <button
-      onClick={() => setAbierto(!abierto)}
-      className="w-full text-left rounded-xl border bg-white px-4 py-3 transition-all hover:shadow-md active:scale-[.99]"
-      style={{ borderColor: abierto ? color : "#e7e2d6", borderWidth: abierto ? 2 : 1 }}
-    >
-      <div className="flex items-center gap-2.5">
-        <span className="text-2xl">{item.icono}</span>
-        <div className="flex-1">
-          <h3 className="font-bold text-stone-800 text-[15px] leading-snug" style={{ fontFamily: "Georgia, serif" }}>
-            {item.titulo}
-          </h3>
-          {item.resumen && <p className="text-sm text-stone-500 leading-snug">{item.resumen}</p>}
-        </div>
-        <span className="text-xs font-bold" style={{ color }}>{abierto ? "▲" : "▼"}</span>
-      </div>
+const ACENTO = "var(--text-con)";
+const RELLENO = "var(--area-con)";
+const SOBRE = "var(--on-con)";
 
-      {abierto && (
-        <div className="mt-3 pt-3 border-t space-y-2" style={{ borderColor: soft }}>
-          {defaultCampos && item.quien && (
-            <div className="grid grid-cols-1 gap-1.5 text-sm">
-              <p><span className="font-semibold" style={{ color }}>¿Quién la interpone?</span> <span className="text-stone-700">{item.quien}</span></p>
-              <p><span className="font-semibold" style={{ color }}>¿Para qué sirve?</span> <span className="text-stone-700">{item.para}</span></p>
-            </div>
-          )}
-          <p className="text-sm text-stone-700 leading-relaxed">{item.detalle}</p>
-          {item.destacado && (
-            <div className="rounded-lg px-3 py-2 text-sm flex gap-2" style={{ backgroundColor: soft, color: "#3a3327" }}>
-              <span>📌</span><span>{item.destacado}</span>
-            </div>
-          )}
+function Tarjeta({ item, defaultCampos }) {
+  return (
+    <TarjetaExpandible item={item} acento={ACENTO} cabecera={item.resumen}>
+      {defaultCampos && item.quien && (
+        <div className="grid grid-cols-1 gap-1.5 text-sm">
+          <p>
+            <span className="tipo-display text-[10.5px] tracking-[0.1em]" style={{ color: ACENTO }}>
+              ¿Quién la interpone?
+            </span>{" "}
+            <span className="text-ink">{item.quien}</span>
+          </p>
+          <p>
+            <span className="tipo-display text-[10.5px] tracking-[0.1em]" style={{ color: ACENTO }}>
+              ¿Para qué sirve?
+            </span>{" "}
+            <span className="text-ink">{item.para}</span>
+          </p>
         </div>
       )}
-    </button>
+    </TarjetaExpandible>
   );
 }
 
@@ -219,50 +214,61 @@ function DiagramaRamas({ ramaActiva, setRamaActiva }) {
     <div>
       {/* nodo raíz */}
       <div className="text-center mb-2">
-        <div className="inline-block rounded-xl px-4 py-2 font-bold text-white text-sm" style={{ backgroundColor: "#3a3327", fontFamily: "Georgia, serif" }}>
+        <div className="tipo-display inline-block rounded-card px-4 py-2.5 text-[12px] tracking-[0.06em] bg-raised text-ink border border-rule">
           Estado colombiano · República unitaria
         </div>
-        <div className="w-0.5 h-4 mx-auto" style={{ backgroundColor: "#d8d1c2" }} />
+        <div className="w-0.5 h-4 mx-auto bg-rule" />
       </div>
 
-      {/* las tres ramas */}
+      {/* Las tres ramas: solo una está activa a la vez, así que se distinguen
+          por estado y no por tres colores distintos. */}
       <div className="grid grid-cols-3 gap-2 mb-4">
-        {RAMAS.map((r) => (
-          <button
-            key={r.key}
-            onClick={() => setRamaActiva(ramaActiva === r.key ? null : r.key)}
-            className="rounded-xl p-3 text-center transition-all active:scale-95 border-2"
-            style={{
-              backgroundColor: ramaActiva === r.key ? r.color : "white",
-              borderColor: r.color,
-              transform: ramaActiva === r.key ? "scale(1.03)" : "scale(1)",
-            }}
-          >
-            <span className="text-2xl block">{r.icono}</span>
-            <span
-              className="text-xs font-bold leading-tight block mt-1"
-              style={{ color: ramaActiva === r.key ? "white" : r.color }}
+        {RAMAS.map((r) => {
+          const activa = ramaActiva === r.key;
+          return (
+            <button
+              key={r.key}
+              onClick={() => setRamaActiva(activa ? null : r.key)}
+              aria-pressed={activa}
+              className="rounded-card p-3 min-h-[44px] text-center transition-all active:scale-95 border-[1.5px]"
+              style={{
+                backgroundColor: activa ? RELLENO : "transparent",
+                borderColor: activa ? RELLENO : "var(--rule)",
+                color: activa ? SOBRE : ACENTO,
+              }}
             >
-              {r.titulo.replace("Rama ", "")}
-            </span>
-          </button>
-        ))}
+              <span className="text-2xl block">{r.icono}</span>
+              <span className="tipo-display text-[10.5px] tracking-[0.08em] leading-tight block mt-1">
+                {r.titulo.replace("Rama ", "")}
+              </span>
+            </button>
+          );
+        })}
       </div>
 
       {/* detalle de la rama activa */}
       {ramaActiva && (() => {
         const r = RAMAS.find((x) => x.key === ramaActiva);
         return (
-          <div className="rounded-xl border-2 bg-white p-4 mb-4" style={{ borderColor: r.color, animation: "fadeIn .25s ease-out" }}>
-            <h3 className="font-bold text-lg" style={{ color: r.color, fontFamily: "Georgia, serif" }}>
+          <div
+            className="rounded-card border-2 bg-surface p-4 mb-4"
+            style={{ borderColor: ACENTO, animation: "fadeIn .25s ease-out" }}
+          >
+            <h3 className="tipo-display text-[17px]" style={{ color: ACENTO }}>
               {r.icono} {r.titulo}
             </h3>
-            <p className="text-sm mt-1"><span className="font-semibold text-stone-700">En cabeza de:</span> <span className="text-stone-600">{r.cabeza}</span></p>
-            <p className="text-sm mt-1"><span className="font-semibold text-stone-700">Función:</span> <span className="text-stone-600">{r.funcion}</span></p>
-            <p className="text-sm text-stone-700 leading-relaxed mt-2">{r.detalle}</p>
+            <p className="text-sm mt-1.5">
+              <span className="tipo-display text-[10.5px] tracking-[0.1em] text-ink-soft">En cabeza de</span>{" "}
+              <span className="text-ink">{r.cabeza}</span>
+            </p>
+            <p className="text-sm mt-1">
+              <span className="tipo-display text-[10.5px] tracking-[0.1em] text-ink-soft">Función</span>{" "}
+              <span className="text-ink">{r.funcion}</span>
+            </p>
+            <p className="text-sm text-ink leading-relaxed mt-2">{r.detalle}</p>
             {r.destacado && (
-              <div className="mt-2 rounded-lg px-3 py-2 text-sm flex gap-2" style={{ backgroundColor: "#F5F1E6", color: "#3a3327" }}>
-                <span>📌</span><span>{r.destacado}</span>
+              <div className="mt-2 rounded-lg px-3 py-2 text-sm flex gap-2 bg-raised text-ink border-l-2" style={{ borderColor: ACENTO }}>
+                <span aria-hidden="true">📌</span><span>{r.destacado}</span>
               </div>
             )}
           </div>
@@ -270,12 +276,12 @@ function DiagramaRamas({ ramaActiva, setRamaActiva }) {
       })()}
 
       {/* organismos de control */}
-      <p className="font-semibold text-stone-700 text-sm mb-2 mt-2">
-        Además de las 3 ramas — organismos de control y otros:
+      <p className="tipo-display text-[10.5px] tracking-[0.11em] text-ink-soft mb-2 mt-2">
+        Además de las 3 ramas — organismos de control y otros
       </p>
       <div className="space-y-2">
         {CONTROL.map((c) => (
-          <TarjetaExpandible key={c.titulo} item={c} color="#A0522D" soft="#F0E0D6" />
+          <Tarjeta key={c.titulo} item={c} />
         ))}
       </div>
     </div>
@@ -285,70 +291,75 @@ function DiagramaRamas({ ramaActiva, setRamaActiva }) {
 /* ============================================================
    APP
    ============================================================ */
+const ENCABEZADOS = {
+  principios: ["Principios constitucionales", "Los cimientos del ordenamiento jurídico (artículos 1 y 3)."],
+  derechos: ["Derechos fundamentales", "Consagrados en los artículos 11 al 44. Son inalienables: inherentes a toda persona, inviolables e irrenunciables, sin distinción de raza, condición, sexo o religión."],
+  proteccion: ["Mecanismos de protección de derechos", "Acciones constitucionales para defender tus derechos ante la justicia."],
+  participacion: ["Mecanismos de participación ciudadana", "Herramientas del artículo 103 para incidir en las decisiones colectivas."],
+  estado: ["Estructura del Estado", "República unitaria con tres ramas del poder público y órganos autónomos. Toca cada rama."],
+};
+
 export default function Constitucion() {
   const [seccion, setSeccion] = useState("principios");
   const [ramaActiva, setRamaActiva] = useState(null);
-  const sec = SECCIONES.find((s) => s.key === seccion);
+  const [titulo, bajada] = ENCABEZADOS[seccion];
 
   return (
     <>
-        <p className="text-stone-500 text-sm mb-4">
+        <p className="text-ink-soft text-sm mb-4">
           Explora los principios, derechos, mecanismos y la estructura del Estado. Toca cualquier tarjeta para ver el detalle.
         </p>
 
         {/* navegación de secciones */}
-        <div className="flex flex-wrap gap-2 mb-5 sticky top-0 py-2 z-20" style={{ backgroundColor: "#FAF7EF" }}>
+        <BarraPills>
           {SECCIONES.map((s) => (
-            <button
+            <Pill
               key={s.key}
+              activa={seccion === s.key}
+              relleno={RELLENO}
+              sobre={SOBRE}
+              acento={ACENTO}
               onClick={() => setSeccion(s.key)}
-              className="px-3 py-1.5 rounded-full text-xs font-semibold border transition-all flex items-center gap-1"
-              style={seccion === s.key
-                ? { backgroundColor: s.color, color: "white", borderColor: s.color }
-                : { backgroundColor: "white", color: s.color, borderColor: s.color }}
             >
-              <span>{s.icono}</span> {s.label}
-            </button>
+              <span aria-hidden="true">{s.icono}</span> {s.label}
+            </Pill>
           ))}
-        </div>
+        </BarraPills>
 
         {/* encabezado de sección */}
-        <div className="mb-4 rounded-xl px-4 py-3" style={{ backgroundColor: sec.soft }}>
-          {seccion === "principios" && (<><p className="font-bold" style={{ color: sec.color, fontFamily: "Georgia, serif" }}>Principios constitucionales</p><p className="text-sm text-stone-600">Los cimientos del ordenamiento jurídico (artículos 1 y 3).</p></>)}
-          {seccion === "derechos" && (<><p className="font-bold" style={{ color: sec.color, fontFamily: "Georgia, serif" }}>Derechos fundamentales</p><p className="text-sm text-stone-600">Consagrados en los artículos 11 al 44. Son inalienables: inherentes a toda persona, inviolables e irrenunciables, sin distinción de raza, condición, sexo o religión.</p></>)}
-          {seccion === "proteccion" && (<><p className="font-bold" style={{ color: sec.color, fontFamily: "Georgia, serif" }}>Mecanismos de protección de derechos</p><p className="text-sm text-stone-600">Acciones constitucionales para defender tus derechos ante la justicia.</p></>)}
-          {seccion === "participacion" && (<><p className="font-bold" style={{ color: sec.color, fontFamily: "Georgia, serif" }}>Mecanismos de participación ciudadana</p><p className="text-sm text-stone-600">Herramientas del artículo 103 para incidir en las decisiones colectivas.</p></>)}
-          {seccion === "estado" && (<><p className="font-bold" style={{ color: sec.color, fontFamily: "Georgia, serif" }}>Estructura del Estado</p><p className="text-sm text-stone-600">República unitaria con tres ramas del poder público y órganos autónomos. Toca cada rama.</p></>)}
+        <div className="mb-4 rounded-card px-4 py-3 bg-raised border-l-2" style={{ borderColor: ACENTO }}>
+          <p className="tipo-display text-[13px]" style={{ color: ACENTO }}>{titulo}</p>
+          <p className="text-sm text-ink-soft mt-0.5">{bajada}</p>
         </div>
 
         {/* contenido */}
         {seccion === "principios" && (
           <div className="space-y-2.5">
-            {PRINCIPIOS.map((p) => <TarjetaExpandible key={p.titulo} item={p} color={sec.color} soft={sec.soft} />)}
+            {PRINCIPIOS.map((p) => <Tarjeta key={p.titulo} item={p} />)}
           </div>
         )}
 
         {seccion === "derechos" && (
           <div className="grid grid-cols-1 gap-2.5">
-            {DERECHOS.map((d) => <TarjetaExpandible key={d.titulo} item={d} color={sec.color} soft={sec.soft} />)}
+            {DERECHOS.map((d) => <Tarjeta key={d.titulo} item={d} />)}
           </div>
         )}
 
         {seccion === "proteccion" && (
           <div className="space-y-2.5">
-            {PROTECCION.map((p) => <TarjetaExpandible key={p.titulo} item={p} color={sec.color} soft={sec.soft} defaultCampos />)}
+            {PROTECCION.map((p) => <Tarjeta key={p.titulo} item={p} defaultCampos />)}
           </div>
         )}
 
         {seccion === "participacion" && (
           <div className="space-y-2.5">
-            {PARTICIPACION.map((p) => <TarjetaExpandible key={p.titulo} item={p} color={sec.color} soft={sec.soft} />)}
+            {PARTICIPACION.map((p) => <Tarjeta key={p.titulo} item={p} />)}
           </div>
         )}
 
         {seccion === "estado" && <DiagramaRamas ramaActiva={ramaActiva} setRamaActiva={setRamaActiva} />}
 
-        <footer className="text-center text-xs text-stone-400 mt-6 pb-4">
+        <footer className="text-center text-xs text-ink-soft mt-6 pb-4">
           Contenido basado en la guía oficial de estudio · Constitución Política de 1991
         </footer>
     </>

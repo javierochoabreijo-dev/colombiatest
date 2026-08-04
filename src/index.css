@@ -1,1 +1,262 @@
 @import "tailwindcss";
+
+/* ============================================================
+   VUELTIAO — sistema de color en dos temas.
+   ------------------------------------------------------------
+   El sombrero vueltiao es un tejido de dos fibras: caña flecha
+   natural y caña teñida de negro. Ese par ES el sistema de temas.
+   No es una inversión mecánica: cada tema reasigna los roles para
+   que el contraste aguante (el amarillo rellena, nunca escribe).
+
+   Reglas que no se rompen:
+   - Un color = un significado. La acción primaria, la destructiva
+     y el acierto tienen valor propio y no se usan como categoría.
+   - Cada área tiene TRES valores: relleno, texto sobre el relleno
+     y tono para texto sobre el fondo. En claro coinciden; en
+     oscuro divergen (un magenta que rellena bien no se lee).
+   - Los colores de región solo viven en el mapa. Es la única
+     escala categórica del sistema, porque es el único sitio donde
+     cinco cosas se ven a la vez.
+   ============================================================ */
+
+/* — TEMA OSCURO (nativo de la dirección) — */
+:root {
+  --ground:   #17120E;
+  --surface:  #221B15;
+  --raised:   #2C2318;
+  --ink:      #F5EFE6;
+  --ink-soft: #B8A894;
+  --rule:     #3A2E24;
+
+  --cta:       #F2B705;
+  --on-cta:    #2A1F02;
+  --danger:      #C1195A;
+  --on-danger:   #FFF0F5;
+  --text-danger: #D66893;
+  --ok:          #1B998B;
+  --on-ok:       #08211E;
+  --text-ok:     #239D8F;
+
+  --area-geo: #1B998B;  --on-geo: #12100C;  --text-geo: #2FBFAE;
+  --area-his: #E4572E;  --on-his: #12100C;  --text-his: #FF7A52;
+  --area-con: #8E6BC1;  --on-con: #12100C;  --text-con: #B294E0;
+  --area-cul: #C1195A;  --on-cul: #FFF0F5;  --text-cul: #F2699F;
+
+  --sim-bg:  #B03A1A;
+  --sim-ink: #FFF6F0;
+
+  /* escala categórica del mapa: 5 regiones visibles a la vez */
+  --reg-caribe:    #3A97CC;
+  --reg-andina:    #9B7BD0;
+  --reg-pacifica:  #46A469;
+  --reg-orinoquia: #C9A227;
+  --reg-amazonia:  #D47153;
+  --on-reg: #12100C;
+
+  --overlay: rgb(0 0 0 / 0.66);
+
+  --weave-a: #F5EFE6;
+  --weave-b: #17120E;
+
+  color-scheme: dark;
+}
+
+/* — TEMA CLARO — */
+@media (prefers-color-scheme: light) {
+  :root {
+    --ground:   #F2EADB;
+    --surface:  #FFFBF4;
+    --raised:   #F7F0E2;
+    --ink:      #241A12;
+    --ink-soft: #6E5F4E;
+    --rule:     #DFD2BE;
+
+    --cta:       #1F1712;
+    --on-cta:    #F7EFDF;
+    --danger:      #A8154C;
+    --on-danger:   #FFF0F5;
+    --text-danger: #A8154C;
+    --ok:          #13766A;
+    --on-ok:       #F0FBF9;
+    --text-ok:     #13766A;
+
+    /* en claro los tres valores coinciden: el mismo tono rellena y se lee */
+    --area-geo: #13766A;  --on-geo: #FFF8EF;  --text-geo: #13766A;
+    --area-his: #B9401E;  --on-his: #FFF8EF;  --text-his: #B9401E;
+    --area-con: #6B4BA0;  --on-con: #FFF8EF;  --text-con: #6B4BA0;
+    --area-cul: #A8154C;  --on-cul: #FFF8EF;  --text-cul: #A8154C;
+
+    --sim-bg:  #B03A1A;
+    --sim-ink: #FFF6F0;
+
+    --reg-caribe:    #1C6A97;
+    --reg-andina:    #5F3F96;
+    --reg-pacifica:  #2A7247;
+    --reg-orinoquia: #806612;
+    --reg-amazonia:  #9C3F22;
+    --on-reg: #FFF8EF;
+
+    --overlay: rgb(36 26 18 / 0.55);
+
+    --weave-a: #241A12;
+    --weave-b: #F2EADB;
+
+    color-scheme: light;
+  }
+}
+
+/* El data-theme que escribe el botón manda sobre la preferencia del sistema.
+   Los dos bloques se repiten enteros a propósito: un token que faltara en uno
+   se heredaría del otro tema y rompería el contraste en silencio. */
+:root[data-theme="light"] {
+  --ground:   #F2EADB;
+  --surface:  #FFFBF4;
+  --raised:   #F7F0E2;
+  --ink:      #241A12;
+  --ink-soft: #6E5F4E;
+  --rule:     #DFD2BE;
+  --cta:       #1F1712;
+  --on-cta:    #F7EFDF;
+  --danger:      #A8154C;
+  --on-danger:   #FFF0F5;
+  --text-danger: #A8154C;
+  --ok:          #13766A;
+  --on-ok:       #F0FBF9;
+  --text-ok:     #13766A;
+  --area-geo: #13766A;  --on-geo: #FFF8EF;  --text-geo: #13766A;
+  --area-his: #B9401E;  --on-his: #FFF8EF;  --text-his: #B9401E;
+  --area-con: #6B4BA0;  --on-con: #FFF8EF;  --text-con: #6B4BA0;
+  --area-cul: #A8154C;  --on-cul: #FFF8EF;  --text-cul: #A8154C;
+  --sim-bg:  #B03A1A;
+  --sim-ink: #FFF6F0;
+  --reg-caribe:    #1C6A97;
+  --reg-andina:    #5F3F96;
+  --reg-pacifica:  #2A7247;
+  --reg-orinoquia: #806612;
+  --reg-amazonia:  #9C3F22;
+  --on-reg: #FFF8EF;
+  --overlay: rgb(36 26 18 / 0.55);
+  --weave-a: #241A12;
+  --weave-b: #F2EADB;
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  --ground:   #17120E;
+  --surface:  #221B15;
+  --raised:   #2C2318;
+  --ink:      #F5EFE6;
+  --ink-soft: #B8A894;
+  --rule:     #3A2E24;
+  --cta:       #F2B705;
+  --on-cta:    #2A1F02;
+  --danger:      #C1195A;
+  --on-danger:   #FFF0F5;
+  --text-danger: #D66893;
+  --ok:          #1B998B;
+  --on-ok:       #08211E;
+  --text-ok:     #239D8F;
+  --area-geo: #1B998B;  --on-geo: #12100C;  --text-geo: #2FBFAE;
+  --area-his: #E4572E;  --on-his: #12100C;  --text-his: #FF7A52;
+  --area-con: #8E6BC1;  --on-con: #12100C;  --text-con: #B294E0;
+  --area-cul: #C1195A;  --on-cul: #FFF0F5;  --text-cul: #F2699F;
+  --sim-bg:  #B03A1A;
+  --sim-ink: #FFF6F0;
+  --reg-caribe:    #3A97CC;
+  --reg-andina:    #9B7BD0;
+  --reg-pacifica:  #46A469;
+  --reg-orinoquia: #C9A227;
+  --reg-amazonia:  #D47153;
+  --on-reg: #12100C;
+  --overlay: rgb(0 0 0 / 0.66);
+  --weave-a: #F5EFE6;
+  --weave-b: #17120E;
+  color-scheme: dark;
+}
+
+/* ============================================================
+   Puente con Tailwind. `inline` hace que las utilidades escriban
+   el var() directamente (color: var(--ink)) en vez de una
+   indirección fija, que es lo que permite que cambien con el tema.
+   ============================================================ */
+@theme inline {
+  --color-ground:   var(--ground);
+  --color-surface:  var(--surface);
+  --color-raised:   var(--raised);
+  --color-ink:      var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-rule:     var(--rule);
+
+  --color-cta:       var(--cta);
+  --color-on-cta:    var(--on-cta);
+  --color-danger:      var(--danger);
+  --color-on-danger:   var(--on-danger);
+  --color-text-danger: var(--text-danger);
+  --color-ok:          var(--ok);
+  --color-on-ok:       var(--on-ok);
+  --color-text-ok:     var(--text-ok);
+
+  --color-area-geo: var(--area-geo);
+  --color-area-his: var(--area-his);
+  --color-area-con: var(--area-con);
+  --color-area-cul: var(--area-cul);
+
+  --color-sim-bg:  var(--sim-bg);
+  --color-sim-ink: var(--sim-ink);
+
+  --font-display: "Archivo Black", "Archivo", "Segoe UI", system-ui, sans-serif;
+  --font-body:    "Archivo", "Segoe UI", system-ui, -apple-system, sans-serif;
+
+  --radius-card: 16px;
+}
+
+/* ============================================================
+   Base
+   ============================================================ */
+html {
+  background-color: var(--ground);
+}
+
+body {
+  margin: 0;
+  background-color: var(--ground);
+  color: var(--ink);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Los títulos y los controles van en display, en mayúsculas.
+   Se declara una vez aquí, no inline en 30 componentes. */
+.tipo-display {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.015em;
+  font-weight: 400; /* Archivo Black ya viene pesada; 700 la falsearía */
+}
+
+/* el tejido: galón repetido, no un degradado decorativo */
+.tejido {
+  background: repeating-linear-gradient(
+    135deg,
+    var(--weave-a) 0 8px,
+    var(--weave-b) 8px 16px
+  );
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+:focus-visible {
+  outline: 2px solid var(--cta);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

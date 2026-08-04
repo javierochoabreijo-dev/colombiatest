@@ -1,5 +1,14 @@
 import React, { useState } from "react";
 import ImagenAtribuida from "../components/ImagenAtribuida";
+import TarjetaExpandible from "../components/TarjetaExpandible";
+import Pill, { BarraPills } from "../components/Pill";
+import { Bandera } from "../components/Iconos";
+import { shuffle } from "../lib/util";
+
+/* Cultura: el módulo entero se identifica con el color de su área. */
+const ACENTO = "var(--text-cul)";
+const RELLENO = "var(--area-cul)";
+const SOBRE = "var(--on-cul)";
 
 /* ============================================================
    ColombiaTest · Módulo Cultura y Sociedad
@@ -9,13 +18,19 @@ import ImagenAtribuida from "../components/ImagenAtribuida";
    Enfoque híbrido: Explorador (codificación) + Flashcards (retrieval).
    ============================================================ */
 
+/* Las categorías ya no llevan color propio: el dorado de "Símbolos" era el
+   mismo que el del CTA de Simulacro y el del área Cultura a la vez. Dentro
+   del módulo la categoría se distingue por estado, no por tono.
+
+   El icono de "Símbolos" era la bandera 🇨🇴, que en Windows se dibuja como
+   las letras "CO" — ahora es un SVG propio. */
 const CATS = [
-  { key: "simbolos", label: "Símbolos", icono: "🇨🇴", color: "#B5892B", soft: "#F5EAD2" },
-  { key: "gastronomia", label: "Gastronomía", icono: "🍽️", color: "#A0522D", soft: "#F0E0D6" },
-  { key: "fiestas", label: "Fiestas", icono: "🎭", color: "#8C3B3B", soft: "#F0DADA" },
-  { key: "arte", label: "Música y arte", icono: "🎶", color: "#5B4B8A", soft: "#E5E0F0" },
-  { key: "deporte", label: "Deporte", icono: "🚴", color: "#1E7F8C", soft: "#DCEEF0" },
-  { key: "turismo", label: "Turismo", icono: "🏖️", color: "#1F6E4A", soft: "#DCEFE3" },
+  { key: "simbolos", label: "Símbolos", icono: null },
+  { key: "gastronomia", label: "Gastronomía", icono: "🍽️" },
+  { key: "fiestas", label: "Fiestas", icono: "🎭" },
+  { key: "arte", label: "Música y arte", icono: "🎶" },
+  { key: "deporte", label: "Deporte", icono: "🚴" },
+  { key: "turismo", label: "Turismo", icono: "🏖️" },
 ];
 
 /* ---------------- SÍMBOLOS PATRIOS ---------------- */
@@ -333,10 +348,15 @@ const FLASHCARDS = [
 
 /* ============================================================
    COMPONENTES VISUALES (SVG propios, sin copyright)
+   ------------------------------------------------------------
+   Los hex de aquí abajo NO son tokens y no deben serlo: son los
+   colores oficiales de la bandera y el escudo. Representan un
+   objeto real, no un rol de interfaz, así que no cambian con el
+   tema ni deben reutilizarse en ningún otro sitio.
    ============================================================ */
 function BanderaSVG() {
   return (
-    <svg viewBox="0 0 300 200" className="w-full max-w-[220px] rounded-md border border-stone-200 shadow-sm">
+    <svg viewBox="0 0 300 200" className="w-full max-w-[220px] rounded-md border border-rule shadow-sm">
       <rect x="0" y="0" width="300" height="100" fill="#FCD116" />
       <rect x="0" y="100" width="300" height="50" fill="#003893" />
       <rect x="0" y="150" width="300" height="50" fill="#CE1126" />
@@ -358,20 +378,20 @@ function EscudoSVG() {
       </g>
       {/* cóndor simplificado */}
       <g>
-        <ellipse cx="100" cy="34" rx="10" ry="8" fill="#3a3327" />
-        <path d="M60 40 Q100 20 140 40 Q100 34 60 40 Z" fill="#4a4237" />
+        <ellipse cx="100" cy="34" rx="10" ry="8" fill="var(--ink)" />
+        <path d="M60 40 Q100 20 140 40 Q100 34 60 40 Z" fill="var(--ink-soft)" />
         <path d="M88 48 Q100 60 112 48 Z" fill="#B5892B" />
       </g>
       {/* cuerpo del escudo: 3 franjas */}
       <g>
-        <path d="M50 60 H150 V150 Q150 195 100 215 Q50 195 50 150 Z" fill="#f5f1e6" stroke="#3a3327" strokeWidth="2.5" />
+        <path d="M50 60 H150 V150 Q150 195 100 215 Q50 195 50 150 Z" fill="var(--surface)" stroke="var(--ink)" strokeWidth="2.5" />
         {/* franja superior azul con granada */}
         <path d="M50 60 H150 V95 H50 Z" fill="#003893" />
         <circle cx="100" cy="78" r="9" fill="#FCD116" />
         {/* cornucopias (puntos) */}
         <circle cx="72" cy="80" r="3.5" fill="#FCD116" /><circle cx="128" cy="80" r="3.5" fill="#2e7d32" />
         {/* franja media platino con gorro frigio */}
-        <rect x="50" y="95" width="100" height="30" fill="#d9d4c7" />
+        <rect x="50" y="95" width="100" height="30" fill="var(--raised)" />
         <path d="M94 118 Q100 100 106 118 Z" fill="#CE1126" />
         {/* franja inferior: istmo y dos mares */}
         <path d="M50 125 H150 V150 Q150 195 100 215 Q50 195 50 150 Z" fill="#1E7F8C" />
@@ -384,74 +404,40 @@ function EscudoSVG() {
 /* ============================================================
    TARJETA DE EXPLORADOR
    ============================================================ */
-function Tarjeta({ item, color, soft }) {
-  const [abierto, setAbierto] = useState(false);
-  return (
-    <button
-      onClick={() => setAbierto(!abierto)}
-      className="w-full text-left rounded-xl border bg-white px-4 py-3 transition-all hover:shadow-md active:scale-[.99]"
-      style={{ borderColor: abierto ? color : "#e7e2d6", borderWidth: abierto ? 2 : 1 }}
-    >
-      <div className="flex items-center gap-2.5">
-        <span className="text-2xl">{item.icono}</span>
-        <div className="flex-1">
-          <h3 className="font-bold text-stone-800 text-[15px] leading-snug" style={{ fontFamily: "Georgia, serif" }}>
-            {item.titulo}
-          </h3>
-          {(item.resumen || item.lugar) && (
-            <p className="text-sm text-stone-500 leading-snug">
-              {item.resumen || `${item.lugar}${item.cuando ? " · " + item.cuando : ""}`}
-            </p>
-          )}
-        </div>
-        <span className="text-xs font-bold" style={{ color }}>{abierto ? "▲" : "▼"}</span>
-      </div>
+function Tarjeta({ item }) {
+  const cabecera =
+    item.resumen || (item.lugar ? `${item.lugar}${item.cuando ? " · " + item.cuando : ""}` : null);
 
-      {abierto && (
-        <div className="mt-3 pt-3 border-t space-y-2.5" style={{ borderColor: soft }}>
-          {item.svg === "bandera" && <div className="flex justify-center py-1"><BanderaSVG /></div>}
-          {item.svg === "escudo" && <div className="flex justify-center py-1"><EscudoSVG /></div>}
-          <ImagenAtribuida imagen={item.imagen} alt={item.titulo} />
-          {item.lugar && (
-            <div className="flex flex-wrap gap-2 text-xs">
-              <span className="px-2 py-0.5 rounded-full" style={{ backgroundColor: soft, color }}>📍 {item.lugar}</span>
-              {item.cuando && <span className="px-2 py-0.5 rounded-full" style={{ backgroundColor: soft, color }}>🗓️ {item.cuando}</span>}
-            </div>
-          )}
-          <p className="text-sm text-stone-700 leading-relaxed">{item.detalle}</p>
-          {item.platos && (
-            <div className="grid grid-cols-3 gap-2">
-              {item.platos.map((p) => (
-                <div key={p.n} className="rounded-xl p-2 flex flex-col items-center text-center gap-1" style={{ backgroundColor: soft }}>
-                  <span className="text-2xl">{p.i}</span>
-                  <span className="text-xs font-medium text-stone-700 leading-tight">{p.n}</span>
-                </div>
-              ))}
-            </div>
-          )}
-          {item.destacado && (
-            <div className="rounded-lg px-3 py-2 text-sm flex gap-2" style={{ backgroundColor: soft, color: "#3a3327" }}>
-              <span>📌</span><span>{item.destacado}</span>
-            </div>
+  return (
+    <TarjetaExpandible item={item} acento={ACENTO} cabecera={cabecera}>
+      {item.svg === "bandera" && <div className="flex justify-center py-1"><BanderaSVG /></div>}
+      {item.svg === "escudo" && <div className="flex justify-center py-1"><EscudoSVG /></div>}
+      <ImagenAtribuida imagen={item.imagen} alt={item.titulo} />
+      {item.lugar && (
+        <div className="flex flex-wrap gap-2 text-xs">
+          <span className="px-2.5 py-1 rounded-full bg-raised" style={{ color: ACENTO }}>📍 {item.lugar}</span>
+          {item.cuando && (
+            <span className="px-2.5 py-1 rounded-full bg-raised" style={{ color: ACENTO }}>🗓️ {item.cuando}</span>
           )}
         </div>
       )}
-    </button>
+      {item.platos && (
+        <div className="grid grid-cols-3 gap-2">
+          {item.platos.map((p) => (
+            <div key={p.n} className="rounded-card p-2 flex flex-col items-center text-center gap-1 bg-raised">
+              <span className="text-2xl">{p.i}</span>
+              <span className="text-xs text-ink leading-tight">{p.n}</span>
+            </div>
+          ))}
+        </div>
+      )}
+    </TarjetaExpandible>
   );
 }
 
 /* ============================================================
    MODO FLASHCARDS (retrieval practice)
    ============================================================ */
-function shuffle(arr) {
-  const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-}
-
 function Flashcards({ onSalir }) {
   const [mazo, setMazo] = useState(() => shuffle(FLASHCARDS));
   const [i, setI] = useState(0);
@@ -482,24 +468,40 @@ function Flashcards({ onSalir }) {
   if (terminado) {
     const pct = Math.round((aciertos / mazo.length) * 100);
     return (
-      <div className="rounded-2xl border-2 bg-white p-6 text-center" style={{ borderColor: "#B5892B" }}>
-        <div className="text-4xl mb-2">{pct >= 70 ? "🎉" : "💪"}</div>
-        <h3 className="text-xl font-bold text-stone-800" style={{ fontFamily: "Georgia, serif" }}>
-          {aciertos} de {mazo.length} ({pct}%)
+      <div className="rounded-card border-2 bg-surface p-6 text-center" style={{ borderColor: ACENTO }}>
+        <p
+          className="tipo-display text-[11px] tracking-[0.16em] mb-2"
+          style={{ color: pct >= 70 ? "var(--text-ok)" : "var(--text-danger)" }}
+        >
+          {pct >= 70 ? "Vas muy bien" : "Toca repasar"}
+        </p>
+        <h3 className="tipo-display text-3xl text-ink">
+          {aciertos} de {mazo.length}
         </h3>
-        <p className="text-stone-500 text-sm mt-1">
-          {pct >= 70 ? "¡Vas muy bien! Sigue repasando para afianzar." : "Repasa las que fallaste y vuelve a intentarlo."}
+        <p className="text-ink-soft text-sm mt-1">
+          {pct}% · {pct >= 70 ? "sigue repasando para afianzar." : "repasa las que fallaste y vuelve a intentarlo."}
         </p>
         <div className="flex flex-col gap-2 mt-5">
           {falladas.length > 0 && (
-            <button onClick={() => reiniciar(true)} className="px-4 py-2.5 rounded-xl font-semibold text-white" style={{ backgroundColor: "#8C3B3B" }}>
+            <button
+              onClick={() => reiniciar(true)}
+              className="tipo-display min-h-[44px] px-4 rounded-full text-[12.5px]"
+              style={{ backgroundColor: "var(--danger)", color: "var(--on-danger)" }}
+            >
               Repasar solo las {falladas.length} falladas
             </button>
           )}
-          <button onClick={() => reiniciar(false)} className="px-4 py-2.5 rounded-xl font-semibold text-white" style={{ backgroundColor: "#B5892B" }}>
+          <button
+            onClick={() => reiniciar(false)}
+            className="tipo-display min-h-[44px] px-4 rounded-full text-[12.5px]"
+            style={{ backgroundColor: "var(--cta)", color: "var(--on-cta)" }}
+          >
             Repasar todo de nuevo
           </button>
-          <button onClick={onSalir} className="px-4 py-2.5 rounded-xl font-semibold border" style={{ borderColor: "#d8d1c2", color: "#3a3327" }}>
+          <button
+            onClick={onSalir}
+            className="tipo-display min-h-[44px] px-4 rounded-full text-[12.5px] border-[1.5px] border-rule text-ink-soft"
+          >
             Volver al explorador
           </button>
         </div>
@@ -510,51 +512,67 @@ function Flashcards({ onSalir }) {
   const tarjeta = mazo[i];
   return (
     <div>
-      <div className="flex items-center justify-between mb-3">
-        <span className="text-sm text-stone-500">Tarjeta {i + 1} / {mazo.length}</span>
-        <span className="text-sm font-semibold" style={{ color: "#1F6E4A" }}>✓ {aciertos}</span>
+      <div className="flex items-center justify-between mb-2">
+        <span className="text-sm text-ink-soft">Tarjeta {i + 1} / {mazo.length}</span>
+        <span className="tipo-display text-xs tracking-[0.04em]" style={{ color: "var(--text-ok)" }}>✓ {aciertos}</span>
       </div>
       {/* barra de progreso */}
-      <div className="w-full h-1.5 rounded-full mb-4" style={{ backgroundColor: "#e7e2d6" }}>
-        <div className="h-1.5 rounded-full transition-all" style={{ width: `${(i / mazo.length) * 100}%`, backgroundColor: cat.color }} />
+      <div className="w-full h-1.5 rounded-full mb-4 bg-raised">
+        <div
+          className="h-1.5 rounded-full transition-all"
+          style={{ width: `${(i / mazo.length) * 100}%`, backgroundColor: "var(--cta)" }}
+        />
       </div>
 
       <div
         onClick={() => setRevelada(true)}
-        className="rounded-2xl border-2 bg-white px-5 py-8 min-h-[200px] flex flex-col items-center justify-center text-center cursor-pointer transition-all"
-        style={{ borderColor: cat.color }}
+        className="rounded-card border border-rule bg-surface px-5 py-8 min-h-[200px] flex flex-col items-center justify-center text-center cursor-pointer transition-all"
       >
-        <span className="text-xs font-bold px-2 py-0.5 rounded-full mb-3" style={{ backgroundColor: cat.soft, color: cat.color }}>
-          {cat.icono} {cat.label}
+        <span
+          className="tipo-display inline-flex items-center gap-1.5 text-[10px] tracking-[0.1em] px-2.5 py-1.5 rounded-full mb-3 bg-raised"
+          style={{ color: ACENTO }}
+        >
+          {cat.icono ? <span aria-hidden="true">{cat.icono}</span> : <Bandera width={16} />}
+          {cat.label}
         </span>
-        <p className="text-lg font-semibold text-stone-800 leading-snug" style={{ fontFamily: "Georgia, serif" }}>
-          {tarjeta.p}
-        </p>
+        <p className="tipo-display text-[17px] text-ink leading-tight">{tarjeta.p}</p>
         {revelada ? (
-          <p className="mt-4 text-stone-700 leading-relaxed" style={{ animation: "fadeIn .25s ease-out" }}>
+          <p className="mt-4 text-ink leading-relaxed" style={{ animation: "fadeIn .25s ease-out" }}>
             {tarjeta.r}
           </p>
         ) : (
-          <p className="mt-4 text-sm text-stone-400">Toca para ver la respuesta</p>
+          <p className="mt-4 text-sm text-ink-soft">Toca para ver la respuesta</p>
         )}
       </div>
 
       {revelada ? (
         <div className="grid grid-cols-2 gap-2 mt-4">
-          <button onClick={() => responder(false)} className="px-4 py-3 rounded-xl font-semibold text-white" style={{ backgroundColor: "#8C3B3B" }}>
+          <button
+            onClick={() => responder(false)}
+            className="tipo-display min-h-[48px] px-4 rounded-full text-[12.5px]"
+            style={{ backgroundColor: "var(--danger)", color: "var(--on-danger)" }}
+          >
             No la sabía
           </button>
-          <button onClick={() => responder(true)} className="px-4 py-3 rounded-xl font-semibold text-white" style={{ backgroundColor: "#1F6E4A" }}>
-            ¡La sabía! ✓
+          <button
+            onClick={() => responder(true)}
+            className="tipo-display min-h-[48px] px-4 rounded-full text-[12.5px]"
+            style={{ backgroundColor: "var(--ok)", color: "var(--on-ok)" }}
+          >
+            ¡La sabía!
           </button>
         </div>
       ) : (
-        <button onClick={() => setRevelada(true)} className="w-full mt-4 px-4 py-3 rounded-xl font-semibold text-white" style={{ backgroundColor: cat.color }}>
+        <button
+          onClick={() => setRevelada(true)}
+          className="tipo-display w-full mt-4 min-h-[48px] px-4 rounded-full text-[12.5px]"
+          style={{ backgroundColor: "var(--cta)", color: "var(--on-cta)" }}
+        >
           Ver respuesta
         </button>
       )}
 
-      <button onClick={onSalir} className="w-full mt-2 text-sm text-stone-500 py-2">Salir del repaso</button>
+      <button onClick={onSalir} className="w-full mt-2 text-sm text-ink-soft min-h-[44px]">Salir del repaso</button>
     </div>
   );
 }
@@ -565,11 +583,10 @@ function Flashcards({ onSalir }) {
 export default function CulturaSociedad() {
   const [modo, setModo] = useState("explorar"); // explorar | flashcards
   const [cat, setCat] = useState("simbolos");
-  const c = CATS.find((x) => x.key === cat);
 
   return (
     <>
-        <p className="text-stone-500 text-sm mb-4">
+        <p className="text-ink-soft text-sm mb-4">
           {modo === "explorar"
             ? "Explora por categoría y toca cada tarjeta. Cuando te sientas listo, ponte a prueba."
             : "Retrieval practice: intenta responder antes de revelar."}
@@ -579,45 +596,48 @@ export default function CulturaSociedad() {
         <div className="grid grid-cols-2 gap-2 mb-5">
           <button
             onClick={() => setModo("explorar")}
-            className="px-4 py-2.5 rounded-xl font-semibold text-sm transition-all border-2"
+            aria-pressed={modo === "explorar"}
+            className="tipo-display min-h-[48px] px-4 rounded-full text-[12.5px] transition-colors border-[1.5px]"
             style={modo === "explorar"
-              ? { backgroundColor: "#3a3327", color: "white", borderColor: "#3a3327" }
-              : { backgroundColor: "white", color: "#3a3327", borderColor: "#d8d1c2" }}
+              ? { backgroundColor: RELLENO, color: SOBRE, borderColor: RELLENO }
+              : { backgroundColor: "transparent", color: ACENTO, borderColor: "var(--rule)" }}
           >
-            📖 Explorar
+            Explorar
           </button>
           <button
             onClick={() => setModo("flashcards")}
-            className="px-4 py-2.5 rounded-xl font-semibold text-sm transition-all border-2"
+            aria-pressed={modo === "flashcards"}
+            className="tipo-display min-h-[48px] px-4 rounded-full text-[12.5px] transition-colors border-[1.5px]"
             style={modo === "flashcards"
-              ? { backgroundColor: "#B5892B", color: "white", borderColor: "#B5892B" }
-              : { backgroundColor: "white", color: "#B5892B", borderColor: "#B5892B" }}
+              ? { backgroundColor: RELLENO, color: SOBRE, borderColor: RELLENO }
+              : { backgroundColor: "transparent", color: ACENTO, borderColor: "var(--rule)" }}
           >
-            🧠 Ponte a prueba
+            Ponte a prueba
           </button>
         </div>
 
         {modo === "explorar" ? (
           <>
             {/* categorías */}
-            <div className="flex flex-wrap gap-2 mb-5 sticky top-0 py-2 z-20" style={{ backgroundColor: "#FAF7EF" }}>
+            <BarraPills>
               {CATS.map((x) => (
-                <button
+                <Pill
                   key={x.key}
+                  activa={cat === x.key}
+                  relleno={RELLENO}
+                  sobre={SOBRE}
+                  acento={ACENTO}
                   onClick={() => setCat(x.key)}
-                  className="px-3 py-1.5 rounded-full text-xs font-semibold border transition-all flex items-center gap-1"
-                  style={cat === x.key
-                    ? { backgroundColor: x.color, color: "white", borderColor: x.color }
-                    : { backgroundColor: "white", color: x.color, borderColor: x.color }}
                 >
-                  <span>{x.icono}</span> {x.label}
-                </button>
+                  {x.icono ? <span aria-hidden="true">{x.icono}</span> : <Bandera width={16} />}
+                  {x.label}
+                </Pill>
               ))}
-            </div>
+            </BarraPills>
 
             <div className="space-y-2.5">
               {DATA[cat].map((item) => (
-                <Tarjeta key={item.titulo} item={item} color={c.color} soft={c.soft} />
+                <Tarjeta key={item.titulo} item={item} />
               ))}
             </div>
           </>
@@ -625,7 +645,7 @@ export default function CulturaSociedad() {
           <Flashcards onSalir={() => setModo("explorar")} />
         )}
 
-        <footer className="text-center text-xs text-stone-400 mt-6 pb-4">
+        <footer className="text-center text-xs text-ink-soft mt-6 pb-4">
           Contenido basado en la guía oficial de estudio · Cultura y Sociedad
         </footer>
     </>

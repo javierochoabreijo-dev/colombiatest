@@ -1,16 +1,25 @@
 import React, { useState, useRef, useEffect } from "react";
+import Pill, { BarraPills } from "../components/Pill";
+
+/* Historia: el módulo entero se identifica con el color de su área. */
+const ACENTO = "var(--text-his)";
+const RELLENO = "var(--area-his)";
+const SOBRE = "var(--on-his)";
 
 /* ============================================================
    DATOS — extraídos del capítulo "Historia" de la Guía Cancillería.
    Organizados en 6 eras; cada evento incluye lo relevante para el test.
    ============================================================ */
 const ERAS = [
-  { key: "precolombina", label: "Antes de Colombia", color: "#8A6D3B", soft: "#EFE6D5", rango: "16.000 a. p. – 1717" },
-  { key: "borbonica", label: "Reformas Borbónicas", color: "#A0522D", soft: "#F0E0D6", rango: "1717 – 1808" },
-  { key: "independencia", label: "Independencia y nación", color: "#1E7F8C", soft: "#DCEEF0", rango: "1809 – 1886" },
-  { key: "modernizacion", label: "Modernización", color: "#4A7C3F", soft: "#E1EBDD", rango: "1886 – 1958" },
-  { key: "violencia", label: "Violencia y conflicto", color: "#8C3B3B", soft: "#F0DADA", rango: "1946 – 1993" },
-  { key: "contemporanea", label: "Historia contemporánea", color: "#5B4B8A", soft: "#E5E0F0", rango: "1991 – hoy" },
+  /* Las eras ya no traen color propio: seis hues sueltos chocaban con los de
+     área (el mismo morado era "Historia contemporánea" y "Constitución"). La
+     era se lee por su rango y por el estado del filtro, no por el tono. */
+  { key: "precolombina", label: "Antes de Colombia", rango: "16.000 a. p. – 1717" },
+  { key: "borbonica", label: "Reformas Borbónicas", rango: "1717 – 1808" },
+  { key: "independencia", label: "Independencia y nación", rango: "1809 – 1886" },
+  { key: "modernizacion", label: "Modernización", rango: "1886 – 1958" },
+  { key: "violencia", label: "Violencia y conflicto", rango: "1946 – 1993" },
+  { key: "contemporanea", label: "Historia contemporánea", rango: "1991 – hoy" },
 ];
 
 const EVENTOS = [
@@ -300,7 +309,7 @@ const EVENTOS = [
 /* ============================================================
    COMPONENTE DE EVENTO (tarjeta en la línea de tiempo)
    ============================================================ */
-function EventoCard({ ev, era, expanded, onToggle, index }) {
+function EventoCard({ ev, expanded, onToggle, index }) {
   const ref = useRef(null);
   const [visible, setVisible] = useState(false);
 
@@ -327,38 +336,41 @@ function EventoCard({ ev, era, expanded, onToggle, index }) {
     >
       {/* punto sobre la línea */}
       <span
-        className="absolute left-[14px] top-1.5 w-3.5 h-3.5 rounded-full border-2 border-white z-10"
-        style={{ backgroundColor: era.color, boxShadow: `0 0 0 3px ${era.soft}` }}
+        className="absolute left-[14px] top-1.5 w-3.5 h-3.5 rounded-full z-10"
+        style={{
+          backgroundColor: ACENTO,
+          border: "2px solid var(--ground)",
+          boxShadow: "0 0 0 3px var(--raised)",
+        }}
       />
       <button
         onClick={onToggle}
-        className="w-full text-left rounded-xl border bg-white px-4 py-3 transition-all hover:shadow-md active:scale-[.99]"
-        style={{ borderColor: expanded ? era.color : "#e7e2d6", borderWidth: expanded ? 2 : 1 }}
+        aria-expanded={expanded}
+        className="w-full text-left rounded-card border bg-surface px-4 py-3 transition-all hover:shadow-md active:scale-[.99]"
+        style={{ borderColor: expanded ? ACENTO : "var(--rule)", borderWidth: expanded ? 2 : 1 }}
       >
-        <div className="flex items-center gap-2 mb-0.5">
+        <div className="flex items-center gap-2 mb-1">
           <span
-            className="text-xs font-bold px-2 py-0.5 rounded-full"
-            style={{ backgroundColor: era.soft, color: era.color }}
+            className="tipo-display text-[10.5px] tracking-[0.1em] px-2.5 py-1 rounded-full bg-raised"
+            style={{ color: ACENTO }}
           >
             {ev.año}
           </span>
         </div>
-        <h3 className="font-bold text-stone-800 text-[15px] leading-snug" style={{ fontFamily: "Georgia, serif" }}>
-          {ev.titulo}
-        </h3>
-        <p className="text-sm text-stone-500 mt-0.5 leading-snug">{ev.resumen}</p>
+        <h3 className="tipo-display text-[14px] text-ink leading-snug">{ev.titulo}</h3>
+        <p className="text-sm text-ink-soft mt-0.5 leading-snug">{ev.resumen}</p>
 
         {expanded && (
-          <div className="mt-3 pt-3 border-t" style={{ borderColor: era.soft }}>
-            <p className="text-sm text-stone-700 leading-relaxed">{ev.detalle}</p>
+          <div className="mt-3 pt-3 border-t border-rule">
+            <p className="text-sm text-ink leading-relaxed">{ev.detalle}</p>
             {ev.destacado && (
-              <div className="mt-2.5 rounded-lg px-3 py-2 text-sm flex gap-2" style={{ backgroundColor: era.soft, color: "#3a3327" }}>
-                <span>📌</span><span>{ev.destacado}</span>
+              <div className="mt-2.5 rounded-lg px-3 py-2 text-sm flex gap-2 bg-raised text-ink border-l-2" style={{ borderColor: ACENTO }}>
+                <span aria-hidden="true">📌</span><span>{ev.destacado}</span>
               </div>
             )}
           </div>
         )}
-        <p className="text-xs mt-2 font-medium" style={{ color: era.color }}>
+        <p className="tipo-display text-[10px] tracking-[0.1em] mt-2" style={{ color: ACENTO }}>
           {expanded ? "Ocultar ▲" : "Ver más ▼"}
         </p>
       </button>
@@ -381,54 +393,53 @@ export default function LineaTiempo() {
 
   return (
     <>
-        <p className="text-stone-500 text-sm mb-4">
+        <p className="text-ink-soft text-sm mb-4">
           Recorre la línea de tiempo. Toca cualquier evento para ver el detalle. Filtra por era para estudiar por partes.
         </p>
 
         {/* filtros de era */}
-        <div className="flex flex-wrap gap-2 mb-5 sticky top-0 py-2 z-20" style={{ backgroundColor: "#FAF7EF" }}>
-          <button
+        <BarraPills>
+          <Pill
+            activa={filtroEra === "todas"}
+            relleno={RELLENO}
+            sobre={SOBRE}
+            acento={ACENTO}
             onClick={() => setFiltroEra("todas")}
-            className="px-3 py-1.5 rounded-full text-xs font-semibold border transition-all"
-            style={filtroEra === "todas"
-              ? { backgroundColor: "#3a3327", color: "white", borderColor: "#3a3327" }
-              : { backgroundColor: "white", color: "#3a3327", borderColor: "#d8d1c2" }}
           >
             Todas
-          </button>
+          </Pill>
           {ERAS.map((e) => (
-            <button
+            <Pill
               key={e.key}
+              activa={filtroEra === e.key}
+              relleno={RELLENO}
+              sobre={SOBRE}
+              acento={ACENTO}
               onClick={() => setFiltroEra(e.key)}
-              className="px-3 py-1.5 rounded-full text-xs font-semibold border transition-all"
-              style={filtroEra === e.key
-                ? { backgroundColor: e.color, color: "white", borderColor: e.color }
-                : { backgroundColor: "white", color: e.color, borderColor: e.color }}
             >
               {e.label}
-            </button>
+            </Pill>
           ))}
-        </div>
+        </BarraPills>
 
         {/* encabezado de era (cuando se filtra) */}
         {filtroEra !== "todas" && (
-          <div className="mb-4 rounded-xl px-4 py-3" style={{ backgroundColor: erasMap[filtroEra].soft }}>
-            <p className="font-bold text-lg" style={{ color: erasMap[filtroEra].color, fontFamily: "Georgia, serif" }}>
+          <div className="mb-4 rounded-card px-4 py-3 bg-raised border-l-2" style={{ borderColor: ACENTO }}>
+            <p className="tipo-display text-[15px]" style={{ color: ACENTO }}>
               {erasMap[filtroEra].label}
             </p>
-            <p className="text-sm text-stone-600">{erasMap[filtroEra].rango}</p>
+            <p className="text-sm text-ink-soft mt-0.5">{erasMap[filtroEra].rango}</p>
           </div>
         )}
 
         {/* línea de tiempo */}
         <div className="relative">
           {/* línea vertical */}
-          <div className="absolute left-[20px] top-1 bottom-1 w-0.5" style={{ backgroundColor: "#e0d9c8" }} />
+          <div className="absolute left-[20px] top-1 bottom-1 w-0.5 bg-rule" />
           {eventosVisibles.map((ev, i) => (
             <EventoCard
               key={ev.titulo}
               ev={ev}
-              era={erasMap[ev.era]}
               index={i}
               expanded={expandido === ev.titulo}
               onToggle={() => setExpandido(expandido === ev.titulo ? null : ev.titulo)}
@@ -436,7 +447,7 @@ export default function LineaTiempo() {
           ))}
         </div>
 
-        <footer className="text-center text-xs text-stone-400 mt-6 pb-4">
+        <footer className="text-center text-xs text-ink-soft mt-6 pb-4">
           Contenido basado en la guía oficial de estudio · {EVENTOS.length} eventos
         </footer>
     </>

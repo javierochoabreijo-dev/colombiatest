@@ -6,8 +6,8 @@
 móvil (375×812) y escritorio (903×694). Las cifras que aparecen abajo están medidas,
 no estimadas.
 
-**Estado:** los puntos **1 y 2 están resueltos** (Opción A, commit `47c7980`). Los puntos
-3, 4, 5 y 6 siguen abiertos.
+**Estado:** los puntos **1 a 5 están resueltos**, y del 6 quedan dos detalles menores.
+Ver «Estado al 4 de agosto» al final.
 
 ---
 
@@ -248,3 +248,78 @@ navegador. Sigue sin haber cuentas ni datos personales, pero conviene confirmarl
 
 Ojo: el sistema vive como HTML en Claude Design, así que portar las decisiones a los
 componentes React es un paso manual.
+
+---
+
+## Estado al 4 de agosto de 2026
+
+La dirección Vueltiao **está implementada en el código React**. Se descartó pasar antes
+por Claude Design: el sistema habría vivido como HTML y portarlo a los componentes seguía
+siendo un paso manual, así que se fue directo al código.
+
+### Lo que se implementó
+
+**Punto 3 — la paleta ya es un sistema.** 37 tokens en `src/index.css`, en tres bloques de
+tema (oscuro por defecto, `@media prefers-color-scheme: light`, y `:root[data-theme]` que
+manda sobre los dos). Los 11 cremas redundantes colapsan a `--ground` / `--surface` /
+`--raised` / `--rule`. Las colisiones semánticas están rotas:
+
+- El CTA (`--cta`) ya no es el dorado del área Cultura. Cambia de tono entre temas:
+  amarillo `#F2B705` en oscuro, negro tejido `#1F1712` en claro.
+- El destructivo (`--danger`) ya no es color de categoría.
+- Las secciones internas de Constitución (5), las eras de Historia (6) y las categorías de
+  Cultura (6) **perdieron su color propio**: 17 hues sueltos que chocaban con los de área.
+  Dentro de un módulo la sección se distingue por estado (rellena/contorno), no por tono.
+- Las 5 regiones del mapa sí conservan escala categórica propia (`--reg-*`). Es el único
+  sitio donde cinco cosas se ven a la vez, así que es la única excepción del sistema.
+
+**Punto 4 — la tipografía ya existe.** Archivo Black (display) y Archivo (lectura) se cargan
+desde Google Fonts en `index.html`. El `fontFamily: "Georgia, serif"` inline de ~30 sitios
+desaparece: ahora es la clase `.tipo-display`, declarada una sola vez.
+
+**Punto 5 — la bandera ya no es emoji.** `Bandera` en `src/components/Iconos.jsx` (SVG,
+proporción 3:2). Los 4 iconos de área también son SVG propios que heredan `currentColor`.
+Verificado: `document.body.innerText` ya no contiene 🇨🇴. Los ~40 emoji de fauna y
+categorías siguen siendo emoji — fuera de alcance.
+
+**Punto 6 — resueltos** el tagline del panel de región (era `text-white/85`, 3,19:1) y la ×
+de cerrar (ahora 44×44 y a color pleno). El dorado `#B5892B` ya no existe. **Quedan** el
+texto a 11 px de los subtítulos del Simulacro y la alineación mixta del hub.
+
+**Tema claro/oscuro.** Botón en la barra superior (no fijo en la esquina: en móvil taparía
+contenido al hacer scroll). El tema se guarda en `localStorage` bajo `vueltiao-tema` —
+confirmado, y sigue siendo lo único que la app guarda. Un script en `index.html` lo aplica
+antes del primer pintado para que no haya parpadeo al montar React.
+
+**Componentes extraídos** (estaban duplicados): `TarjetaExpandible`, `Pill` + `BarraPills`,
+`Bandera` + `ICONOS_AREA`, `BotonTema`. `shuffle()` vive ahora en `src/lib/util.js`.
+
+### Verificación
+
+Medida sobre el dev server, no estimada:
+
+- **104 pares de contraste, todos ≥ 4,5:1** (52 por tema). Mínimos: 4,51 en oscuro y 4,59
+  en claro. Los 37 tokens están definidos en los tres bloques, ninguno vacío.
+- El espécimen tenía **7 pares por debajo del umbral** que la sesión anterior no detectó
+  porque midió contra la superficie, no contra el fondo. Corregidos midiendo, no a ojo:
+  - El panel de Simulacro daba 3,45:1 en los dos temas. `--sim-bg` pasa de `#E4572E` a
+    `#B03A1A` (5,68:1).
+  - En claro, geo e his no llegaban sobre `--ground`: `#147A6E`→`#13766A`, `#C0431F`→`#B9401E`.
+  - El destructivo y el acierto necesitaban tono de texto propio en oscuro, igual que las
+    áreas: nacen `--text-danger` y `--text-ok`.
+  - Orinoquía en claro (4,07) y Amazonía en oscuro (4,31) subieron un paso.
+- Cero botones por debajo de 44×44 en hub, los 4 módulos y el flujo de test, en móvil
+  (375×812) y escritorio (1280×720).
+- Mapa a 458×485. Un solo `min-h-screen`, cero scroll anidado, cero scroll horizontal,
+  ancho útil 343 px en móvil, una sola cabecera por vista.
+- Archivo y Archivo Black cargan (`document.fonts.check`). Consola sin errores.
+  `npm run build` pasa.
+- El botón de tema alterna, escribe `localStorage` y sobrevive a la recarga.
+
+**Sin captura.** El panel de navegador volvió a no componer frames, así que sigue sin haber
+verificación *a ojo* — solo medida. Falta mirar el peso de Archivo Black en mayúsculas y si
+el tema claro conserva la energía del oscuro. El dev server queda en `localhost:5173`.
+
+### Siguiente paso
+
+Wompi y despliegue en Vercel, las dos tareas del plan original que siguen aparcadas.

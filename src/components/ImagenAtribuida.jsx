@@ -15,9 +15,9 @@ export default function ImagenAtribuida({ imagen, alt, className = "" }) {
         src={url}
         alt={alt}
         loading="lazy"
-        className="w-full max-h-56 object-cover rounded-lg border border-stone-200"
+        className="w-full max-h-56 object-cover rounded-lg border border-rule"
       />
-      <figcaption className="text-[10px] text-stone-400 mt-1 leading-snug">
+      <figcaption className="text-[10px] text-ink-soft mt-1 leading-snug">
         {autor && `Foto: ${autor}`}
         {licencia && ` · ${licencia}`}
         {fuente && (

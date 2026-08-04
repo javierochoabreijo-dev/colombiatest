@@ -4,6 +4,27 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ColombiaTest · Prepárate para el examen de nacionalidad</title>
+
+    <!-- Sin esto la tipografía editorial no existe en Windows ni en Android:
+         Georgia no está instalada y caía a una serif genérica. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Archivo+Black&display=swap"
+    />
+
+    <!-- Se aplica el tema ANTES del primer pintado: si esto viviera en React,
+         la primera pintura saldría con el tema del sistema y daría un
+         parpadeo al montar. Lo único que la app guarda en el navegador. -->
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem("vueltiao-tema");
+          if (t === "dark" || t === "light") document.documentElement.dataset.theme = t;
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

@@ -5,12 +5,15 @@ import { FAUNA_IMAGENES } from "../data/faunaImagenes";
 /* ============================================================
    DATOS — extraídos y resumidos de la Guía Cancillería (cap. Geografía)
    ============================================================ */
+/* Las 5 regiones son la ÚNICA escala categórica del sistema: es el único
+   sitio donde cinco cosas se ven a la vez y hay que poder separarlas. Los
+   valores viven en src/index.css y cambian con el tema; `--on-reg` es el
+   texto que va encima de cualquiera de los cinco rellenos. */
 const REGIONS = {
   caribe: {
     name: "Región Caribe",
     tagline: "1.600 km de costa entre manglares, sabanas y sierra",
-    color: "#1E7F8C",
-    soft: "#DCEEF0",
+    color: "var(--reg-caribe)",
     departamentos: ["La Guajira", "Magdalena", "Cesar", "Atlántico", "Bolívar", "Sucre", "Córdoba"],
     capitales: ["Riohacha", "Santa Marta", "Valledupar", "Barranquilla", "Cartagena", "Sincelejo", "Montería"],
     dato: "Aquí está el punto más alto de Colombia: el Pico Cristóbal Colón (5.775 m), en la Sierra Nevada de Santa Marta.",
@@ -46,8 +49,7 @@ const REGIONS = {
   andina: {
     name: "Región Andina",
     tagline: "Tres cordilleras, el corazón poblado de Colombia",
-    color: "#6B5B3E",
-    soft: "#EDE7DA",
+    color: "var(--reg-andina)",
     departamentos: ["Antioquia", "Caldas", "Risaralda", "Quindío", "Tolima", "Huila", "Boyacá", "Cundinamarca", "Santander", "Norte de Santander"],
     capitales: ["Medellín", "Manizales", "Pereira", "Armenia", "Ibagué", "Neiva", "Tunja", "Bogotá", "Bucaramanga", "Cúcuta"],
     dato: "Con ~18 millones de habitantes (40,5% del país), es la región más poblada. Aquí vive un colombiano de cada dos.",
@@ -84,8 +86,7 @@ const REGIONS = {
   pacifica: {
     name: "Región Pacífica",
     tagline: "Selva húmeda, la franja más lluviosa del planeta",
-    color: "#1F6E4A",
-    soft: "#DCEFE3",
+    color: "var(--reg-pacifica)",
     departamentos: ["Chocó", "Valle del Cauca", "Cauca", "Nariño"],
     capitales: ["Quibdó", "Cali", "Popayán", "Pasto"],
     dato: "Una de las regiones con mayor precipitación del mundo — el Chocó puede recibir más de 10.000 mm de lluvia al año.",
@@ -120,8 +121,7 @@ const REGIONS = {
   orinoquia: {
     name: "Región Orinoquía",
     tagline: "Los Llanos Orientales: horizonte abierto y sabana",
-    color: "#B5892B",
-    soft: "#F5EAD2",
+    color: "var(--reg-orinoquia)",
     departamentos: ["Arauca", "Casanare", "Meta", "Vichada"],
     capitales: ["Arauca", "Yopal", "Villavicencio", "Puerto Carreño"],
     dato: "Ocupa cerca del 28% del territorio colombiano, pero es una de las regiones menos densamente pobladas.",
@@ -157,8 +157,7 @@ const REGIONS = {
   amazonia: {
     name: "Región Amazónica",
     tagline: "42% del territorio nacional, la selva más biodiversa",
-    color: "#2D5B2E",
-    soft: "#E1EBDD",
+    color: "var(--reg-amazonia)",
     departamentos: ["Putumayo", "Caquetá", "Guaviare", "Vaupés", "Guainía", "Amazonas"],
     capitales: ["Mocoa", "Florencia", "San José del Guaviare", "Mitú", "Puerto Inírida", "Leticia"],
     dato: "Se estiman 30.000 especies de plantas en la región — cerca del 10% de todas las especies vegetales del planeta.",
@@ -268,16 +267,16 @@ function CalloutLine({ dept, color }) {
         strokeDashoffset={len}
         style={{ animation: "drawCallout .45s ease-out forwards" }}
       />
-      <circle cx={cx} cy={cy} r="4.5" fill={color} stroke="white" strokeWidth="1.5"
+      <circle cx={cx} cy={cy} r="4.5" fill={color} stroke="var(--ground)" strokeWidth="1.5"
         style={{ animation: "popDot .3s ease-out .1s backwards" }} />
-      <circle cx={lx} cy={ly} r="4.5" fill={color} stroke="white" strokeWidth="1.5"
+      <circle cx={lx} cy={ly} r="4.5" fill={color} stroke="var(--ground)" strokeWidth="1.5"
         style={{ animation: "popDot .3s ease-out .35s backwards" }} />
       <g style={{ animation: "fadeIn .3s ease-out .35s backwards" }}>
-        <rect x={boxX} y={ly - 20} width={boxWidth} height="32" rx="6" fill="#FFFDF8" stroke={color} strokeOpacity="0.35" />
-        <text ref={titleRef} x={lx + labelPad} y={ly - 6} textAnchor={anchor} fontSize="13" fontWeight="700" fill="#3a3327">
+        <rect x={boxX} y={ly - 20} width={boxWidth} height="32" rx="6" fill="var(--surface)" stroke={color} strokeOpacity="0.55" />
+        <text ref={titleRef} x={lx + labelPad} y={ly - 6} textAnchor={anchor} fontSize="13" fontWeight="700" fill="var(--ink)">
           {name}
         </text>
-        <text ref={capRef} x={lx + labelPad} y={ly + 10} textAnchor={anchor} fontSize="11" fill="#6b6455">
+        <text ref={capRef} x={lx + labelPad} y={ly + 10} textAnchor={anchor} fontSize="11" fill="var(--ink-soft)">
           Capital: {capital}
         </text>
       </g>
@@ -305,7 +304,7 @@ function ColombiaMap({ selected, hovered, pinnedDept, onSelect, onHover }) {
             d={dept.d}
             fill={region.color}
             fillOpacity={regionActive ? 1 : isHovered ? 0.88 : 0.62}
-            stroke="#FAF7EF"
+            stroke="var(--ground)"
             strokeWidth={isPinned ? 2.5 : regionActive ? 2 : 1}
             strokeLinejoin="round"
             className="cursor-pointer outline-none focus:outline-none"
@@ -338,11 +337,11 @@ function ColombiaMap({ selected, hovered, pinnedDept, onSelect, onHover }) {
           x="30" y="20" width="70" height="46" rx="8"
           fill={REGIONS.caribe.color}
           fillOpacity={selected === "caribe" ? 1 : hovered === "caribe" ? 0.88 : 0.62}
-          stroke="#FAF7EF" strokeWidth="1.5"
+          stroke="var(--ground)" strokeWidth="1.5"
         />
-        <text x="65" y="40" textAnchor="middle" fontSize="8" fill="white" fontWeight="600">San Andrés,</text>
-        <text x="65" y="50" textAnchor="middle" fontSize="8" fill="white" fontWeight="600">Providencia y</text>
-        <text x="65" y="60" textAnchor="middle" fontSize="8" fill="white" fontWeight="600">Sta. Catalina</text>
+        <text x="65" y="40" textAnchor="middle" fontSize="8" fill="var(--on-reg)" fontWeight="600">San Andrés,</text>
+        <text x="65" y="50" textAnchor="middle" fontSize="8" fill="var(--on-reg)" fontWeight="600">Providencia y</text>
+        <text x="65" y="60" textAnchor="middle" fontSize="8" fill="var(--on-reg)" fontWeight="600">Sta. Catalina</text>
       </g>
 
       {pinnedDept && <CalloutLine key={pinnedDept.name} dept={pinnedDept} color={REGIONS[pinnedDept.region].color} />}
@@ -362,35 +361,38 @@ function DetailPanel({ regionKey, onClose }) {
   return (
     <>
     <div
-      className="rounded-2xl overflow-hidden shadow-xl border animate-[fadeIn_.25s_ease-out]"
-      style={{ borderColor: r.color, backgroundColor: "#FFFDF8" }}
+      className="rounded-card overflow-hidden shadow-xl border bg-surface animate-[fadeIn_.25s_ease-out]"
+      style={{ borderColor: r.color }}
     >
-      <div className="px-5 py-4 flex items-start justify-between" style={{ backgroundColor: r.color }}>
+      <div
+        className="px-5 py-4 flex items-start justify-between"
+        style={{ backgroundColor: r.color, color: "var(--on-reg)" }}
+      >
         <div>
-          <h2 className="text-white text-xl font-bold tracking-tight" style={{ fontFamily: "Georgia, serif" }}>
-            {r.name}
-          </h2>
-          <p className="text-white/85 text-sm mt-0.5">{r.tagline}</p>
+          <h2 className="tipo-display text-xl">{r.name}</h2>
+          {/* sin opacidad: a 85% el tagline se quedaba en 3,19:1 */}
+          <p className="text-sm mt-1">{r.tagline}</p>
         </div>
         <button
           onClick={onClose}
-          className="text-white/80 hover:text-white text-2xl leading-none px-2 -mt-1"
+          className="text-2xl leading-none min-w-[44px] min-h-[44px] -mt-1 -mr-2"
+          style={{ color: "var(--on-reg)" }}
           aria-label="Cerrar"
         >
           ×
         </button>
       </div>
 
-      <div className="px-5 pt-3 pb-2 flex flex-wrap gap-1.5 border-b" style={{ borderColor: r.soft }}>
+      <div className="px-5 pt-3 pb-2 flex flex-wrap gap-1.5 border-b border-rule">
         {TABS.map((t) => (
           <button
             key={t.key}
             onClick={() => setTab(t.key)}
-            className="px-3 py-1.5 rounded-full text-sm font-medium transition-colors"
+            className="tipo-display min-h-[44px] px-3.5 rounded-full text-[11px] tracking-[0.08em] transition-colors border-[1.5px]"
             style={
               tab === t.key
-                ? { backgroundColor: r.color, color: "white" }
-                : { backgroundColor: r.soft, color: r.color }
+                ? { backgroundColor: r.color, color: "var(--on-reg)", borderColor: r.color }
+                : { backgroundColor: "transparent", color: r.color, borderColor: "var(--rule)" }
             }
           >
             {t.label}
@@ -401,19 +403,19 @@ function DetailPanel({ regionKey, onClose }) {
       <div className="px-5 py-4 space-y-3">
         {tab === "geografia" && (
           <>
-            <p className="text-stone-700 leading-relaxed">{r.geografia}</p>
+            <p className="text-ink leading-relaxed">{r.geografia}</p>
             <div className="grid grid-cols-2 gap-3 pt-1">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-wide" style={{ color: r.color }}>Departamentos</p>
-                <p className="text-sm text-stone-600 mt-1">{r.departamentos.join(", ")}</p>
+                <p className="tipo-display text-[10.5px] tracking-[0.11em]" style={{ color: r.color }}>Departamentos</p>
+                <p className="text-sm text-ink-soft mt-1">{r.departamentos.join(", ")}</p>
               </div>
               <div>
-                <p className="text-xs font-semibold uppercase tracking-wide" style={{ color: r.color }}>Capitales</p>
-                <p className="text-sm text-stone-600 mt-1">{r.capitales.join(", ")}</p>
+                <p className="tipo-display text-[10.5px] tracking-[0.11em]" style={{ color: r.color }}>Capitales</p>
+                <p className="text-sm text-ink-soft mt-1">{r.capitales.join(", ")}</p>
               </div>
             </div>
-            <div className="text-sm text-stone-500"><span className="font-semibold" style={{ color: r.color }}>Clima:</span> {r.clima}</div>
-            <div className="mt-2 rounded-lg px-3 py-2 text-sm" style={{ backgroundColor: r.soft, color: "#3a3327" }}>
+            <div className="text-sm text-ink-soft"><span className="tipo-display text-[10.5px] tracking-[0.11em]" style={{ color: r.color }}>Clima</span> {r.clima}</div>
+            <div className="mt-2 rounded-lg px-3 py-2 text-sm bg-raised text-ink border-l-2" style={{ borderColor: r.color }}>
               💡 {r.dato}
             </div>
           </>
@@ -423,8 +425,8 @@ function DetailPanel({ regionKey, onClose }) {
           <div className="space-y-2.5">
             {r.relieve.map((it) => (
               <div key={it.titulo} className="border-l-2 pl-3" style={{ borderColor: r.color }}>
-                <p className="font-semibold text-stone-800 text-sm">{it.titulo}</p>
-                <p className="text-sm text-stone-600">{it.texto}</p>
+                <p className="tipo-display text-[12px] text-ink">{it.titulo}</p>
+                <p className="text-sm text-ink-soft mt-0.5">{it.texto}</p>
               </div>
             ))}
           </div>
@@ -435,12 +437,11 @@ function DetailPanel({ regionKey, onClose }) {
             {r.flora.map((it) => (
               <div
                 key={it.nombre}
-                className="rounded-xl p-3 flex flex-col items-center text-center gap-1 transition-transform active:scale-95"
-                style={{ backgroundColor: r.soft }}
+                className="rounded-card p-3 flex flex-col items-center text-center gap-1 bg-raised transition-transform active:scale-95"
               >
                 <span className="text-3xl leading-none">{it.icono}</span>
-                <p className="font-semibold text-stone-800 text-sm leading-tight">{it.nombre}</p>
-                <p className="text-xs text-stone-600 leading-snug">{it.texto}</p>
+                <p className="tipo-display text-[12px] text-ink leading-tight">{it.nombre}</p>
+                <p className="text-xs text-ink-soft leading-snug">{it.texto}</p>
               </div>
             ))}
           </div>
@@ -450,7 +451,7 @@ function DetailPanel({ regionKey, onClose }) {
           <div className="space-y-4">
             {r.fauna.map((cat) => (
               <div key={cat.categoria}>
-                <p className="font-semibold text-stone-800 text-sm mb-1.5 flex items-center gap-1.5">
+                <p className="tipo-display text-[12px] text-ink mb-1.5 flex items-center gap-1.5">
                   <span className="text-base">{cat.icono}</span> {cat.categoria}
                 </p>
                 <div className="grid grid-cols-3 gap-2">
@@ -461,46 +462,46 @@ function DetailPanel({ regionKey, onClose }) {
                       <Wrapper
                         key={sp.nombre}
                         onClick={img ? () => setEspecieAbierta(sp.nombre) : undefined}
-                        className="rounded-xl p-2 flex flex-col items-center text-center gap-1 transition-transform active:scale-95"
-                        style={{ backgroundColor: r.soft }}
+                        className="rounded-card p-2 flex flex-col items-center text-center gap-1 bg-raised transition-transform active:scale-95"
                       >
                         {img ? (
                           <img
                             src={img.url}
                             alt={sp.nombre}
                             loading="lazy"
-                            className="w-9 h-9 rounded-full object-cover border border-white"
+                            className="w-9 h-9 rounded-full object-cover border border-rule"
                           />
                         ) : (
                           <span className="text-2xl leading-none">{sp.icono}</span>
                         )}
-                        <p className="text-xs font-medium text-stone-700 leading-tight">{sp.nombre}</p>
+                        <p className="text-xs text-ink leading-tight">{sp.nombre}</p>
                       </Wrapper>
                     );
                   })}
                 </div>
-                {cat.nota && <p className="text-xs text-stone-500 italic mt-1.5">💡 {cat.nota}</p>}
+                {cat.nota && <p className="text-xs text-ink-soft italic mt-1.5">💡 {cat.nota}</p>}
               </div>
             ))}
           </div>
         )}
 
-        {tab === "gente" && <p className="text-stone-700 leading-relaxed">{r.gente}</p>}
+        {tab === "gente" && <p className="text-ink leading-relaxed">{r.gente}</p>}
       </div>
     </div>
 
     {especieAbierta && FAUNA_IMAGENES[especieAbierta] && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          style={{ backgroundColor: "var(--overlay)" }}
           onClick={() => setEspecieAbierta(null)}
         >
           <div
-            className="bg-white rounded-2xl p-4 max-w-sm w-full animate-[fadeIn_.2s_ease-out]"
+            className="bg-surface border border-rule rounded-card p-4 max-w-sm w-full animate-[fadeIn_.2s_ease-out]"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-2">
-              <p className="font-bold text-stone-800" style={{ fontFamily: "Georgia, serif" }}>{especieAbierta}</p>
-              <button onClick={() => setEspecieAbierta(null)} className="text-stone-400 hover:text-stone-600 text-2xl leading-none px-1" aria-label="Cerrar">×</button>
+              <p className="tipo-display text-[14px] text-ink">{especieAbierta}</p>
+              <button onClick={() => setEspecieAbierta(null)} className="text-ink-soft hover:text-ink text-2xl leading-none min-w-[44px] min-h-[44px]" aria-label="Cerrar">×</button>
             </div>
             <ImagenAtribuida imagen={FAUNA_IMAGENES[especieAbierta]} alt={especieAbierta} />
           </div>
@@ -525,7 +526,7 @@ export default function MapaRegiones() {
 
   return (
     <>
-      <p className="text-stone-500 text-sm mb-4">Toca una región del mapa para explorar su geografía, flora, fauna y gente.</p>
+      <p className="text-ink-soft text-sm mb-4">Toca una región del mapa para explorar su geografía, flora, fauna y gente.</p>
 
       <div className="flex flex-wrap gap-2 mb-4">
         {Object.entries(REGIONS).map(([key, r]) => (
@@ -534,11 +535,11 @@ export default function MapaRegiones() {
             onClick={() => { setSelected(key); setPinnedDept(null); }}
             onMouseEnter={() => setHovered(key)}
             onMouseLeave={() => setHovered(null)}
-            className="px-3 py-1.5 rounded-full text-sm font-medium border transition-all"
+            className="tipo-display min-h-[44px] px-3.5 rounded-full text-[11px] tracking-[0.08em] border-[1.5px] transition-colors"
             style={
               selected === key
-                ? { backgroundColor: r.color, color: "white", borderColor: r.color }
-                : { backgroundColor: "white", color: r.color, borderColor: r.color }
+                ? { backgroundColor: r.color, color: "var(--on-reg)", borderColor: r.color }
+                : { backgroundColor: "transparent", color: r.color, borderColor: "var(--rule)" }
             }
           >
             {r.name.replace("Región ", "")}
@@ -547,7 +548,7 @@ export default function MapaRegiones() {
       </div>
 
       <div className="grid md:grid-cols-2 gap-6 items-start">
-        <div className="bg-white rounded-2xl border border-stone-200 p-3">
+        <div className="bg-surface rounded-card border border-rule p-3">
           <ColombiaMap selected={selected} hovered={hovered} pinnedDept={pinnedDept} onSelect={handleMapSelect} onHover={setHovered} />
         </div>
         <DetailPanel regionKey={selected} onClose={() => { setSelected(null); setPinnedDept(null); }} />

@@ -214,7 +214,7 @@ const MAP_CENTER = { x: (MAP_BOX.xmin + MAP_BOX.xmax) / 2, y: (MAP_BOX.ymin + MA
 const LABEL_GAP = 46; // separación entre el borde del mapa y la etiqueta
 // Debe coincidir con el viewBox del <svg> de ColombiaMap ("-150 -75 860 910")
 const CANVAS = { xmin: -150, xmax: 710, ymin: -75, ymax: 835 };
-const LABEL_SAFE_H = 34;
+const LABEL_SAFE_H = 52; // media caja de etiqueta, para no salirse por arriba/abajo
 
 function outwardLabelPoint(cx, cy, estW) {
   let dx = cx - MAP_CENTER.x;
@@ -240,10 +240,11 @@ function outwardLabelPoint(cx, cy, estW) {
 
 function CalloutLine({ dept, color }) {
   const { cx, cy, name, capital } = dept;
-  // Estimación previa del ancho (para reservar espacio antes de medir el DOM real)
-  const estW = Math.min(300, Math.max(110, Math.max(name.length * 7.4, (capital.length + 9) * 6.3) + 22));
+  // Estimación previa del ancho (para reservar espacio antes de medir el DOM real).
+  // Las constantes van en unidades del viewBox, no en píxeles de pantalla.
+  const estW = Math.min(540, Math.max(200, Math.max(name.length * 13.7, (capital.length + 9) * 11.6) + 40));
   const { lx, ly, anchor } = outwardLabelPoint(cx, cy, estW);
-  const labelPad = anchor === "start" ? 10 : -10;
+  const labelPad = anchor === "start" ? 18 : -18;
   const len = Math.hypot(lx - cx, ly - cy);
 
   const titleRef = useRef(null);
@@ -253,30 +254,30 @@ function CalloutLine({ dept, color }) {
   useLayoutEffect(() => {
     const w1 = titleRef.current ? titleRef.current.getBBox().width : 0;
     const w2 = capRef.current ? capRef.current.getBBox().width : 0;
-    setBoxWidth(Math.min(estW, Math.max(w1, w2) + 20));
+    setBoxWidth(Math.min(estW, Math.max(w1, w2) + 36));
   }, [name, capital, estW]);
 
-  const boxX = anchor === "start" ? lx - 6 : lx - boxWidth + 6;
+  const boxX = anchor === "start" ? lx - 10 : lx - boxWidth + 10;
 
   return (
     <g style={{ pointerEvents: "none" }}>
       <line
         x1={cx} y1={cy} x2={lx} y2={ly}
-        stroke={color} strokeWidth="2"
+        stroke={color} strokeWidth="3"
         strokeDasharray={len}
         strokeDashoffset={len}
         style={{ animation: "drawCallout .45s ease-out forwards" }}
       />
-      <circle cx={cx} cy={cy} r="4.5" fill={color} stroke="var(--ground)" strokeWidth="1.5"
+      <circle cx={cx} cy={cy} r="7" fill={color} stroke="var(--ground)" strokeWidth="2.5"
         style={{ animation: "popDot .3s ease-out .1s backwards" }} />
-      <circle cx={lx} cy={ly} r="4.5" fill={color} stroke="var(--ground)" strokeWidth="1.5"
+      <circle cx={lx} cy={ly} r="7" fill={color} stroke="var(--ground)" strokeWidth="2.5"
         style={{ animation: "popDot .3s ease-out .35s backwards" }} />
       <g style={{ animation: "fadeIn .3s ease-out .35s backwards" }}>
-        <rect x={boxX} y={ly - 20} width={boxWidth} height="32" rx="6" fill="var(--surface)" stroke={color} strokeOpacity="0.55" />
-        <text ref={titleRef} x={lx + labelPad} y={ly - 6} textAnchor={anchor} fontSize="13" fontWeight="700" fill="var(--ink)">
+        <rect x={boxX} y={ly - 36} width={boxWidth} height="58" rx="12" fill="var(--surface)" stroke={color} strokeWidth="2" strokeOpacity="0.75" />
+        <text ref={titleRef} x={lx + labelPad} y={ly - 10} textAnchor={anchor} fontSize="25" fontWeight="700" fill="var(--ink)">
           {name}
         </text>
-        <text ref={capRef} x={lx + labelPad} y={ly + 10} textAnchor={anchor} fontSize="11" fill="var(--ink-soft)">
+        <text ref={capRef} x={lx + labelPad} y={ly + 15} textAnchor={anchor} fontSize="21" fill="var(--ink-soft)">
           Capital: {capital}
         </text>
       </g>
@@ -329,19 +330,19 @@ function ColombiaMap({ selected, hovered, pinnedDept, onSelect, onHover }) {
       <g
         className="cursor-pointer outline-none focus:outline-none"
         style={{ outline: "none" }}
-        onClick={() => onSelect({ name: "San Andrés y Providencia", region: "caribe", capital: "San Andrés", cx: 65, cy: 43 })}
+        onClick={() => onSelect({ name: "San Andrés y Providencia", region: "caribe", capital: "San Andrés", cx: 32, cy: -19 })}
         onMouseEnter={() => onHover("caribe")}
         onMouseLeave={() => onHover(null)}
       >
         <rect
-          x="30" y="20" width="70" height="46" rx="8"
+          x="-46" y="-58" width="156" height="78" rx="12"
           fill={REGIONS.caribe.color}
           fillOpacity={selected === "caribe" ? 1 : hovered === "caribe" ? 0.88 : 0.62}
           stroke="var(--ground)" strokeWidth="1.5"
         />
-        <text x="65" y="40" textAnchor="middle" fontSize="8" fill="var(--on-reg)" fontWeight="600">San Andrés,</text>
-        <text x="65" y="50" textAnchor="middle" fontSize="8" fill="var(--on-reg)" fontWeight="600">Providencia y</text>
-        <text x="65" y="60" textAnchor="middle" fontSize="8" fill="var(--on-reg)" fontWeight="600">Sta. Catalina</text>
+        <text x="32" y="-32" textAnchor="middle" fontSize="20" fill="var(--on-reg)" fontWeight="600">San Andrés,</text>
+        <text x="32" y="-8" textAnchor="middle" fontSize="20" fill="var(--on-reg)" fontWeight="600">Providencia y</text>
+        <text x="32" y="16" textAnchor="middle" fontSize="20" fill="var(--on-reg)" fontWeight="600">Sta. Catalina</text>
       </g>
 
       {pinnedDept && <CalloutLine key={pinnedDept.name} dept={pinnedDept} color={REGIONS[pinnedDept.region].color} />}
@@ -388,7 +389,7 @@ function DetailPanel({ regionKey, onClose }) {
           <button
             key={t.key}
             onClick={() => setTab(t.key)}
-            className="tipo-display min-h-[44px] px-3.5 rounded-full text-[11px] tracking-[0.08em] transition-colors border-[1.5px]"
+            className="tipo-display min-h-[44px] px-3.5 rounded-full text-[12px] transition-colors border-[1.5px]"
             style={
               tab === t.key
                 ? { backgroundColor: r.color, color: "var(--on-reg)", borderColor: r.color }
@@ -404,17 +405,35 @@ function DetailPanel({ regionKey, onClose }) {
         {tab === "geografia" && (
           <>
             <p className="text-ink leading-relaxed">{r.geografia}</p>
-            <div className="grid grid-cols-2 gap-3 pt-1">
-              <div>
-                <p className="tipo-display text-[10.5px] tracking-[0.11em]" style={{ color: r.color }}>Departamentos</p>
-                <p className="text-sm text-ink-soft mt-1">{r.departamentos.join(", ")}</p>
-              </div>
-              <div>
-                <p className="tipo-display text-[10.5px] tracking-[0.11em]" style={{ color: r.color }}>Capitales</p>
-                <p className="text-sm text-ink-soft mt-1">{r.capitales.join(", ")}</p>
-              </div>
+            {/* Antes eran dos listas separadas por comas y había que contar
+                posiciones para saber qué capital iba con qué departamento.
+                Los dos arrays ya son paralelos, así que se emparejan. */}
+            <div className="pt-1 rounded-card border border-rule overflow-hidden">
+              <table className="w-full text-sm border-collapse">
+                <caption className="sr-only">
+                  Departamentos de la {r.name} y sus capitales
+                </caption>
+                <thead>
+                  <tr className="bg-raised">
+                    <th scope="col" className="tipo-display text-[12px] text-left px-3 py-2" style={{ color: r.color }}>
+                      Departamento
+                    </th>
+                    <th scope="col" className="tipo-display text-[12px] text-left px-3 py-2" style={{ color: r.color }}>
+                      Capital
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {r.departamentos.map((d, i) => (
+                    <tr key={d} className="border-t border-rule">
+                      <th scope="row" className="text-left font-medium text-ink px-3 py-1.5">{d}</th>
+                      <td className="text-ink-soft px-3 py-1.5">{r.capitales[i]}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
-            <div className="text-sm text-ink-soft"><span className="tipo-display text-[10.5px] tracking-[0.11em]" style={{ color: r.color }}>Clima</span> {r.clima}</div>
+            <div className="text-sm text-ink-soft"><span className="tipo-display text-[12px]" style={{ color: r.color }}>Clima</span> {r.clima}</div>
             <div className="mt-2 rounded-lg px-3 py-2 text-sm bg-raised text-ink border-l-2" style={{ borderColor: r.color }}>
               💡 {r.dato}
             </div>
@@ -535,7 +554,7 @@ export default function MapaRegiones() {
             onClick={() => { setSelected(key); setPinnedDept(null); }}
             onMouseEnter={() => setHovered(key)}
             onMouseLeave={() => setHovered(null)}
-            className="tipo-display min-h-[44px] px-3.5 rounded-full text-[11px] tracking-[0.08em] border-[1.5px] transition-colors"
+            className="tipo-display min-h-[44px] px-3.5 rounded-full text-[12px] border-[1.5px] transition-colors"
             style={
               selected === key
                 ? { backgroundColor: r.color, color: "var(--on-reg)", borderColor: r.color }

@@ -15,7 +15,7 @@ export default function Pill({ activa, relleno, sobre, acento, onClick, children
       type="button"
       onClick={onClick}
       aria-pressed={activa}
-      className="tipo-display inline-flex items-center gap-1.5 min-h-[44px] px-3.5 rounded-full text-[11px] tracking-[0.08em] border-[1.5px] transition-colors"
+      className="tipo-display inline-flex items-center gap-1.5 min-h-[44px] px-3.5 rounded-full text-[12px] border-[1.5px] transition-colors"
       style={
         activa
           ? { backgroundColor: relleno, color: sobre, borderColor: relleno }

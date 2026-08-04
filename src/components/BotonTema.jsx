@@ -13,7 +13,7 @@ export default function BotonTema() {
       onClick={alternar}
       aria-pressed={esOscuro}
       aria-label={esOscuro ? "Cambiar a tema claro" : "Cambiar a tema oscuro"}
-      className="tipo-display inline-flex items-center gap-2 min-h-[44px] px-3.5 rounded-full border border-rule bg-surface text-ink text-[11px] tracking-[0.11em] transition-colors hover:border-cta"
+      className="tipo-display inline-flex items-center gap-2 min-h-[44px] px-3.5 rounded-full border border-rule bg-surface text-ink text-[12px] transition-colors hover:border-cta"
     >
       <span
         className="w-[13px] h-[13px] rounded-full bg-cta shrink-0"

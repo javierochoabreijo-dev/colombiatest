@@ -192,13 +192,13 @@ function Tarjeta({ item, defaultCampos }) {
       {defaultCampos && item.quien && (
         <div className="grid grid-cols-1 gap-1.5 text-sm">
           <p>
-            <span className="tipo-display text-[10.5px] tracking-[0.1em]" style={{ color: ACENTO }}>
+            <span className="tipo-display text-[12px]" style={{ color: ACENTO }}>
               ¿Quién la interpone?
             </span>{" "}
             <span className="text-ink">{item.quien}</span>
           </p>
           <p>
-            <span className="tipo-display text-[10.5px] tracking-[0.1em]" style={{ color: ACENTO }}>
+            <span className="tipo-display text-[12px]" style={{ color: ACENTO }}>
               ¿Para qué sirve?
             </span>{" "}
             <span className="text-ink">{item.para}</span>
@@ -214,7 +214,7 @@ function DiagramaRamas({ ramaActiva, setRamaActiva }) {
     <div>
       {/* nodo raíz */}
       <div className="text-center mb-2">
-        <div className="tipo-display inline-block rounded-card px-4 py-2.5 text-[12px] tracking-[0.06em] bg-raised text-ink border border-rule">
+        <div className="tipo-display inline-block rounded-card px-4 py-2.5 text-[12px] bg-raised text-ink border border-rule">
           Estado colombiano · República unitaria
         </div>
         <div className="w-0.5 h-4 mx-auto bg-rule" />
@@ -238,7 +238,7 @@ function DiagramaRamas({ ramaActiva, setRamaActiva }) {
               }}
             >
               <span className="text-2xl block">{r.icono}</span>
-              <span className="tipo-display text-[10.5px] tracking-[0.08em] leading-tight block mt-1">
+              <span className="tipo-display text-[12px] leading-tight block mt-1">
                 {r.titulo.replace("Rama ", "")}
               </span>
             </button>
@@ -258,11 +258,11 @@ function DiagramaRamas({ ramaActiva, setRamaActiva }) {
               {r.icono} {r.titulo}
             </h3>
             <p className="text-sm mt-1.5">
-              <span className="tipo-display text-[10.5px] tracking-[0.1em] text-ink-soft">En cabeza de</span>{" "}
+              <span className="tipo-display text-[12px] text-ink-soft">En cabeza de</span>{" "}
               <span className="text-ink">{r.cabeza}</span>
             </p>
             <p className="text-sm mt-1">
-              <span className="tipo-display text-[10.5px] tracking-[0.1em] text-ink-soft">Función</span>{" "}
+              <span className="tipo-display text-[12px] text-ink-soft">Función</span>{" "}
               <span className="text-ink">{r.funcion}</span>
             </p>
             <p className="text-sm text-ink leading-relaxed mt-2">{r.detalle}</p>
@@ -276,7 +276,7 @@ function DiagramaRamas({ ramaActiva, setRamaActiva }) {
       })()}
 
       {/* organismos de control */}
-      <p className="tipo-display text-[10.5px] tracking-[0.11em] text-ink-soft mb-2 mt-2">
+      <p className="tipo-display text-[12px] text-ink-soft mb-2 mt-2">
         Además de las 3 ramas — organismos de control y otros
       </p>
       <div className="space-y-2">

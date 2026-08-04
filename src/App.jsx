@@ -7,7 +7,6 @@ import { cargarBanco } from "./data/preguntas";
 import { shuffle } from "./lib/util";
 import { ICONOS_AREA, Bandera } from "./components/Iconos";
 import BotonTema from "./components/BotonTema";
-import BancoTipografico from "./components/BancoTipografico";
 
 /* ============================================================
    ColombiaTest · HUB / SHELL DE NAVEGACIÓN
@@ -65,10 +64,9 @@ function Test({ area, banco, onSalir }) {
     ? {
         key: "simulacro",
         nombre: area === "simulacro80" ? "Simulacro completo" : "Simulacro breve",
-        color: "var(--sim-bg)", sobre: "var(--sim-ink)", texto: "var(--sim-bg)",
+        color: "var(--cta)", sobre: "var(--on-cta)", texto: "var(--cta)",
       }
     : MODULOS.find((m) => m.key === area);
-  const Icono = ICONOS_AREA[areaInfo.key];
 
   const preguntas = React.useMemo(() => {
     if (area === "simulacro80") {
@@ -116,7 +114,7 @@ function Test({ area, banco, onSalir }) {
       <div className="rounded-card border-2 bg-surface p-6" style={{ borderColor: areaInfo.color }}>
         <div className="text-center">
           <p
-            className="tipo-display text-[11px] tracking-[0.16em] mb-2"
+            className="tipo-display text-[12px] mb-2"
             style={{ color: aprueba ? "var(--text-ok)" : "var(--text-danger)" }}
           >
             {aprueba ? "En rango de aprobación" : "Sigue repasando"}
@@ -131,7 +129,7 @@ function Test({ area, banco, onSalir }) {
 
         {esSimulacro && (
           <div className="mt-5">
-            <p className="tipo-display text-[10.5px] tracking-[0.13em] text-ink-soft mb-2">Resultado por área</p>
+            <p className="tipo-display text-[12px] text-ink-soft mb-2">Resultado por área</p>
             <div className="space-y-1.5">
               {MODULOS.map((m) => {
                 const r = porArea[m.key];
@@ -173,14 +171,16 @@ function Test({ area, banco, onSalir }) {
     );
   }
 
+  // en simulacro cada pregunta se etiqueta con SU área, no con la del test
   const areaPregunta = esSimulacro ? MODULOS.find((m) => m.key === actual.area) : areaInfo;
+  const Icono = ICONOS_AREA[areaPregunta.key];
 
   return (
     <div>
       <div className="flex items-center justify-between mb-2">
         <span className="text-sm text-ink-soft">Pregunta {i + 1} / {preguntas.length}</span>
         {!esSimulacro && (
-          <span className="tipo-display text-xs tracking-[0.04em]" style={{ color: "var(--text-ok)" }}>✓ {aciertos}</span>
+          <span className="tipo-display text-xs" style={{ color: "var(--text-ok)" }}>✓ {aciertos}</span>
         )}
       </div>
       <div className="w-full h-1.5 rounded-full mb-4 bg-raised">
@@ -191,7 +191,7 @@ function Test({ area, banco, onSalir }) {
       </div>
 
       <div className="rounded-card border border-rule bg-surface p-5">
-        <span className="tipo-display inline-flex items-center gap-1.5 text-[10px] tracking-[0.1em] px-2.5 py-1.5 rounded-full bg-raised" style={{ color: areaPregunta.texto }}>
+        <span className="tipo-display inline-flex items-center gap-1.5 text-[12px] px-2.5 py-1.5 rounded-full bg-raised" style={{ color: areaPregunta.texto }}>
           {Icono && <Icono className="w-3.5 h-3.5" />}
           {areaPregunta.nombre}
         </span>
@@ -213,7 +213,7 @@ function Test({ area, banco, onSalir }) {
             className="mt-3 rounded-lg px-3 py-2.5 text-sm bg-raised text-ink border-l-[3px]"
             style={{ borderColor: "var(--text-ok)", animation: "fadeIn .2s ease-out" }}
           >
-            <span className="tipo-display block text-[10.5px] tracking-[0.1em] mb-1" style={{ color: "var(--text-ok)" }}>
+            <span className="tipo-display block text-[12px] mb-1" style={{ color: "var(--text-ok)" }}>
               Respuesta esperada
             </span>
             {actual.a}
@@ -274,7 +274,7 @@ function Inicio({ irAModulo, irATest, irASimulacro }) {
         <div className="tejido h-2.5 rounded-full mt-4" aria-hidden="true" />
       </header>
 
-      <p className="tipo-display text-[10.5px] tracking-[0.11em] text-ink-soft mb-2.5">Explora las 4 áreas</p>
+      <p className="tipo-display text-[12px] text-ink-soft mb-2.5">Explora las 4 áreas</p>
       <div className="grid grid-cols-2 gap-3 mb-6">
         {MODULOS.map((m) => {
           const Icono = ICONOS_AREA[m.key];
@@ -295,10 +295,15 @@ function Inicio({ irAModulo, irATest, irASimulacro }) {
                 >
                   Estudiar
                 </button>
+                {/* En contorno sobre fondo transparente parecía deshabilitado.
+                    Ahora se apoya en la superficie elevada y al pasar por
+                    encima se rellena con el color del área (ver .boton-fantasma
+                    en index.css). Los tres valores van como variables para que
+                    el hover pueda ganarles sin recurrir a !important. */}
                 <button
                   onClick={() => irATest(m.key)}
-                  className="tipo-display min-h-[44px] min-w-[44px] flex items-center justify-center text-[12.5px] px-4 rounded-full border-[1.5px] bg-transparent"
-                  style={{ borderColor: m.texto, color: m.texto }}
+                  className="boton-fantasma tipo-display min-h-[44px] min-w-[44px] flex items-center justify-center text-[12.5px] px-4 rounded-full"
+                  style={{ "--f": m.color, "--s": m.sobre, "--t": m.texto }}
                 >
                   Test
                 </button>
@@ -308,28 +313,34 @@ function Inicio({ irAModulo, irATest, irASimulacro }) {
         })}
       </div>
 
-      <div className="rounded-card p-5 text-center" style={{ backgroundColor: "var(--sim-bg)", color: "var(--sim-ink)" }}>
-        <h3 className="tipo-display text-[17px] tracking-[0.04em]">Simulacro</h3>
-        <p className="text-[11.5px] leading-snug mt-1.5 mb-4 opacity-90 max-w-[42ch] mx-auto">
-          Practica en condiciones de examen: sin respuestas hasta el final y con diagnóstico por área.
-        </p>
-        <div className="grid grid-cols-2 gap-2">
-          <button
-            onClick={() => irASimulacro("simulacro20")}
-            className="tipo-display min-h-[52px] px-3 rounded-full text-[12.5px] flex flex-col items-center justify-center leading-tight"
-            style={{ backgroundColor: "var(--cta)", color: "var(--on-cta)" }}
-          >
-            Breve · 20
-            <span className="block text-[9.5px] tracking-normal normal-case opacity-80 mt-0.5">5 por área, rotan</span>
-          </button>
-          <button
-            onClick={() => irASimulacro("simulacro80")}
-            className="tipo-display min-h-[52px] px-3 rounded-full text-[12.5px] flex flex-col items-center justify-center leading-tight border-[1.5px] bg-transparent"
-            style={{ borderColor: "var(--sim-ink)", color: "var(--sim-ink)" }}
-          >
-            Completo · 80
-            <span className="block text-[9.5px] tracking-normal normal-case opacity-80 mt-0.5">como el examen real</span>
-          </button>
+      {/* El bloque era un panel naranja a sangre y competía con su propio CTA:
+          el botón más importante de la app quedaba dentro de una mancha del
+          mismo peso. Ahora la jerarquía la lleva el botón; el panel solo lo
+          enmarca y el tejido —el galón del vueltiao— lo señala sin gritar. */}
+      <div className="rounded-card border border-rule bg-surface overflow-hidden">
+        <div className="tejido h-1.5" aria-hidden="true" />
+        <div className="p-5 text-center">
+          <h3 className="tipo-display text-[19px] text-ink">Simulacro</h3>
+          <p className="text-[13px] leading-snug mt-1.5 mb-4 text-ink-soft max-w-[42ch] mx-auto">
+            Practica en condiciones de examen: sin respuestas hasta el final y con diagnóstico por área.
+          </p>
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              onClick={() => irASimulacro("simulacro20")}
+              className="tipo-display min-h-[56px] px-3 rounded-full text-[13px] flex flex-col items-center justify-center leading-tight transition-transform active:scale-[.97]"
+              style={{ backgroundColor: "var(--cta)", color: "var(--on-cta)" }}
+            >
+              Breve · 20
+              <span className="block text-[12px] font-normal opacity-75 mt-0.5">5 por área, rotan</span>
+            </button>
+            <button
+              onClick={() => irASimulacro("simulacro80")}
+              className="tipo-display min-h-[56px] px-3 rounded-full text-[13px] flex flex-col items-center justify-center leading-tight border-[1.5px] bg-raised text-ink border-rule transition-colors hover:border-cta active:scale-[.97]"
+            >
+              Completo · 80
+              <span className="block text-[12px] font-normal text-ink-soft mt-0.5">como el examen real</span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -378,12 +389,12 @@ export default function App() {
           {vista.tipo !== "inicio" ? (
             <button
               onClick={volver}
-              className="tipo-display text-[11px] tracking-[0.11em] text-ink-soft min-h-[44px] flex items-center gap-1.5"
+              className="tipo-display text-[12px] text-ink-soft min-h-[44px] min-w-[44px] px-1 flex items-center gap-1.5"
             >
               ← Inicio
             </button>
           ) : (
-            <span className="tipo-display text-[11px] tracking-[0.11em] text-ink-soft">ColombiaTest</span>
+            <span className="tipo-display text-[12px] text-ink-soft">ColombiaTest</span>
           )}
           <BotonTema />
         </div>
@@ -408,7 +419,7 @@ export default function App() {
                 <h1 className="tipo-display text-xl text-ink">{m.nombre}</h1>
                 <button
                   onClick={() => setVista({ tipo: "test", area: m.key })}
-                  className="tipo-display ml-auto text-[11px] tracking-[0.08em] min-h-[44px] px-4 rounded-full"
+                  className="tipo-display ml-auto text-[12px] min-h-[44px] px-4 rounded-full"
                   style={{ backgroundColor: m.color, color: m.sobre }}
                 >
                   Hacer test
@@ -421,9 +432,6 @@ export default function App() {
 
         {vista.tipo === "test" && <Test area={vista.area} banco={banco} onSalir={volver} />}
       </div>
-
-      {/* fuera del bundle de producción */}
-      {import.meta.env.DEV && <BancoTipografico />}
     </div>
   );
 }

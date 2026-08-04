@@ -42,9 +42,6 @@
   --area-con: #8E6BC1;  --on-con: #12100C;  --text-con: #B294E0;
   --area-cul: #C1195A;  --on-cul: #FFF0F5;  --text-cul: #F2699F;
 
-  --sim-bg:  #B03A1A;
-  --sim-ink: #FFF6F0;
-
   /* escala categórica del mapa: 5 regiones visibles a la vez */
   --reg-caribe:    #3A97CC;
   --reg-andina:    #9B7BD0;
@@ -86,9 +83,6 @@
     --area-con: #6B4BA0;  --on-con: #FFF8EF;  --text-con: #6B4BA0;
     --area-cul: #A8154C;  --on-cul: #FFF8EF;  --text-cul: #A8154C;
 
-    --sim-bg:  #B03A1A;
-    --sim-ink: #FFF6F0;
-
     --reg-caribe:    #1C6A97;
     --reg-andina:    #5F3F96;
     --reg-pacifica:  #2A7247;
@@ -127,8 +121,6 @@
   --area-his: #B9401E;  --on-his: #FFF8EF;  --text-his: #B9401E;
   --area-con: #6B4BA0;  --on-con: #FFF8EF;  --text-con: #6B4BA0;
   --area-cul: #A8154C;  --on-cul: #FFF8EF;  --text-cul: #A8154C;
-  --sim-bg:  #B03A1A;
-  --sim-ink: #FFF6F0;
   --reg-caribe:    #1C6A97;
   --reg-andina:    #5F3F96;
   --reg-pacifica:  #2A7247;
@@ -160,8 +152,6 @@
   --area-his: #E4572E;  --on-his: #12100C;  --text-his: #FF7A52;
   --area-con: #8E6BC1;  --on-con: #12100C;  --text-con: #B294E0;
   --area-cul: #C1195A;  --on-cul: #FFF0F5;  --text-cul: #F2699F;
-  --sim-bg:  #B03A1A;
-  --sim-ink: #FFF6F0;
   --reg-caribe:    #3A97CC;
   --reg-andina:    #9B7BD0;
   --reg-pacifica:  #46A469;
@@ -201,11 +191,8 @@
   --color-area-con: var(--area-con);
   --color-area-cul: var(--area-cul);
 
-  --color-sim-bg:  var(--sim-bg);
-  --color-sim-ink: var(--sim-ink);
-
-  --font-display: "Archivo Black", "Archivo", "Segoe UI", system-ui, sans-serif;
-  --font-body:    "Archivo", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-display: "Instrument Sans", "Segoe UI", system-ui, sans-serif;
+  --font-body:    "Instrument Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
 
   --radius-card: 16px;
 }
@@ -225,21 +212,60 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Los títulos y los controles van en display.
-   Se declara una vez aquí, no inline en 30 componentes. */
+/* Los títulos y los controles. Se declara una vez aquí, no inline en 30
+   componentes. Sin versalitas: en caja baja la jerarquía la marcan el peso
+   y el tamaño, no la caja, así que el tracking abierto también se fue —
+   separaba las letras y rompía la palabra. */
 .tipo-display {
   font-family: var(--font-display);
-  text-transform: uppercase;
-  letter-spacing: 0.015em;
-  font-weight: var(--display-weight, 400);
+  font-weight: 600;
+  letter-spacing: -0.005em;
 }
 
-/* Sin versalitas. El tracking abierto solo tiene sentido en mayúsculas: en
-   caja baja separa las letras y rompe la palabra, así que cae con ellas.
-   Gana a las utilidades `tracking-[…]` de Tailwind por especificidad. */
-:root.sin-versalitas .tipo-display {
-  text-transform: none;
-  letter-spacing: 0;
+/* Los títulos grandes aprietan un punto más: a cuerpo alto el tracking por
+   defecto de Instrument Sans se abre demasiado. */
+h1.tipo-display,
+h2.tipo-display,
+h3.tipo-display {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+/* ============================================================
+   Botón fantasma — la acción secundaria de cada tarjeta de área.
+   ------------------------------------------------------------
+   En contorno sobre fondo transparente parecía deshabilitado. Se apoya
+   en la superficie elevada y al pasar por encima se rellena con el
+   color del área, que es lo que le da vida al gesto.
+
+   Los tres valores llegan como variables desde el componente (--f
+   relleno, --s texto sobre el relleno, --t tono de contorno y texto).
+   Si vinieran como estilo inline, el :hover no podría ganarles sin
+   !important.
+   ============================================================ */
+.boton-fantasma {
+  background-color: var(--raised);
+  border: 1.5px solid var(--t);
+  color: var(--t);
+  transition:
+    background-color 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease,
+    transform 0.14s ease,
+    box-shadow 0.18s ease;
+}
+
+.boton-fantasma:hover {
+  background-color: var(--f);
+  border-color: var(--f);
+  color: var(--s);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgb(0 0 0 / 0.22);
+}
+
+.boton-fantasma:active {
+  transform: translateY(0) scale(0.97);
+  box-shadow: none;
 }
 
 /* el tejido: galón repetido, no un degradado decorativo */

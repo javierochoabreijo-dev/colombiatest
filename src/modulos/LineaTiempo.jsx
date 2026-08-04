@@ -351,7 +351,7 @@ function EventoCard({ ev, expanded, onToggle, index }) {
       >
         <div className="flex items-center gap-2 mb-1">
           <span
-            className="tipo-display text-[10.5px] tracking-[0.1em] px-2.5 py-1 rounded-full bg-raised"
+            className="tipo-display text-[12px] px-2.5 py-1 rounded-full bg-raised"
             style={{ color: ACENTO }}
           >
             {ev.año}
@@ -370,7 +370,7 @@ function EventoCard({ ev, expanded, onToggle, index }) {
             )}
           </div>
         )}
-        <p className="tipo-display text-[10px] tracking-[0.1em] mt-2" style={{ color: ACENTO }}>
+        <p className="tipo-display text-[12px] mt-2" style={{ color: ACENTO }}>
           {expanded ? "Ocultar ▲" : "Ver más ▼"}
         </p>
       </button>

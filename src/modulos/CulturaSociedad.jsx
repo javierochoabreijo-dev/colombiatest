@@ -470,7 +470,7 @@ function Flashcards({ onSalir }) {
     return (
       <div className="rounded-card border-2 bg-surface p-6 text-center" style={{ borderColor: ACENTO }}>
         <p
-          className="tipo-display text-[11px] tracking-[0.16em] mb-2"
+          className="tipo-display text-[12px] mb-2"
           style={{ color: pct >= 70 ? "var(--text-ok)" : "var(--text-danger)" }}
         >
           {pct >= 70 ? "Vas muy bien" : "Toca repasar"}
@@ -514,7 +514,7 @@ function Flashcards({ onSalir }) {
     <div>
       <div className="flex items-center justify-between mb-2">
         <span className="text-sm text-ink-soft">Tarjeta {i + 1} / {mazo.length}</span>
-        <span className="tipo-display text-xs tracking-[0.04em]" style={{ color: "var(--text-ok)" }}>✓ {aciertos}</span>
+        <span className="tipo-display text-xs" style={{ color: "var(--text-ok)" }}>✓ {aciertos}</span>
       </div>
       {/* barra de progreso */}
       <div className="w-full h-1.5 rounded-full mb-4 bg-raised">
@@ -529,7 +529,7 @@ function Flashcards({ onSalir }) {
         className="rounded-card border border-rule bg-surface px-5 py-8 min-h-[200px] flex flex-col items-center justify-center text-center cursor-pointer transition-all"
       >
         <span
-          className="tipo-display inline-flex items-center gap-1.5 text-[10px] tracking-[0.1em] px-2.5 py-1.5 rounded-full mb-3 bg-raised"
+          className="tipo-display inline-flex items-center gap-1.5 text-[12px] px-2.5 py-1.5 rounded-full mb-3 bg-raised"
           style={{ color: ACENTO }}
         >
           {cat.icono ? <span aria-hidden="true">{cat.icono}</span> : <Bandera width={16} />}

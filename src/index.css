@@ -225,13 +225,21 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Los títulos y los controles van en display, en mayúsculas.
+/* Los títulos y los controles van en display.
    Se declara una vez aquí, no inline en 30 componentes. */
 .tipo-display {
   font-family: var(--font-display);
   text-transform: uppercase;
   letter-spacing: 0.015em;
-  font-weight: 400; /* Archivo Black ya viene pesada; 700 la falsearía */
+  font-weight: var(--display-weight, 400);
+}
+
+/* Sin versalitas. El tracking abierto solo tiene sentido en mayúsculas: en
+   caja baja separa las letras y rompe la palabra, así que cae con ellas.
+   Gana a las utilidades `tracking-[…]` de Tailwind por especificidad. */
+:root.sin-versalitas .tipo-display {
+  text-transform: none;
+  letter-spacing: 0;
 }
 
 /* el tejido: galón repetido, no un degradado decorativo */

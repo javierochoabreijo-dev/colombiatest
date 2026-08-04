@@ -7,6 +7,7 @@ import { cargarBanco } from "./data/preguntas";
 import { shuffle } from "./lib/util";
 import { ICONOS_AREA, Bandera } from "./components/Iconos";
 import BotonTema from "./components/BotonTema";
+import BancoTipografico from "./components/BancoTipografico";
 
 /* ============================================================
    ColombiaTest · HUB / SHELL DE NAVEGACIÓN
@@ -420,6 +421,9 @@ export default function App() {
 
         {vista.tipo === "test" && <Test area={vista.area} banco={banco} onSalir={volver} />}
       </div>
+
+      {/* fuera del bundle de producción */}
+      {import.meta.env.DEV && <BancoTipografico />}
     </div>
   );
 }

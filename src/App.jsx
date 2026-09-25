@@ -335,7 +335,7 @@ function Inicio({ irAModulo, irATest, irASimulacro, progreso }) {
 
       <p className="tipo-display text-[12px] text-ink-soft mb-2.5">Explora las 4 áreas</p>
       <div className="grid grid-cols-2 gap-3 mb-6">
-        {MODULOS.map((m) => {
+        {MODULOS.map((m, i) => {
           const Icono = ICONOS_AREA[m.key];
           return (
             <div key={m.key} className="rounded-card border border-rule bg-surface p-3.5 flex flex-col gap-2">
@@ -350,10 +350,10 @@ function Inicio({ irAModulo, irATest, irASimulacro, progreso }) {
                   un barrido de brillo al pasar por encima. Ver .boton-brillo
                   y .boton-relleno en index.css. */}
               <div className="flex gap-1.5">
-                <BotonRelleno area={m} className="flex-1 px-3" onClick={() => irAModulo(m.key)}>
+                <BotonRelleno area={m} entrada={0.35 + i * 0.12} className="flex-1 px-3" onClick={() => irAModulo(m.key)}>
                   Estudiar
                 </BotonRelleno>
-                <BotonFantasma area={m} className="min-w-[44px] px-4" onClick={() => irATest(m.key)}>
+                <BotonFantasma area={m} entrada={0.42 + i * 0.12} className="min-w-[44px] px-4" onClick={() => irATest(m.key)}>
                   Test
                 </BotonFantasma>
               </div>

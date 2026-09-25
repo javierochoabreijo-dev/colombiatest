@@ -293,6 +293,23 @@ h3.tipo-display {
   transform: translateX(130%);
 }
 
+/* En móvil no hay hover, así que el barrido también se lanza al aparecer
+   la pantalla y al pulsar. Sin fill-mode a propósito: al acabar vuelve al
+   reposo del bloque de arriba (fuera de cuadro por la izquierda) y el
+   :hover de escritorio sigue funcionando. */
+@keyframes barrido {
+  from { transform: translateX(-130%); }
+  to   { transform: translateX(130%); }
+}
+
+.boton-brillo.brillo-entrada::after {
+  animation: barrido 0.75s cubic-bezier(0.22, 0.61, 0.36, 1) var(--retardo, 0s);
+}
+
+.boton-brillo.brillo-pulsado::after {
+  animation: barrido 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
 .boton-brillo:active {
   transform: translateY(0) scale(0.975);
 }

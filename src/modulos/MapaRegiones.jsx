@@ -1,6 +1,7 @@
 import React, { useState, useRef, useLayoutEffect } from "react";
 import ImagenAtribuida from "../components/ImagenAtribuida";
 import { FAUNA_IMAGENES } from "../data/faunaImagenes";
+import { urlAncho } from "../lib/imagenes";
 
 /* ============================================================
    DATOS — extraídos y resumidos de la Guía Cancillería (cap. Geografía)
@@ -485,9 +486,12 @@ function DetailPanel({ regionKey, onClose }) {
                       >
                         {img ? (
                           <img
-                            src={img.url}
+                            src={urlAncho(img.url, 96)}
                             alt={sp.nombre}
                             loading="lazy"
+                            decoding="async"
+                            width="36"
+                            height="36"
                             className="w-9 h-9 rounded-full object-cover border border-rule"
                           />
                         ) : (

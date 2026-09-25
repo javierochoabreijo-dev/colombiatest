@@ -39,7 +39,7 @@
 
   --area-geo: #1B998B;  --on-geo: #12100C;  --text-geo: #2FBFAE;
   --area-his: #E4572E;  --on-his: #12100C;  --text-his: #FF7A52;
-  --area-con: #8E6BC1;  --on-con: #12100C;  --text-con: #B294E0;
+  --area-con: #9270C3;  --on-con: #12100C;  --text-con: #B294E0;
   --area-cul: #C1195A;  --on-cul: #FFF0F5;  --text-cul: #F2699F;
 
   /* escala categórica del mapa: 5 regiones visibles a la vez */
@@ -150,7 +150,7 @@
   --text-ok:     #239D8F;
   --area-geo: #1B998B;  --on-geo: #12100C;  --text-geo: #2FBFAE;
   --area-his: #E4572E;  --on-his: #12100C;  --text-his: #FF7A52;
-  --area-con: #8E6BC1;  --on-con: #12100C;  --text-con: #B294E0;
+  --area-con: #9270C3;  --on-con: #12100C;  --text-con: #B294E0;
   --area-cul: #C1195A;  --on-cul: #FFF0F5;  --text-cul: #F2699F;
   --reg-caribe:    #3A97CC;
   --reg-andina:    #9B7BD0;
@@ -247,24 +247,96 @@ h3.tipo-display {
   background-color: var(--raised);
   border: 1.5px solid var(--t);
   color: var(--t);
-  transition:
-    background-color 0.18s ease,
-    border-color 0.18s ease,
-    color 0.18s ease,
-    transform 0.14s ease,
-    box-shadow 0.18s ease;
 }
 
 .boton-fantasma:hover {
   background-color: var(--f);
   border-color: var(--f);
   color: var(--s);
+}
+
+/* ------------------------------------------------------------
+   Brillo — el barrido que recorre el botón al pasar por encima.
+   Es lo que quita la sensación de tinta plana. Vive en un ::after
+   sobre el contenido, con pointer-events desactivados; pasa en
+   medio segundo, así que el contraste en reposo no cambia.
+   ------------------------------------------------------------ */
+.boton-brillo {
+  position: relative;
+  overflow: hidden;
+  transition:
+    background-color 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease,
+    filter 0.2s ease,
+    transform 0.14s ease,
+    box-shadow 0.2s ease;
+}
+
+.boton-brillo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    115deg,
+    transparent 40%,
+    rgb(255 255 255 / 0.22) 50%,
+    transparent 60%
+  );
+  transform: translateX(-130%);
+  transition: transform 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.boton-brillo:hover::after,
+.boton-brillo:focus-visible::after {
+  transform: translateX(130%);
+}
+
+.boton-brillo:active {
+  transform: translateY(0) scale(0.975);
+}
+
+/* ------------------------------------------------------------
+   Relleno con volumen. El degradado es NEUTRO entre el 45 % y el
+   60 % de la altura, que es donde se apoya la etiqueta: el botón
+   gana bisel sin que el texto pierda contraste.
+   ------------------------------------------------------------ */
+.boton-relleno {
+  background-color: var(--f);
+  color: var(--s);
+  background-image: linear-gradient(
+    to bottom,
+    rgb(255 255 255 / 0.14) 0%,
+    rgb(255 255 255 / 0) 45%,
+    rgb(0 0 0 / 0) 62%,
+    rgb(0 0 0 / 0.07) 100%
+  );
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.2),
+    inset 0 -1px 0 rgb(0 0 0 / 0.16),
+    0 1px 3px rgb(0 0 0 / 0.28);
+}
+
+.boton-relleno:hover {
+  filter: brightness(1.07) saturate(1.05);
+  transform: translateY(-1px);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.26),
+    inset 0 -1px 0 rgb(0 0 0 / 0.18),
+    0 6px 16px rgb(0 0 0 / 0.3);
+}
+
+.boton-relleno:active {
+  box-shadow: inset 0 2px 4px rgb(0 0 0 / 0.3);
+}
+
+.boton-fantasma:hover {
   transform: translateY(-1px);
   box-shadow: 0 4px 14px rgb(0 0 0 / 0.22);
 }
 
 .boton-fantasma:active {
-  transform: translateY(0) scale(0.97);
   box-shadow: none;
 }
 

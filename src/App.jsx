@@ -7,6 +7,10 @@ import { cargarBanco } from "./data/preguntas";
 import { shuffle } from "./lib/util";
 import { ICONOS_AREA, Bandera } from "./components/Iconos";
 import BotonTema from "./components/BotonTema";
+import { BotonRelleno, BotonFantasma } from "./components/BotonArea";
+import PanelProgreso from "./components/PanelProgreso";
+import Anillo from "./components/Anillo";
+import { leerProgreso, registrarResultado } from "./lib/progreso";
 
 /* ============================================================
    ColombiaTest · HUB / SHELL DE NAVEGACIÓN
@@ -58,7 +62,7 @@ const MODULOS = [
 /* ============================================================
    TEST DE PRÁCTICA (respuesta escrita autoevaluada)
    ============================================================ */
-function Test({ area, banco, onSalir }) {
+function Test({ area, banco, onSalir, onRepasar, onProgreso }) {
   const esSimulacro = area === "simulacro20" || area === "simulacro80";
   const areaInfo = esSimulacro
     ? {
@@ -91,6 +95,23 @@ function Test({ area, banco, onSalir }) {
 
   const actual = preguntas[i];
 
+  // Al terminar se guarda el mejor resultado de cada área tocada. El efecto
+  // corre después del render que fija `terminado`, así que porArea y aciertos
+  // ya están al día.
+  useEffect(() => {
+    if (!terminado) return;
+    let ultimo = null;
+    if (esSimulacro) {
+      MODULOS.forEach((m) => {
+        const r = porArea[m.key];
+        if (r) ultimo = registrarResultado(m.key, r.ok, r.total);
+      });
+    } else {
+      ultimo = registrarResultado(area, aciertos, preguntas.length);
+    }
+    if (ultimo) onProgreso(ultimo);
+  }, [terminado]);
+
   const revelar = () => setFase("comparar");
 
   const evaluar = (acerto) => {
@@ -110,60 +131,91 @@ function Test({ area, banco, onSalir }) {
   if (terminado) {
     const pct = Math.round((aciertos / preguntas.length) * 100);
     const aprueba = pct >= 70;
+
+    // De peor a mejor: lo primero que se lee es lo que hay que repasar.
+    const filas = esSimulacro
+      ? MODULOS.map((m) => ({ area: m, r: porArea[m.key] }))
+          .filter((x) => x.r)
+          .sort((a, b) => a.r.ok / a.r.total - b.r.ok / b.r.total)
+      : [];
+
     return (
-      <div className="rounded-card border-2 bg-surface p-6" style={{ borderColor: areaInfo.color }}>
-        <div className="text-center">
-          <p
-            className="tipo-display text-[12px] mb-2"
-            style={{ color: aprueba ? "var(--text-ok)" : "var(--text-danger)" }}
-          >
-            {aprueba ? "En rango de aprobación" : "Sigue repasando"}
-          </p>
-          <h3 className="tipo-display text-3xl text-ink">
-            {aciertos} de {preguntas.length}
-          </h3>
-          <p className="text-sm text-ink-soft mt-1">
-            {pct}% · el umbral de referencia es 70%.
+      <div className="flex flex-col gap-5" style={{ animation: "fadeIn .3s ease-out" }}>
+
+        <div className="flex flex-col items-center pt-1">
+          <Anillo pct={pct} color={aprueba ? "var(--text-ok)" : "var(--text-danger)"} />
+          <p className="text-[13.5px] text-ink-soft mt-3.5">
+            {aciertos} de {preguntas.length} · el umbral es 70%
           </p>
         </div>
 
-        {esSimulacro && (
-          <div className="mt-5">
-            <p className="tipo-display text-[12px] text-ink-soft mb-2">Resultado por área</p>
-            <div className="space-y-1.5">
-              {MODULOS.map((m) => {
-                const r = porArea[m.key];
-                if (!r) return null;
-                const p = Math.round((r.ok / r.total) * 100);
+        <div className="tejido h-2.5 rounded-full" aria-hidden="true" />
+
+        {esSimulacro ? (
+          <div>
+            <h3 className="tipo-display text-[20px] text-ink">Qué repasar</h3>
+            <p className="text-[12.5px] text-ink-soft mt-0.5 mb-3">
+              De lo más flojo a lo que ya dominas.
+            </p>
+
+            <div className="flex flex-col gap-2">
+              {filas.map(({ area: m, r }) => {
+                const Icono = ICONOS_AREA[m.key];
+                const falladas = r.total - r.ok;
+                const perfecta = falladas === 0;
+                const floja = r.ok / r.total < 0.7;
                 return (
-                  <div key={m.key} className="flex items-center gap-2">
-                    <span className="text-sm w-28 text-ink-soft">{m.nombre}</span>
-                    <div className="flex-1 h-2 rounded-full bg-raised">
-                      <div
-                        className="h-2 rounded-full"
-                        style={{ width: `${p}%`, backgroundColor: p >= 70 ? "var(--text-ok)" : "var(--text-danger)" }}
-                      />
+                  <div
+                    key={m.key}
+                    className="rounded-xl border border-rule bg-surface px-3.5 py-3 flex items-center gap-3"
+                    style={floja ? { borderLeft: `3px solid ${m.color}` } : undefined}
+                  >
+                    <span className="shrink-0 flex items-center" style={{ color: perfecta ? "var(--text-ok)" : m.texto }}>
+                      {perfecta ? (
+                        <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                          <path d="M4 12.5 L9.5 18 L20 6.5" />
+                        </svg>
+                      ) : (
+                        <Icono className="w-[19px] h-[19px]" />
+                      )}
+                    </span>
+                    <div className="flex-1 min-w-0">
+                      <p className={`tipo-display text-[14.5px] ${perfecta ? "text-ink-soft" : "text-ink"}`}>
+                        {m.nombre}
+                      </p>
+                      <p
+                        className="text-[12.5px] mt-px"
+                        style={{ color: perfecta ? "var(--text-ok)" : floja ? "var(--text-danger)" : "var(--ink-soft)" }}
+                      >
+                        {r.ok} de {r.total} · {perfecta ? "sin fallos" : `${falladas} ${falladas === 1 ? "fallada" : "falladas"}`}
+                      </p>
                     </div>
-                    <span className="text-xs text-ink-soft w-10 text-right">{p}%</span>
+                    {!perfecta &&
+                      (floja ? (
+                        <BotonRelleno area={m} className="shrink-0 px-4" onClick={() => onRepasar(m.key)}>
+                          Repasar
+                        </BotonRelleno>
+                      ) : (
+                        <BotonFantasma area={m} className="shrink-0 px-4" onClick={() => onRepasar(m.key)}>
+                          Repasar
+                        </BotonFantasma>
+                      ))}
                   </div>
                 );
               })}
             </div>
-            {(() => {
-              const debiles = MODULOS.filter((m) => porArea[m.key] && (porArea[m.key].ok / porArea[m.key].total) < 0.7);
-              return debiles.length > 0 ? (
-                <p className="text-sm mt-3 rounded-lg px-3 py-2 bg-raised text-ink border-l-2" style={{ borderColor: "var(--text-danger)" }}>
-                  Áreas para reforzar: {debiles.map((d) => d.nombre).join(", ")}.
-                </p>
-              ) : null;
-            })()}
           </div>
+        ) : (
+          <p className="text-[13.5px] text-ink-soft text-center -mt-1">
+            {aprueba
+              ? `Vas bien en ${areaInfo.nombre}. Prueba un simulacro para verte las cuatro áreas a la vez.`
+              : `Repasa ${areaInfo.nombre} y vuelve a intentarlo.`}
+          </p>
         )}
 
         <button
           onClick={onSalir}
-          className="tipo-display w-full mt-5 min-h-[44px] px-4 rounded-full text-[12.5px]"
-          style={{ backgroundColor: areaInfo.color, color: areaInfo.sobre }}
+          className="boton-brillo tipo-display w-full min-h-[48px] px-4 rounded-full text-[13px] border-[1.5px] bg-raised text-ink border-rule hover:border-cta"
         >
           Volver al inicio
         </button>
@@ -262,7 +314,7 @@ function Test({ area, banco, onSalir }) {
 /* ============================================================
    PANTALLA DE INICIO
    ============================================================ */
-function Inicio({ irAModulo, irATest, irASimulacro }) {
+function Inicio({ irAModulo, irATest, irASimulacro, progreso }) {
   return (
     <div>
       <header className="mb-6 text-center">
@@ -273,6 +325,13 @@ function Inicio({ irAModulo, irATest, irASimulacro }) {
         </p>
         <div className="tejido h-2.5 rounded-full mt-4" aria-hidden="true" />
       </header>
+
+      <PanelProgreso
+        modulos={MODULOS}
+        progreso={progreso}
+        irAModulo={irAModulo}
+        irATest={irATest}
+      />
 
       <p className="tipo-display text-[12px] text-ink-soft mb-2.5">Explora las 4 áreas</p>
       <div className="grid grid-cols-2 gap-3 mb-6">
@@ -287,26 +346,16 @@ function Inicio({ irAModulo, irATest, irASimulacro }) {
                 <h2 className="tipo-display text-[15px] text-ink">{m.nombre}</h2>
               </div>
               <p className="text-xs text-ink-soft leading-snug flex-1">{m.desc}</p>
+              {/* El relleno plano dejaba el color opaco: ahora lleva bisel y
+                  un barrido de brillo al pasar por encima. Ver .boton-brillo
+                  y .boton-relleno en index.css. */}
               <div className="flex gap-1.5">
-                <button
-                  onClick={() => irAModulo(m.key)}
-                  className="tipo-display flex-1 min-h-[44px] flex items-center justify-center text-[12.5px] px-3 rounded-full"
-                  style={{ backgroundColor: m.color, color: m.sobre }}
-                >
+                <BotonRelleno area={m} className="flex-1 px-3" onClick={() => irAModulo(m.key)}>
                   Estudiar
-                </button>
-                {/* En contorno sobre fondo transparente parecía deshabilitado.
-                    Ahora se apoya en la superficie elevada y al pasar por
-                    encima se rellena con el color del área (ver .boton-fantasma
-                    en index.css). Los tres valores van como variables para que
-                    el hover pueda ganarles sin recurrir a !important. */}
-                <button
-                  onClick={() => irATest(m.key)}
-                  className="boton-fantasma tipo-display min-h-[44px] min-w-[44px] flex items-center justify-center text-[12.5px] px-4 rounded-full"
-                  style={{ "--f": m.color, "--s": m.sobre, "--t": m.texto }}
-                >
+                </BotonRelleno>
+                <BotonFantasma area={m} className="min-w-[44px] px-4" onClick={() => irATest(m.key)}>
                   Test
-                </button>
+                </BotonFantasma>
               </div>
             </div>
           );
@@ -357,6 +406,7 @@ function Inicio({ irAModulo, irATest, irASimulacro }) {
 export default function App() {
   const [vista, setVista] = useState({ tipo: "inicio" });
   const [banco, setBanco] = useState(null);
+  const [progreso, setProgreso] = useState(leerProgreso);
 
   useEffect(() => {
     cargarBanco().then(setBanco);
@@ -401,6 +451,7 @@ export default function App() {
 
         {vista.tipo === "inicio" && (
           <Inicio
+            progreso={progreso}
             irAModulo={(k) => setVista({ tipo: "modulo", area: k })}
             irATest={(k) => setVista({ tipo: "test", area: k })}
             irASimulacro={(k) => setVista({ tipo: "test", area: k })}
@@ -430,7 +481,15 @@ export default function App() {
           );
         })()}
 
-        {vista.tipo === "test" && <Test area={vista.area} banco={banco} onSalir={volver} />}
+        {vista.tipo === "test" && (
+          <Test
+            area={vista.area}
+            banco={banco}
+            onSalir={volver}
+            onRepasar={(k) => setVista({ tipo: "modulo", area: k })}
+            onProgreso={setProgreso}
+          />
+        )}
       </div>
     </div>
   );

@@ -273,9 +273,13 @@ manda sobre los dos). Los 11 cremas redundantes colapsan a `--ground` / `--surfa
 - Las 5 regiones del mapa sí conservan escala categórica propia (`--reg-*`). Es el único
   sitio donde cinco cosas se ven a la vez, así que es la única excepción del sistema.
 
-**Punto 4 — la tipografía ya existe.** Archivo Black (display) y Archivo (lectura) se cargan
-desde Google Fonts en `index.html`. El `fontFamily: "Georgia, serif"` inline de ~30 sitios
-desaparece: ahora es la clase `.tipo-display`, declarada una sola vez.
+**Punto 4 — la tipografía ya existe.** Se carga una webfont real desde Google Fonts en
+`index.html`. El `fontFamily: "Georgia, serif"` inline de ~30 sitios desaparece: ahora es la
+clase `.tipo-display`, declarada una sola vez.
+
+> Corregido después: esta sección se escribió con Archivo Black + Archivo, que fue la primera
+> elección. En `b6fd223` se sustituyeron por **Instrument Sans** y se quitaron las versalitas.
+> Ver «Estado al 25 de septiembre» al final.
 
 **Punto 5 — la bandera ya no es emoji.** `Bandera` en `src/components/Iconos.jsx` (SVG,
 proporción 3:2). Los 4 iconos de área también son SVG propios que heredan `currentColor`.
@@ -323,3 +327,60 @@ el tema claro conserva la energía del oscuro. El dev server queda en `localhost
 ### Siguiente paso
 
 Wompi y despliegue en Vercel, las dos tareas del plan original que siguen aparcadas.
+
+
+---
+
+## Estado al 25 de septiembre de 2026
+
+Sin cambios de código desde el 4 de agosto. La rama `feat/datos-imagenes-layout` sigue con
+**9 commits por delante de `master`**, árbol limpio, sin push (el repo no tiene remoto).
+
+### Lo que cambió respecto a la sección anterior
+
+Tras revisar la implementación a ojo:
+
+- **Tipografía: Instrument Sans, en caja baja.** Archivo Black se descartó por demasiado
+  pesada y las versalitas por cambiar demasiado el carácter. Con ellas cayó el tracking
+  abierto de las ~30 utilidades `tracking-[…]`, que en minúsculas separaba las letras.
+- **El Simulacro dejó de ser un panel naranja a sangre**, que competía con su propio CTA.
+  Ahora es superficie con borde y una franja de tejido; la jerarquía la lleva el botón.
+  Mueren los tokens `--sim-bg` y `--sim-ink`: el simulacro hereda los del CTA.
+- **El botón «Test» parecía deshabilitado** en contorno sobre transparente. Ahora se apoya
+  en la superficie elevada y al pasar por encima se rellena con el color del área.
+- **Las etiquetas del mapa salían al 53%**: el SVG vive en un `viewBox` de 860 que se
+  renderiza a ~458 px, así que los 13 px del nombre del departamento eran 6,9 px reales.
+  Escalan a 13,3 y 11,2 px. El recuadro de San Andrés se movió al margen izquierdo del
+  lienzo, vacío, para poder crecer sin pisar el continente.
+- **Departamentos y capitales** pasan de dos listas separadas por comas a una tabla
+  emparejada con cabeceras.
+- Cerrados los dos puntos menores que quedaban del punto 6: ningún cuerpo baja de 12 px
+  y «← Inicio» llega a 44 px de ancho.
+
+### Verificación visual: hecha
+
+La captura de pantalla, pendiente en las dos sesiones anteriores, **ya funciona**. Revisado
+el hub, Geografía y el flujo de test en los dos temas. La dirección se sostiene.
+
+Medido de nuevo tras los cambios: **102 pares de contraste, todos ≥ 4,5:1** (mínimos 4,51
+en oscuro y 4,59 en claro), cero mayúsculas forzadas, cero botones por debajo de 44×44 en
+las seis vistas, y `npm run build` pasa.
+
+### La app está publicada como artifact
+
+Build estático, con las rutas de `dist/` pasadas a relativas:
+https://claude.ai/artifact/VCVDAKya2fmY559anhrxNt
+
+Es privado y funciona sin servidor. Sin variables de Supabase en el build, `cargarBanco()`
+cae al banco local (`src/data/bancoLocal.js`), que es el comportamiento previsto. Ojo: es
+una foto del build, no se actualiza solo — hay que republicarlo tras cada cambio.
+
+Los otros dos artifacts (comparativa de tres direcciones y espécimen de Vueltiao) son de la
+fase de diseño y **están desfasados**: siguen mostrando Archivo Black en mayúsculas y el
+panel naranja del Simulacro.
+
+### Siguiente paso
+
+Wompi y despliegue en Vercel, las dos tareas del plan original que siguen aparcadas. El
+proyecto no tiene remoto git, así que desplegar en Vercel pide primero crear el repo y
+subir la rama (o fusionarla a `master`).

@@ -28,12 +28,12 @@
    ============================================================ */
 
 // Vite resuelve los globs en build y deja las urls con hash ya puestas.
-const FAUNA = import.meta.glob("../assets/fauna/*.jpg", {
+const FAUNA = import.meta.glob("../assets/fauna/*.{jpg,png}", {
   eager: true,
   query: "?url",
   import: "default",
 });
-const CULTURA = import.meta.glob("../assets/cultura/*.jpg", {
+const CULTURA = import.meta.glob("../assets/cultura/*.{jpg,png}", {
   eager: true,
   query: "?url",
   import: "default",

@@ -197,7 +197,8 @@ visuales antes de implementar.
   - Imágenes libres de Wikimedia Commons con atribución: 47 claves de fauna en
     `src/data/faunaImagenes.js` + 22 fichas de cultura, vía el componente
     `src/components/ImagenAtribuida.jsx`.
-- Tareas pendientes del plan original: integración de pagos con Wompi y despliegue en Vercel.
+- Tarea pendiente del plan original: despliegue en Vercel. (La integración de pagos con
+  Wompi se descartó el 25 de septiembre: la app va a ser gratuita entera.)
 - Reglas de contenido que no deben romperse: 5 regiones naturales (nunca 6); el examen real
   es de respuesta escrita (nunca opción múltiple en el simulacro); la independencia se
   consolida en Boyacá (1819); 4 áreas × 20 preguntas = 80.
@@ -326,7 +327,7 @@ el tema claro conserva la energía del oscuro. El dev server queda en `localhost
 
 ### Siguiente paso
 
-Wompi y despliegue en Vercel, las dos tareas del plan original que siguen aparcadas.
+Despliegue en Vercel, la tarea del plan original que sigue aparcada.
 
 
 ---
@@ -381,6 +382,10 @@ panel naranja del Simulacro.
 
 ### Siguiente paso
 
-Wompi y despliegue en Vercel, las dos tareas del plan original que siguen aparcadas. El
-proyecto no tiene remoto git, así que desplegar en Vercel pide primero crear el repo y
-subir la rama (o fusionarla a `master`).
+Despliegue en Vercel. El proyecto no tiene remoto git, así que pide primero crear el
+repo y subir la rama (o fusionarla a `master`).
+
+La integración de pagos con Wompi queda **descartada**: la app va a ser gratuita entera,
+sin tier premium. Eso simplifica el despliegue —no hay backend, ni claves, ni webhooks—
+y refuerza las decisiones ya tomadas: sin cuentas, sin datos personales y con todo el
+contenido y las imágenes servidos como estáticos.

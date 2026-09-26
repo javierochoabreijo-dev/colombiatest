@@ -14,7 +14,12 @@ export default function ImagenAtribuida({ imagen, alt, className = "" }) {
   const src = imagenLocal(imagen);
   if (!src) return null;
 
-  const { autor, licencia, fuente } = imagen;
+  const { autor, licencia, fuente, ajuste } = imagen;
+
+  // Los emblemas (escudo) no se recortan como una foto: se muestran enteros y
+  // sobre una placa clara, porque llevan trazo oscuro y en tema oscuro se
+  // perderían contra el fondo. Es como se presenta la heráldica.
+  const esEmblema = ajuste === "contain";
 
   return (
     <figure className={className}>
@@ -25,18 +30,26 @@ export default function ImagenAtribuida({ imagen, alt, className = "" }) {
         alt={alt}
         loading="lazy"
         decoding="async"
-        className="w-full max-h-56 object-cover rounded-lg border border-rule"
+        className={
+          esEmblema
+            ? "w-full max-h-56 object-contain rounded-lg border border-rule p-3"
+            : "w-full max-h-56 object-cover rounded-lg border border-rule"
+        }
+        style={esEmblema ? { backgroundColor: "#F7F4EC" } : undefined}
         onError={(e) => {
           const f = e.currentTarget.closest("figure");
           if (f) f.style.display = "none";
         }}
       />
+      {/* Se monta por partes: si falta el autor —el escudo es de dominio
+          público y no lo tiene— no debe quedar un separador suelto delante. */}
       <figcaption className="text-[10px] text-ink-soft mt-1 leading-snug">
-        {autor && `Foto: ${autor}`}
-        {licencia && ` · ${licencia}`}
+        {[autor && (esEmblema ? autor : `Foto: ${autor}`), licencia]
+          .filter(Boolean)
+          .join(" · ")}
         {fuente && (
           <>
-            {" · "}
+            {(autor || licencia) && " · "}
             <a href={fuente} target="_blank" rel="noopener noreferrer" className="underline">
               Wikimedia Commons
             </a>

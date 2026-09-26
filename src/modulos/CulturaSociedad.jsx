@@ -47,10 +47,16 @@ const SIMBOLOS = [
     destacado: "Amarillo = riqueza del suelo · Azul = mares y ríos · Rojo = sangre de los libertadores.",
   },
   {
-    titulo: "Escudo nacional", icono: "🛡️", svg: "escudo",
+    titulo: "Escudo nacional", icono: "🛡️",
     resumen: "Diseñado por Francisco de Paula Santander en 1834.",
     detalle: "Tiene tres franjas y está flanqueado por dos banderas. Arriba (fondo azul): una granada de oro (por la Nueva Granada) entre dos cornucopias (riqueza económica y frutos tropicales). Centro (platino): un gorro frigio, símbolo de libertad, sostenido por una lanza. Abajo: dos buques a ambos lados del Istmo de Panamá (los océanos Caribe y Pacífico y el comercio). Corona el escudo un cóndor con una cinta que dice el lema nacional.",
     destacado: "Lema nacional en la cinta del cóndor: \"Libertad y Orden\".",
+    imagen: {
+      archivo: "cultura/escudo-nacional.png",
+      ajuste: "contain",
+      licencia: "Dominio público",
+      fuente: "https://commons.wikimedia.org/wiki/File:Coat_of_arms_of_Colombia.svg",
+    },
   },
   {
     titulo: "Himno nacional", icono: "🎵",
@@ -386,43 +392,6 @@ function BanderaSVG() {
   );
 }
 
-function EscudoSVG() {
-  return (
-    <svg viewBox="0 0 200 240" className="w-full max-w-[150px]">
-      {/* banderas cruzadas detrás */}
-      <g opacity="0.9">
-        <rect x="14" y="70" width="46" height="30" fill="#FCD116" transform="rotate(-18 37 85)" />
-        <rect x="14" y="100" width="46" height="15" fill="#003893" transform="rotate(-18 37 85)" />
-        <rect x="14" y="115" width="46" height="15" fill="#CE1126" transform="rotate(-18 37 85)" />
-        <rect x="140" y="70" width="46" height="30" fill="#FCD116" transform="rotate(18 163 85)" />
-        <rect x="140" y="100" width="46" height="15" fill="#003893" transform="rotate(18 163 85)" />
-        <rect x="140" y="115" width="46" height="15" fill="#CE1126" transform="rotate(18 163 85)" />
-      </g>
-      {/* cóndor simplificado */}
-      <g>
-        <ellipse cx="100" cy="34" rx="10" ry="8" fill="var(--ink)" />
-        <path d="M60 40 Q100 20 140 40 Q100 34 60 40 Z" fill="var(--ink-soft)" />
-        <path d="M88 48 Q100 60 112 48 Z" fill="#B5892B" />
-      </g>
-      {/* cuerpo del escudo: 3 franjas */}
-      <g>
-        <path d="M50 60 H150 V150 Q150 195 100 215 Q50 195 50 150 Z" fill="var(--surface)" stroke="var(--ink)" strokeWidth="2.5" />
-        {/* franja superior azul con granada */}
-        <path d="M50 60 H150 V95 H50 Z" fill="#003893" />
-        <circle cx="100" cy="78" r="9" fill="#FCD116" />
-        {/* cornucopias (puntos) */}
-        <circle cx="72" cy="80" r="3.5" fill="#FCD116" /><circle cx="128" cy="80" r="3.5" fill="#2e7d32" />
-        {/* franja media platino con gorro frigio */}
-        <rect x="50" y="95" width="100" height="30" fill="var(--raised)" />
-        <path d="M94 118 Q100 100 106 118 Z" fill="#CE1126" />
-        {/* franja inferior: istmo y dos mares */}
-        <path d="M50 125 H150 V150 Q150 195 100 215 Q50 195 50 150 Z" fill="#1E7F8C" />
-        <rect x="94" y="130" width="12" height="70" fill="#8A6D3B" />
-      </g>
-    </svg>
-  );
-}
-
 /* ============================================================
    TARJETA DE EXPLORADOR
    ============================================================ */
@@ -433,7 +402,6 @@ function Tarjeta({ item }) {
   return (
     <TarjetaExpandible item={item} acento={ACENTO} cabecera={cabecera}>
       {item.svg === "bandera" && <div className="flex justify-center py-1"><BanderaSVG /></div>}
-      {item.svg === "escudo" && <div className="flex justify-center py-1"><EscudoSVG /></div>}
       <ImagenAtribuida imagen={item.imagen} alt={item.titulo} />
       {item.lugar && (
         <div className="flex flex-wrap gap-2 text-xs">

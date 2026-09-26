@@ -57,7 +57,8 @@ fallback local mientras yo no defina el `.env.local`.
 
 - Conectar imágenes libres (Wikimedia Commons) en las fichas de fauna y cultura,
   usando un campo `imagen_url` con atribución al pie.
-- Integración de pagos con Wompi para un tier premium (opcional).
+- ~~Integración de pagos con Wompi para un tier premium~~ — descartado el 25/09/2026:
+  la app va a ser gratuita entera.
 - Despliegue en Vercel con las variables de entorno.
 
 Empieza confirmando que entiendes el estado del proyecto y muéstrame tu plan para

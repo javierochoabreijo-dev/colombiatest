@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import TarjetaExpandible from "../components/TarjetaExpandible";
 import Pill, { BarraPills } from "../components/Pill";
+import EnlaceGuia from "../components/EnlaceGuia";
 
 /* ============================================================
    DATOS — extraídos del capítulo "Constitución Política"
@@ -360,7 +361,7 @@ export default function Constitucion() {
         {seccion === "estado" && <DiagramaRamas ramaActiva={ramaActiva} setRamaActiva={setRamaActiva} />}
 
         <footer className="text-center text-xs text-ink-soft mt-6 pb-4">
-          Contenido basado en la guía oficial de estudio · Constitución Política de 1991
+          <EnlaceGuia> · Constitución Política de 1991</EnlaceGuia>
         </footer>
     </>
   );

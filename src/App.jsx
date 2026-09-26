@@ -7,6 +7,7 @@ import { cargarBanco } from "./data/preguntas";
 import { shuffle } from "./lib/util";
 import { ICONOS_AREA, Bandera } from "./components/Iconos";
 import BotonTema from "./components/BotonTema";
+import EnlaceGuia from "./components/EnlaceGuia";
 import { BotonRelleno, BotonFantasma } from "./components/BotonArea";
 import PanelProgreso from "./components/PanelProgreso";
 import Anillo from "./components/Anillo";
@@ -395,7 +396,7 @@ function Inicio({ irAModulo, irATest, irASimulacro, progreso, onProgreso }) {
       </div>
 
       <p className="text-center text-xs text-ink-soft mt-5">
-        Contenido basado en la guía oficial · Sin registro ni datos personales
+        <EnlaceGuia> · Sin registro ni datos personales</EnlaceGuia>
       </p>
     </div>
   );

@@ -2,6 +2,7 @@ import React, { useState, useRef, useLayoutEffect } from "react";
 import ImagenAtribuida from "../components/ImagenAtribuida";
 import { FAUNA_IMAGENES } from "../data/faunaImagenes";
 import { imagenLocal } from "../lib/imagenes";
+import EnlaceGuia from "../components/EnlaceGuia";
 
 /* ============================================================
    DATOS — extraídos y resumidos de la Guía Cancillería (cap. Geografía)
@@ -582,6 +583,11 @@ export default function MapaRegiones() {
         </div>
         <DetailPanel regionKey={selected} onClose={() => { setSelected(null); setPinnedDept(null); }} />
       </div>
+
+      {/* el único módulo que no tenía pie; ahora los cuatro citan la fuente */}
+      <footer className="text-center text-xs text-ink-soft mt-6 pb-4">
+        <EnlaceGuia> · 5 regiones naturales</EnlaceGuia>
+      </footer>
     </>
   );
 }

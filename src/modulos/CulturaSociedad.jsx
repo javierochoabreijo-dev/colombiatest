@@ -4,6 +4,7 @@ import TarjetaExpandible from "../components/TarjetaExpandible";
 import Pill, { BarraPills } from "../components/Pill";
 import { Bandera } from "../components/Iconos";
 import { shuffle } from "../lib/util";
+import EnlaceGuia from "../components/EnlaceGuia";
 
 /* Cultura: el módulo entero se identifica con el color de su área. */
 const ACENTO = "var(--text-cul)";
@@ -636,7 +637,7 @@ export default function CulturaSociedad() {
         )}
 
         <footer className="text-center text-xs text-ink-soft mt-6 pb-4">
-          Contenido basado en la guía oficial de estudio · Cultura y Sociedad
+          <EnlaceGuia> · Cultura y Sociedad</EnlaceGuia>
         </footer>
     </>
   );

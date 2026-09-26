@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import Pill, { BarraPills } from "../components/Pill";
+import EnlaceGuia from "../components/EnlaceGuia";
 
 /* Historia: el módulo entero se identifica con el color de su área. */
 const ACENTO = "var(--text-his)";
@@ -448,7 +449,7 @@ export default function LineaTiempo() {
         </div>
 
         <footer className="text-center text-xs text-ink-soft mt-6 pb-4">
-          Contenido basado en la guía oficial de estudio · {EVENTOS.length} eventos
+          <EnlaceGuia> · {EVENTOS.length} eventos</EnlaceGuia>
         </footer>
     </>
   );

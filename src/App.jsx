@@ -9,9 +9,9 @@ import { ICONOS_AREA, Bandera } from "./components/Iconos";
 import BotonTema from "./components/BotonTema";
 import EnlaceGuia from "./components/EnlaceGuia";
 import { BotonRelleno, BotonFantasma } from "./components/BotonArea";
-import PanelProgreso from "./components/PanelProgreso";
+import NotaProgreso from "./components/NotaProgreso";
 import Anillo from "./components/Anillo";
-import { leerProgreso, registrarResultado } from "./lib/progreso";
+import { leerProgreso, registrarResultado, mediaProgreso, haceCuanto } from "./lib/progreso";
 
 /* ============================================================
    ColombiaTest · HUB / SHELL DE NAVEGACIÓN
@@ -352,6 +352,8 @@ function Test({ area, banco, onSalir, onRepasar, onProgreso }) {
    PANTALLA DE INICIO
    ============================================================ */
 function Inicio({ irAModulo, irATest, irASimulacro, progreso, onProgreso }) {
+  const resumen = mediaProgreso(progreso, MODULOS.map((m) => m.key));
+
   return (
     <div>
       <header className="mb-6 text-center">
@@ -363,18 +365,26 @@ function Inicio({ irAModulo, irATest, irASimulacro, progreso, onProgreso }) {
         <div className="tejido h-2.5 rounded-full mt-4" aria-hidden="true" />
       </header>
 
-      <PanelProgreso
-        modulos={MODULOS}
-        progreso={progreso}
-        onProgreso={onProgreso}
-        irAModulo={irAModulo}
-        irATest={irATest}
-      />
-
-      <p className="tipo-display text-[12px] text-ink-soft mb-2.5">Explora las 4 áreas</p>
+      {/* El progreso ya no es una sección aparte: es un atributo de cada área,
+          así que vive dentro de su tarjeta. El panel que había aquí repetía los
+          mismos botones que las tarjetas de abajo y ocupaba media pantalla. */}
+      <div className="flex items-baseline justify-between mb-2.5">
+        <p className="tipo-display text-[12px] text-ink-soft">Explora las 4 áreas</p>
+        {resumen && (
+          <p className="text-[12px] text-ink-soft">
+            media{" "}
+            <span className="font-semibold" style={{ color: resumen.media >= 70 ? "var(--text-ok)" : "var(--text-danger)" }}>
+              {resumen.media}%
+            </span>
+          </p>
+        )}
+      </div>
       <div className="grid grid-cols-2 gap-3 mb-6">
         {MODULOS.map((m, i) => {
           const Icono = ICONOS_AREA[m.key];
+          const p = progreso[m.key];
+          const dias = p ? (Date.now() - new Date(p.fecha).getTime()) / 86400000 : 0;
+          const viejo = p && dias > 7 ? haceCuanto(p.fecha) : null;
           return (
             <div key={m.key} className="rounded-card border border-rule bg-surface p-3.5 flex flex-col gap-2">
               <div className="flex items-center gap-2.5">
@@ -383,6 +393,33 @@ function Inicio({ irAModulo, irATest, irASimulacro, progreso, onProgreso }) {
                 </span>
                 <h2 className="tipo-display text-[15px] text-ink">{m.nombre}</h2>
               </div>
+              {/* Solo si hay resultado: una barra vacía en las cuatro tarjetas
+                  sería ruido para quien acaba de llegar. */}
+              {p && (
+                <div className="flex items-center gap-2">
+                  <div className="flex-1 h-[5px] rounded-full bg-raised overflow-hidden">
+                    <div
+                      className="h-[5px] rounded-full"
+                      style={{
+                        width: `${p.pct}%`,
+                        backgroundColor: m.color,
+                        transition: "width .5s cubic-bezier(.22,.61,.36,1)",
+                      }}
+                    />
+                  </div>
+                  <span
+                    className="text-[11.5px] font-semibold shrink-0"
+                    style={{ color: p.pct >= 70 ? "var(--text-ok)" : "var(--text-danger)" }}
+                  >
+                    {p.ok}/{p.total}
+                  </span>
+                </div>
+              )}
+
+              {/* La fecha solo aparece cuando envejece. "Hoy" en las cuatro
+                  tarjetas es ruido; "hace 2 meses" es un aviso. */}
+              {viejo && <p className="text-[11px] text-ink-soft -mt-1">{viejo}</p>}
+
               <p className="text-xs text-ink-soft leading-snug flex-1">{m.desc}</p>
               {/* El relleno plano dejaba el color opaco: ahora lleva bisel y
                   un barrido de brillo al pasar por encima. Ver .boton-brillo
@@ -434,6 +471,8 @@ function Inicio({ irAModulo, irATest, irASimulacro, progreso, onProgreso }) {
       <p className="text-center text-xs text-ink-soft mt-5">
         <EnlaceGuia> · Sin registro ni datos personales</EnlaceGuia>
       </p>
+
+      <NotaProgreso hayDatos={!!resumen} onProgreso={onProgreso} />
     </div>
   );
 }

@@ -1,6 +1,50 @@
 @import "tailwindcss";
 
 /* ============================================================
+   TIPOGRAFÍA
+   ------------------------------------------------------------
+   Instrument Sans va servida CON la app, no desde Google Fonts.
+   Era la última llamada a un tercero que quedaba, después de
+   traernos las 69 imágenes de Wikimedia, y pesaba por tres
+   motivos en una app gratuita y mayormente móvil:
+
+   · Dos handshakes DNS + TLS extra en la primera carga, sobre
+     una red móvil, justo lo que se quitó con las imágenes.
+   · Si Google Fonts no responde o está bloqueado, la app cae a
+     la fuente del sistema y pierde su identidad visual.
+   · Google vería la IP de cada visitante, en una app que no
+     pide registro ni guarda nada fuera del dispositivo.
+
+   Son dos ficheros y 40 KB. Ambos son VARIABLES: cubren de 400 a
+   700 en un solo archivo, así que no hace falta uno por peso.
+   `swap` deja leer con la fuente del sistema mientras llegan.
+   ============================================================ */
+
+@font-face {
+  font-family: "Instrument Sans";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("./assets/fuentes/instrument-sans-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* El español entero cabe en el bloque de arriba; este es el seguro para
+   cualquier carácter suelto que se cuele en el contenido. */
+@font-face {
+  font-family: "Instrument Sans";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("./assets/fuentes/instrument-sans-latin-ext.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF,
+    U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020,
+    U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+/* ============================================================
    VUELTIAO — sistema de color en dos temas.
    ------------------------------------------------------------
    El sombrero vueltiao es un tejido de dos fibras: caña flecha

@@ -314,7 +314,7 @@ function Test({ area, banco, onSalir, onRepasar, onProgreso }) {
 /* ============================================================
    PANTALLA DE INICIO
    ============================================================ */
-function Inicio({ irAModulo, irATest, irASimulacro, progreso }) {
+function Inicio({ irAModulo, irATest, irASimulacro, progreso, onProgreso }) {
   return (
     <div>
       <header className="mb-6 text-center">
@@ -329,6 +329,7 @@ function Inicio({ irAModulo, irATest, irASimulacro, progreso }) {
       <PanelProgreso
         modulos={MODULOS}
         progreso={progreso}
+        onProgreso={onProgreso}
         irAModulo={irAModulo}
         irATest={irATest}
       />
@@ -452,6 +453,7 @@ export default function App() {
         {vista.tipo === "inicio" && (
           <Inicio
             progreso={progreso}
+            onProgreso={setProgreso}
             irAModulo={(k) => setVista({ tipo: "modulo", area: k })}
             irATest={(k) => setVista({ tipo: "test", area: k })}
             irASimulacro={(k) => setVista({ tipo: "test", area: k })}

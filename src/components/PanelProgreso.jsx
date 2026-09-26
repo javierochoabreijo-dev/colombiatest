@@ -1,18 +1,24 @@
 import React, { useState } from "react";
 import { ICONOS_AREA } from "./Iconos";
 import { BotonRelleno, BotonFantasma } from "./BotonArea";
-import { mediaProgreso } from "../lib/progreso";
+import { mediaProgreso, borrarProgreso, haceCuanto } from "../lib/progreso";
 
 /* ============================================================
    PANEL DE PROGRESO
    ------------------------------------------------------------
    La rejilla de 4 tarjetas no puede contestar "¿por dónde voy?",
    así que la respuesta vive aquí: una fila por área, con su mejor
-   resultado. Plegado por defecto para no empujar las tarjetas
-   fuera de pantalla en móvil.
+   resultado y cuándo se hizo. Plegado por defecto para no empujar
+   las tarjetas fuera de pantalla en móvil.
 
    Se despliega con grid-template-rows 0fr → 1fr, que es la forma
    de animar hacia alto automático sin medir nada en JS.
+
+   Nada de la app depende de estos datos: son una comodidad, no una
+   cuenta. Si se pierden —y en iPhone se pierden solos, porque
+   Safari borra el almacenamiento de los sitios que no visitas en
+   una semana— se van unos números, no el acceso a nada. Por eso se
+   dice en pantalla dónde viven y se puede borrarlos.
    ============================================================ */
 
 function Chevron({ abierto }) {
@@ -37,9 +43,15 @@ function Chevron({ abierto }) {
   );
 }
 
-export default function PanelProgreso({ modulos, progreso, irAModulo, irATest }) {
+export default function PanelProgreso({ modulos, progreso, onProgreso, irAModulo, irATest }) {
   const [abierto, setAbierto] = useState(false);
+  const [confirmando, setConfirmando] = useState(false);
   const resumen = mediaProgreso(progreso, modulos.map((m) => m.key));
+
+  const borrar = () => {
+    onProgreso(borrarProgreso());
+    setConfirmando(false);
+  };
 
   return (
     <div className="rounded-card border border-rule bg-surface overflow-hidden mb-6">
@@ -72,13 +84,14 @@ export default function PanelProgreso({ modulos, progreso, irAModulo, irATest })
             {!resumen && (
               <p className="text-[13px] text-ink-soft leading-snug pt-3">
                 Haz un test de cualquier área o un simulacro y aquí verás tu mejor
-                resultado en cada una. Se guarda solo en este dispositivo.
+                resultado en cada una.
               </p>
             )}
 
             {modulos.map((m) => {
               const p = progreso[m.key];
               const Icono = ICONOS_AREA[m.key];
+              const cuando = p && haceCuanto(p.fecha);
               return (
                 <div key={m.key} className="pt-3 flex flex-col gap-2">
                   <div className="flex items-center gap-2.5">
@@ -90,11 +103,15 @@ export default function PanelProgreso({ modulos, progreso, irAModulo, irATest })
                     </span>
                     <span className="tipo-display text-[14px] text-ink flex-1">{m.nombre}</span>
                     {p ? (
-                      <span
-                        className="text-[12.5px] font-semibold"
-                        style={{ color: p.pct >= 70 ? "var(--text-ok)" : "var(--text-danger)" }}
-                      >
-                        {p.ok} / {p.total}
+                      <span className="text-right leading-tight">
+                        <span
+                          className="block text-[12.5px] font-semibold"
+                          style={{ color: p.pct >= 70 ? "var(--text-ok)" : "var(--text-danger)" }}
+                        >
+                          {p.ok} / {p.total}
+                        </span>
+                        {/* sin esto un 16/20 de hace un mes parece de hoy */}
+                        {cuando && <span className="block text-[11px] text-ink-soft">{cuando}</span>}
                       </span>
                     ) : (
                       <span className="text-[12.5px] text-ink-soft">sin empezar</span>
@@ -123,6 +140,44 @@ export default function PanelProgreso({ modulos, progreso, irAModulo, irATest })
                 </div>
               );
             })}
+
+            <div className="pt-3 mt-1 border-t border-rule">
+              <p className="text-[11.5px] text-ink-soft leading-snug">
+                Se guarda solo en este dispositivo y en este navegador. No hay cuenta
+                ni copia en ningún servidor, así que no viaja contigo a otro móvil y
+                puede borrarse si limpias los datos del navegador.
+              </p>
+
+              {resumen &&
+                (confirmando ? (
+                  <div className="flex gap-1.5 mt-2.5">
+                    <button
+                      type="button"
+                      onClick={borrar}
+                      className="tipo-display flex-1 min-h-[44px] px-3 rounded-full text-[12.5px]"
+                      style={{ backgroundColor: "var(--danger)", color: "var(--on-danger)" }}
+                    >
+                      Sí, borrar
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setConfirmando(false)}
+                      className="tipo-display min-h-[44px] px-4 rounded-full text-[12.5px] border-[1.5px] border-rule text-ink-soft"
+                    >
+                      Cancelar
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => setConfirmando(true)}
+                    className="tipo-display mt-2.5 min-h-[44px] px-4 rounded-full text-[12.5px] border-[1.5px] border-rule"
+                    style={{ color: "var(--text-danger)" }}
+                  >
+                    Borrar mi progreso
+                  </button>
+                ))}
+            </div>
           </div>
         </div>
       </div>

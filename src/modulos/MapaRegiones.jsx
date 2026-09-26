@@ -1,7 +1,7 @@
 import React, { useState, useRef, useLayoutEffect } from "react";
 import ImagenAtribuida from "../components/ImagenAtribuida";
 import { FAUNA_IMAGENES } from "../data/faunaImagenes";
-import { miniaturaLocal } from "../lib/imagenes";
+import { imagenLocal } from "../lib/imagenes";
 
 /* ============================================================
    DATOS — extraídos y resumidos de la Guía Cancillería (cap. Geografía)
@@ -477,7 +477,7 @@ function DetailPanel({ regionKey, onClose }) {
                 <div className="grid grid-cols-3 gap-2">
                   {cat.items.map((sp) => {
                     const img = FAUNA_IMAGENES[sp.nombre];
-                    const mini = miniaturaLocal(img);
+                    const mini = imagenLocal(img);
                     const Wrapper = img ? "button" : "div";
                     return (
                       <Wrapper

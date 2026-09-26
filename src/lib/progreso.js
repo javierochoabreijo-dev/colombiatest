@@ -50,6 +50,30 @@ export function registrarResultado(area, ok, total) {
   return progreso;
 }
 
+/* Borra todo el progreso. Si la app guarda datos, el usuario tiene que
+   poder quitarlos, y sin enterrar el control en ningún menú. */
+export function borrarProgreso() {
+  try {
+    localStorage.removeItem(CLAVE);
+  } catch (e) {
+    // sin almacenamiento no había nada que borrar
+  }
+  return vacio();
+}
+
+/* "hace 3 días" en vez de una fecha: lo que importa de un resultado viejo
+   es que es viejo, no el día exacto. */
+export function haceCuanto(iso) {
+  if (!iso) return null;
+  const dias = Math.floor((Date.now() - new Date(iso).getTime()) / 86400000);
+  if (Number.isNaN(dias) || dias < 0) return null;
+  if (dias === 0) return "hoy";
+  if (dias === 1) return "ayer";
+  if (dias < 30) return `hace ${dias} días`;
+  const meses = Math.floor(dias / 30);
+  return meses === 1 ? "hace un mes" : `hace ${meses} meses`;
+}
+
 /* Media de las áreas que tienen algún resultado. null si no hay ninguna:
    una media de cero áreas sería 0 % y daría a entender que se falló todo. */
 export function mediaProgreso(progreso, claves) {

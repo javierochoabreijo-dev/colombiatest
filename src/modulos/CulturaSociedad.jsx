@@ -69,6 +69,7 @@ const SIMBOLOS = [
     detalle: "Lleva su nombre en honor al naturalista colombiano José Jerónimo Triana. La Academia Colombiana de Historia estableció su relevancia como flor nacional en 1936. Es originaria de los pisos térmicos templados (1.000–2.000 m, 17–24 °C).",
     destacado: "Cattleya trianae, en honor a José Jerónimo Triana.",
     imagen: {
+      archivo: "cultura/flor-nacional.jpg",
       url: "https://commons.wikimedia.org/wiki/Special:FilePath/Cattleya_trianae,_Flor_Nacional_de_Colombia.jpg",
       autor: "Mario Carvajal",
       licencia: "CC BY 2.0",
@@ -81,6 +82,7 @@ const SIMBOLOS = [
     detalle: "Científicamente Ceroxylon quindiuense, alcanza hasta 70 metros de altura. Fue elegida en 1949 durante la comisión preparatoria del III Congreso Suramericano de Botánica. La Ley 61 de 1985 le otorgó el estatus de Árbol Nacional y ordenó protegerla en su hábitat.",
     destacado: "Palma de Cera del Quindío (Ceroxylon quindiuense), hasta 70 m.",
     imagen: {
+      archivo: "cultura/arbol-nacional.jpg",
       url: "https://commons.wikimedia.org/wiki/Special:FilePath/Palma_de_cera_del_Quind%C3%ADo_(Ceroxylon_quindiuense)_(14748688243).jpg",
       autor: "Alejandro Bayer Tamayo",
       licencia: "CC BY-SA 2.0",
@@ -93,6 +95,7 @@ const SIMBOLOS = [
     detalle: "Pieza artesanal de las sabanas del Caribe, con raíces en la cultura Zenú. Fue declarado Símbolo Cultural de la Nación por la Ley 908 del 8 de septiembre de 2004. Otros símbolos: la ruana cundiboyacense, el carriel antioqueño y las mochilas arhuacas y wayúu.",
     destacado: "Sombrero vueltiao, cultura Zenú, Ley 908 de 2004.",
     imagen: {
+      archivo: "cultura/simbolo-cultural.jpg",
       url: "https://commons.wikimedia.org/wiki/Special:FilePath/Sombrero_vueltiao.jpg",
       autor: "Jdvillalobos",
       licencia: "Dominio público",
@@ -112,6 +115,7 @@ const GASTRONOMIA = [
     detalle: "Costa y tierras fértiles con gran variedad de frutos del mar y pescados (bacalao, pargo rojo, bocachico, camarones, ostras). Platos: pescado frito, arroz con coco, sancocho de rabo (cola) y carne en posta.",
     platos: [{ n: "Pargo rojo", i: "🐟" }, { n: "Arroz con coco", i: "🥥" }, { n: "Sancocho de rabo", i: "🍲" }],
     imagen: {
+      archivo: "cultura/region-caribe.jpg",
       url: "https://commons.wikimedia.org/wiki/Special:FilePath/Arroz_con_coco,_pescado_frito_y_patacones.jpg",
       autor: "ProtoplasmaKid",
       licencia: "CC BY-SA 4.0",
@@ -125,6 +129,7 @@ const GASTRONOMIA = [
     detalle: "Herencia africana y biodiversidad de mar y ríos. Platos: sancocho de gallina, bocachico frito, chuleta de cerdo (valluna) y aborrajados.",
     platos: [{ n: "Sancocho de gallina", i: "🍲" }, { n: "Bocachico frito", i: "🐟" }, { n: "Aborrajados", i: "🍌" }],
     imagen: {
+      archivo: "cultura/region-pacifica.jpg",
       url: "https://commons.wikimedia.org/wiki/Special:FilePath/Sancocho_de_gallina_criolla.jpg",
       autor: "WIKIRAICES",
       licencia: "CC BY-SA 4.0",
@@ -135,6 +140,7 @@ const GASTRONOMIA = [
     platos: [{ n: "Bandeja paisa", i: "🍛" }, { n: "Ajiaco", i: "🥣" }, { n: "Mute", i: "🌽" }],
     destacado: "Bandeja paisa = Antioquia · Ajiaco = Bogotá · Mute = Santander.",
     imagen: {
+      archivo: "cultura/region-andina.jpg",
       url: "https://commons.wikimedia.org/wiki/Special:FilePath/Bandeja_paisa_antioque%C3%B1a,_Colombia.jpg",
       autor: "Matt Lemmon",
       licencia: "CC BY-SA 2.0",
@@ -145,6 +151,7 @@ const GASTRONOMIA = [
     platos: [{ n: "Mamona (ternera a la llanera)", i: "🥩" }],
     destacado: "El plato típico de los Llanos es la mamona o ternera a la llanera.",
     imagen: {
+      archivo: "cultura/region-orinoquia-llanos.jpg",
       url: "https://commons.wikimedia.org/wiki/Special:FilePath/Ternera_a_la_llanera.jpg",
       autor: "Danilo Sarmiento (Dansar)",
       licencia: "CC BY-SA 3.0",
@@ -161,6 +168,7 @@ const FIESTAS = [
     detalle: "Uno de los carnavales más importantes del mundo, declarado Patrimonio Cultural Inmaterial de la Humanidad por la UNESCO. Reúne música tradicional como la cumbia y el vallenato.",
     destacado: "Patrimonio de la Humanidad (UNESCO). Se celebra en febrero.",
     imagen: {
+      archivo: "cultura/carnaval-de-barranquilla.jpg",
       url: "https://commons.wikimedia.org/wiki/Special:FilePath/Garabato_Carnaval_de_Barranquilla.jpg",
       autor: "Jdvillalobos",
       licencia: "CC BY 3.0",
@@ -170,6 +178,7 @@ const FIESTAS = [
     detalle: "Mezcla de tradiciones indígenas (Los Pastos y Quillacingas) y la evangelización europea. Se celebra en vísperas de año nuevo en el suroeste del país.",
     destacado: "Se celebra en Pasto (Nariño).",
     imagen: {
+      archivo: "cultura/carnaval-de-negros-y-blancos.jpg",
       url: "https://commons.wikimedia.org/wiki/Special:FilePath/Epifan%C3%ADa_Carroza_Carnaval_de_Negros_y_Blancos_2024.jpg",
       autor: "Jhonsca",
       licencia: "CC BY-SA 4.0",
@@ -179,6 +188,7 @@ const FIESTAS = [
     detalle: "Festividad emblemática de Medellín, famosa por el desfile de silleteros, conciertos y ferias gastronómicas.",
     destacado: "Feria de las Flores = Medellín, con el desfile de silleteros.",
     imagen: {
+      archivo: "cultura/feria-de-las-flores.jpg",
       url: "https://commons.wikimedia.org/wiki/Special:FilePath/Desfile_de_Silleteros2007-(21)Medellin.JPG",
       autor: "SajoR",
       licencia: "CC BY-SA 2.5",
@@ -188,6 +198,7 @@ const FIESTAS = [
     detalle: "Resalta el género musical vallenato. Reúne a los mejores acordeoneros para coronar al Rey Vallenato, con conciertos y desfiles.",
     destacado: "Valledupar, capital del vallenato. Corona al Rey Vallenato.",
     imagen: {
+      archivo: "cultura/festival-de-la-leyenda-vallenata.jpg",
       url: "https://commons.wikimedia.org/wiki/Special:FilePath/Festival_vallenato.jpg",
       autor: "Jdvillalobos",
       licencia: "CC BY 3.0",
@@ -197,6 +208,7 @@ const FIESTAS = [
     detalle: "Desde 1962, incentiva la música y el baile tradicional de los llanos orientales. Incluye el \"joropódromo\" con torneos de joropo, baile que comparte raíces con Venezuela.",
     destacado: "El Festival del Joropo se celebra en Villavicencio (Meta).",
     imagen: {
+      archivo: "cultura/festival-y-torneo-internacional-del-joropo.jpg",
       url: "https://commons.wikimedia.org/wiki/Special:FilePath/Joropódromo_en_2023_(1).jpg",
       autor: "Canal Global Televisión",
       licencia: "CC BY 3.0",
@@ -208,6 +220,7 @@ const FIESTAS = [
   { titulo: "Feria de Manizales", icono: "☕", lugar: "Manizales (Caldas)", cuando: "Enero",
     detalle: "Su temática principal es el café. De origen español, se inspira en la Feria de Sevilla; ofrece formación en cata de café.",
     imagen: {
+      archivo: "cultura/feria-de-manizales.jpg",
       url: "https://commons.wikimedia.org/wiki/Special:FilePath/Reinado_internacional_del_caf%C3%A9_feria_de_manizales_Colombia.jpg",
       autor: "Anonimo18121991",
       licencia: "CC BY-SA 4.0",
@@ -216,6 +229,7 @@ const FIESTAS = [
   { titulo: "Semana Santa de Popayán", icono: "🕯️", lugar: "Popayán (Cauca)", cuando: "Semana Santa",
     detalle: "Una de las celebraciones religiosas más tradicionales del país: procesiones por las calles empedradas con música sacra.",
     imagen: {
+      archivo: "cultura/semana-santa-de-popayan.jpg",
       url: "https://commons.wikimedia.org/wiki/Special:FilePath/Semana_Santa_en_Popay%C3%A1n_(13903409316).jpg",
       autor: "Policía Nacional de Colombia",
       licencia: "CC BY-SA 2.0",
@@ -224,6 +238,7 @@ const FIESTAS = [
   { titulo: "Hay Festival", icono: "📚", lugar: "Cartagena (Bolívar)", cuando: "Enero",
     detalle: "\"La fiesta de las ideas y las palabras\": festival internacional de literatura, historia y pensamiento.",
     imagen: {
+      archivo: "cultura/hay-festival.jpg",
       url: "https://commons.wikimedia.org/wiki/Special:FilePath/Ciudad_Amurallada_Cartagena.JPG",
       autor: "Davidsan181",
       licencia: "CC BY-SA 3.0",
@@ -242,6 +257,7 @@ const ARTE = [
     detalle: "Gabriel García Márquez (\"Gabo\") ganó el Premio Nobel en 1982 con Cien años de soledad; también escribió El amor en los tiempos del cólera y Crónica de una muerte anunciada. Otros: Jorge Isaacs (La María), José Eustasio Rivera (La Vorágine, 1924) y Tomás Carrasquilla.",
     destacado: "García Márquez: Nobel de Literatura 1982, por Cien años de soledad.",
     imagen: {
+      archivo: "cultura/literatura.jpg",
       url: "https://commons.wikimedia.org/wiki/Special:FilePath/Gabriel_Garcia_Marquez.jpg",
       autor: "Jose Lara",
       licencia: "CC BY-SA 2.0",
@@ -250,6 +266,7 @@ const ARTE = [
   { titulo: "Artes plásticas", icono: "🖼️",
     detalle: "En el siglo XX destacan Fernando Botero, Alejandro Obregón, Omar Rayo, Beatriz González y Débora Arango. En la época colonial sobresalió el pintor Gregorio Vásquez de Arce y Ceballos.",
     imagen: {
+      archivo: "cultura/artes-plasticas.jpg",
       url: "https://commons.wikimedia.org/wiki/Special:FilePath/Esfinge_by_Fernando_Botero_-_Plaza_Botero_-_Medell%C3%ADn_-_Colombia_2024.jpg",
       autor: "José Luiz Bernardes Ribeiro",
       licencia: "CC BY-SA 4.0",
@@ -267,6 +284,7 @@ const DEPORTE = [
     detalle: "El ciclismo es el deporte más importante del país; las montañas son ideales para entrenar a los \"escarabajos\". Grandes ciclistas: Lucho Herrera, Rigoberto Urán, Nairo Quintana y Egan Bernal (y de antaño Martín \"Cochise\" Rodríguez, Ramón Hoyos, Rafael Niño).",
     destacado: "El ciclismo es el \"deporte rey\" de Colombia.",
     imagen: {
+      archivo: "cultura/ciclismo-el-deporte-rey.jpg",
       url: "https://commons.wikimedia.org/wiki/Special:FilePath/Cl%C3%A1sica_de_ciclismo_El_carmen_de_viboral_-_panoramio.jpg",
       autor: "Fernando Gallo B",
       licencia: "CC BY 3.0",
@@ -281,6 +299,7 @@ const TURISMO = [
   { titulo: "Turismo litoral", icono: "🏖️",
     detalle: "Playas de ciudades como Santa Marta, donde está el Parque Nacional Natural Tayrona.",
     imagen: {
+      archivo: "cultura/turismo-litoral.jpg",
       url: "https://commons.wikimedia.org/wiki/Special:FilePath/Playa_La_Arenilla,_Parque_Nacional_Natural_Tayrona.JPG",
       autor: "Karolynaroca",
       licencia: "CC BY-SA 3.0",
@@ -289,6 +308,7 @@ const TURISMO = [
   { titulo: "Turismo de naturaleza", icono: "🐋",
     detalle: "Senderismo, avistamiento de aves, buceo, rafting y avistamiento de ballenas. Incluye parques como Los Nevados.",
     imagen: {
+      archivo: "cultura/turismo-de-naturaleza.jpg",
       url: "https://commons.wikimedia.org/wiki/Special:FilePath/Laguna_negra,_parque_nacional_los_nevados,_colombia.JPG",
       autor: "Kamilokardona",
       licencia: "Dominio público",
@@ -297,6 +317,7 @@ const TURISMO = [
   { titulo: "Turismo rural", icono: "🚜",
     detalle: "Contacto con el campo, con parapente, escalada, canopy; incluye las haciendas y plantaciones de café.",
     imagen: {
+      archivo: "cultura/turismo-rural.jpg",
       url: "https://commons.wikimedia.org/wiki/Special:FilePath/Valle_de_Cocora_banner.jpg",
       autor: "Peterfitzgerald",
       licencia: "CC BY-SA 3.0",
@@ -305,6 +326,7 @@ const TURISMO = [
   { titulo: "Turismo académico y cultural", icono: "🏛️",
     detalle: "Museos, galerías de arte y sitios arqueológicos. Las ciudades más visitadas son Bogotá, Medellín y Cali.",
     imagen: {
+      archivo: "cultura/turismo-academico-y-cultural.jpg",
       url: "https://commons.wikimedia.org/wiki/Special:FilePath/Calle_de_La_Candelaria_Bogot%C3%A1.JPG",
       autor: "Javier Benítez",
       licencia: "CC BY-SA 3.0",

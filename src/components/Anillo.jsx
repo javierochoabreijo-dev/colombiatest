@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { reduceMovimiento } from "../lib/util";
 
 /* ============================================================
    ANILLO DE RESULTADO
@@ -20,14 +21,6 @@ import React, { useEffect, useState } from "react";
 
 const DURACION = 900;
 const PASOS = 30;
-
-function reduceMovimiento() {
-  try {
-    return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  } catch (e) {
-    return false;
-  }
-}
 
 // desaceleración: rápido al principio, se asienta al final
 const suavizar = (t) => 1 - Math.pow(1 - t, 3);

@@ -8,3 +8,14 @@ export function shuffle(arr) {
   }
   return a;
 }
+
+/* Si el sistema pide menos movimiento, las animaciones no solo se acortan:
+   las que retienen al usuario (el destello antes de pasar de pregunta) se
+   saltan enteras. Acortarlas dejaría el gesto igual de lento. */
+export function reduceMovimiento() {
+  try {
+    return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  } catch (e) {
+    return false;
+  }
+}

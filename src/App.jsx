@@ -4,7 +4,7 @@ import LineaTiempo from "./modulos/LineaTiempo";
 import Constitucion from "./modulos/Constitucion";
 import CulturaSociedad from "./modulos/CulturaSociedad";
 import { cargarBanco } from "./data/preguntas";
-import { shuffle } from "./lib/util";
+import { shuffle, reduceMovimiento } from "./lib/util";
 import { ICONOS_AREA, Bandera } from "./components/Iconos";
 import BotonTema from "./components/BotonTema";
 import EnlaceGuia from "./components/EnlaceGuia";
@@ -93,6 +93,8 @@ function Test({ area, banco, onSalir, onRepasar, onProgreso }) {
   const [aciertos, setAciertos] = useState(0);
   const [porArea, setPorArea] = useState({});
   const [terminado, setTerminado] = useState(false);
+  // "acierto" | "fallo" | null — tiñe la tarjeta mientras se cambia de pregunta
+  const [veredicto, setVeredicto] = useState(null);
 
   const actual = preguntas[i];
 
@@ -122,10 +124,24 @@ function Test({ area, banco, onSalir, onRepasar, onProgreso }) {
       return { ...prev, [k]: { ok: cur.ok + (acerto ? 1 : 0), total: cur.total + 1 } };
     });
     if (acerto) setAciertos((n) => n + 1);
-    if (i + 1 < preguntas.length) {
-      setI(i + 1); setEntrada(""); setFase("responder");
+
+    const avanzar = () => {
+      setVeredicto(null);
+      if (i + 1 < preguntas.length) {
+        setI(i + 1); setEntrada(""); setFase("responder");
+      } else {
+        setTerminado(true);
+      }
+    };
+
+    // 220 ms: lo justo para que el destello se vea como respuesta al toque y
+    // no como una espera. En un simulacro de 80 preguntas este gesto se repite
+    // 80 veces, así que cualquier cosa más larga acaba estorbando.
+    if (reduceMovimiento()) {
+      avanzar();
     } else {
-      setTerminado(true);
+      setVeredicto(acerto ? "acierto" : "fallo");
+      setTimeout(avanzar, 220);
     }
   };
 
@@ -233,7 +249,19 @@ function Test({ area, banco, onSalir, onRepasar, onProgreso }) {
       <div className="flex items-center justify-between mb-2">
         <span className="text-sm text-ink-soft">Pregunta {i + 1} / {preguntas.length}</span>
         {!esSimulacro && (
-          <span className="tipo-display text-xs" style={{ color: "var(--text-ok)" }}>✓ {aciertos}</span>
+          /* El salto pertenece a "acertaste", no a "el número cambió": se ata
+             al veredicto y no a la `key`, para que un fallo no lo dispare.
+             La `key` sigue haciendo falta para reiniciar la animación cuando
+             se encadenan dos aciertos seguidos. */
+          <span
+            key={aciertos}
+            className={`tipo-display text-xs inline-block ${
+              veredicto === "acierto" ? "contador-sube" : ""
+            }`}
+            style={{ color: "var(--text-ok)" }}
+          >
+            ✓ {aciertos}
+          </span>
         )}
       </div>
       <div className="w-full h-1.5 rounded-full mb-4 bg-raised">
@@ -243,7 +271,15 @@ function Test({ area, banco, onSalir, onRepasar, onProgreso }) {
         />
       </div>
 
-      <div className="rounded-card border border-rule bg-surface p-5">
+      {/* `key` en el índice: al cambiar de pregunta la tarjeta se remonta y
+          vuelve a entrar, en vez de que el texto se sustituya de golpe. */}
+      <div
+        key={i}
+        className={`rounded-card border border-rule bg-surface p-5 ${
+          veredicto ? `veredicto-${veredicto}` : ""
+        }`}
+        style={{ animation: veredicto ? undefined : "fadeIn .18s ease-out" }}
+      >
         <span className="tipo-display inline-flex items-center gap-1.5 text-[12px] px-2.5 py-1.5 rounded-full bg-raised" style={{ color: areaPregunta.texto }}>
           {Icono && <Icono className="w-3.5 h-3.5" />}
           {areaPregunta.nombre}
@@ -406,7 +442,10 @@ function Inicio({ irAModulo, irATest, irASimulacro, progreso, onProgreso }) {
    APP (router de estado, sin librerías)
    ============================================================ */
 export default function App() {
-  const [vista, setVista] = useState({ tipo: "inicio" });
+  // `direccion` no describe la vista, describe cómo se llegó a ella: entrar en
+  // un módulo empuja hacia dentro y volver hacia fuera, para que el movimiento
+  // diga dónde estás.
+  const [vista, setVista] = useState({ tipo: "inicio", direccion: "dentro" });
   const [banco, setBanco] = useState(null);
   const [progreso, setProgreso] = useState(leerProgreso);
 
@@ -414,7 +453,7 @@ export default function App() {
     cargarBanco().then(setBanco);
   }, []);
 
-  const volver = () => setVista({ tipo: "inicio" });
+  const volver = () => setVista({ tipo: "inicio", direccion: "fuera" });
 
   // El ancho lo decide el shell, no cada módulo: solo Geografía necesita más.
   // Va como estilo inline (no clase) porque es un valor dirigido por datos.
@@ -451,13 +490,20 @@ export default function App() {
           <BotonTema />
         </div>
 
+        {/* Un solo contenedor con `key` por vista: al cambiar se remonta y
+            corre la animación de entrada, en la dirección con la que se llegó.
+            Sin el key React reutilizaría el nodo y no habría nada que animar. */}
+        <div
+          key={vista.tipo + (vista.area || "")}
+          className={vista.direccion === "fuera" ? "vista-fuera" : "vista-dentro"}
+        >
         {vista.tipo === "inicio" && (
           <Inicio
             progreso={progreso}
             onProgreso={setProgreso}
-            irAModulo={(k) => setVista({ tipo: "modulo", area: k })}
-            irATest={(k) => setVista({ tipo: "test", area: k })}
-            irASimulacro={(k) => setVista({ tipo: "test", area: k })}
+            irAModulo={(k) => setVista({ tipo: "modulo", area: k, direccion: "dentro" })}
+            irATest={(k) => setVista({ tipo: "test", area: k, direccion: "dentro" })}
+            irASimulacro={(k) => setVista({ tipo: "test", area: k, direccion: "dentro" })}
           />
         )}
 
@@ -472,7 +518,7 @@ export default function App() {
                 </span>
                 <h1 className="tipo-display text-xl text-ink">{m.nombre}</h1>
                 <button
-                  onClick={() => setVista({ tipo: "test", area: m.key })}
+                  onClick={() => setVista({ tipo: "test", area: m.key, direccion: "dentro" })}
                   className="tipo-display ml-auto text-[12px] min-h-[44px] px-4 rounded-full"
                   style={{ backgroundColor: m.color, color: m.sobre }}
                 >
@@ -489,10 +535,11 @@ export default function App() {
             area={vista.area}
             banco={banco}
             onSalir={volver}
-            onRepasar={(k) => setVista({ tipo: "modulo", area: k })}
+            onRepasar={(k) => setVista({ tipo: "modulo", area: k, direccion: "dentro" })}
             onProgreso={setProgreso}
           />
         )}
+        </div>
       </div>
     </div>
   );

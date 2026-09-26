@@ -371,6 +371,79 @@ h3.tipo-display {
   to   { opacity: 1; transform: translateY(0); }
 }
 
+/* ============================================================
+   MOVIMIENTO
+   ------------------------------------------------------------
+   Tres reglas para toda la app:
+
+   1. Corto. Esto es una app de estudio: los mismos gestos se
+      repiten 80 veces en un simulacro. Lo que la primera vez
+      resulta agradable, a la vigésima estorba. Nada pasa de
+      220 ms salvo el anillo de resultados, que se ve una vez.
+   2. Con dirección. Entrar en un módulo empuja hacia dentro;
+      volver, hacia fuera. El movimiento dice dónde estás.
+   3. Nunca bloquea. Ninguna animación retiene al usuario
+      esperando: o acompaña un cambio que ya ocurrió, o se
+      solapa con él.
+
+   El bloque de prefers-reduced-motion del final las desactiva
+   todas de golpe.
+   ============================================================ */
+
+/* --- navegación entre vistas --- */
+@keyframes entraDentro {
+  from { opacity: 0; transform: translateX(14px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes entraFuera {
+  from { opacity: 0; transform: translateX(-14px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.vista-dentro { animation: entraDentro 0.2s cubic-bezier(0.22, 0.61, 0.36, 1); }
+.vista-fuera  { animation: entraFuera  0.2s cubic-bezier(0.22, 0.61, 0.36, 1); }
+
+/* --- veredicto de una respuesta --- */
+/* El destello sustituye a la espera: en vez de retener al usuario para que
+   "vea" el resultado, la tarjeta se tiñe mientras ya está saliendo. */
+@keyframes destelloAcierto {
+  0%   { box-shadow: 0 0 0 0 var(--text-ok); }
+  35%  { box-shadow: 0 0 0 3px var(--text-ok); }
+  100% { box-shadow: 0 0 0 0 rgb(0 0 0 / 0); }
+}
+@keyframes destelloFallo {
+  0%   { box-shadow: 0 0 0 0 var(--text-danger); }
+  35%  { box-shadow: 0 0 0 3px var(--text-danger); }
+  100% { box-shadow: 0 0 0 0 rgb(0 0 0 / 0); }
+}
+
+.veredicto-acierto { animation: destelloAcierto 0.42s ease-out; }
+.veredicto-fallo   { animation: destelloFallo   0.42s ease-out; }
+
+/* El contador de aciertos da un salto al subir: es la única señal de
+   progreso visible durante el test. */
+@keyframes saltoContador {
+  0%   { transform: scale(1); }
+  45%  { transform: scale(1.32); }
+  100% { transform: scale(1); }
+}
+.contador-sube { animation: saltoContador 0.34s cubic-bezier(0.34, 1.56, 0.64, 1); }
+
+/* --- desplegar una tarjeta --- */
+/* 0fr → 1fr anima hacia alto automático sin medir nada en JS. El hijo
+   necesita overflow hidden para que el contenido se recorte al cerrarse. */
+.desplegable {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.24s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.desplegable[data-abierto="true"] {
+  grid-template-rows: 1fr;
+}
+.desplegable > * {
+  overflow: hidden;
+}
+
 :focus-visible {
   outline: 2px solid var(--cta);
   outline-offset: 2px;

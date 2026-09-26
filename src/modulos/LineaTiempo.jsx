@@ -361,16 +361,18 @@ function EventoCard({ ev, expanded, onToggle, index }) {
         <h3 className="tipo-display text-[14px] text-ink leading-snug">{ev.titulo}</h3>
         <p className="text-sm text-ink-soft mt-0.5 leading-snug">{ev.resumen}</p>
 
-        {expanded && (
-          <div className="mt-3 pt-3 border-t border-rule">
-            <p className="text-sm text-ink leading-relaxed">{ev.detalle}</p>
-            {ev.destacado && (
-              <div className="mt-2.5 rounded-lg px-3 py-2 text-sm flex gap-2 bg-raised text-ink border-l-2" style={{ borderColor: ACENTO }}>
-                <span aria-hidden="true">📌</span><span>{ev.destacado}</span>
-              </div>
-            )}
+        <div className="desplegable" data-abierto={expanded}>
+          <div>
+            <div className="mt-3 pt-3 border-t border-rule" inert={expanded ? undefined : ""}>
+              <p className="text-sm text-ink leading-relaxed">{ev.detalle}</p>
+              {ev.destacado && (
+                <div className="mt-2.5 rounded-lg px-3 py-2 text-sm flex gap-2 bg-raised text-ink border-l-2" style={{ borderColor: ACENTO }}>
+                  <span aria-hidden="true">📌</span><span>{ev.destacado}</span>
+                </div>
+              )}
+            </div>
           </div>
-        )}
+        </div>
         <p className="tipo-display text-[12px] mt-2" style={{ color: ACENTO }}>
           {expanded ? "Ocultar ▲" : "Ver más ▼"}
         </p>

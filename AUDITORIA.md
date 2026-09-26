@@ -382,10 +382,50 @@ panel naranja del Simulacro.
 
 ### Siguiente paso
 
-Despliegue en Vercel. El proyecto no tiene remoto git, así que pide primero crear el
-repo y subir la rama (o fusionarla a `master`).
+Desplegar en Vercel importando el repo. No hace falta ninguna variable de entorno.
 
 La integración de pagos con Wompi queda **descartada**: la app va a ser gratuita entera,
 sin tier premium. Eso simplifica el despliegue —no hay backend, ni claves, ni webhooks—
 y refuerza las decisiones ya tomadas: sin cuentas, sin datos personales y con todo el
 contenido y las imágenes servidos como estáticos.
+
+---
+
+## Estado al 26 de septiembre de 2026
+
+El trabajo vive ya en `main`, en
+https://github.com/javierochoabreijo-dev/colombiatest (público). La rama
+`feat/datos-imagenes-layout` se fusionó por avance rápido y se borró; `master` se renombró
+a `main`, porque era la convención que asumen GitHub y Vercel y estaba 20 commits por
+detrás.
+
+### Lo que cerró desde el 25
+
+- **Animaciones**: veredicto de respuesta (destello de 220 ms que sustituye a la espera,
+  no la añade), transiciones de vista con dirección, y tarjetas que despliegan con
+  `grid-template-rows` 0fr → 1fr.
+- **Cero dependencias externas**: la tipografía sigue el camino de las imágenes y se
+  sirve con la app. Ya no hay ni una petición a un tercero.
+- **El progreso se fundió en las tarjetas** (opción C del lienzo). El panel repetía en
+  cada fila los mismos botones que la tarjeta de debajo; el progreso no era una sección,
+  era un atributo de cada área. El aviso de privacidad y el borrado se mudaron al pie.
+- **Escudo nacional** por el render oficial de Commons, en dominio público.
+- **La guía oficial** enlazada desde el pie de las cinco vistas, avisando de sus 61 MB.
+
+### Limpieza de repositorio
+
+`PROMPT_CLAUDE_CODE.md` se eliminó: era el prompt de arranque de agosto y describía un
+estado que ya no existe, con una "primera tarea" resuelta el mismo mes. En un repo
+público desorientaba a quien llegara.
+
+El README se reescribió: decía 38 eventos (son 44), no mencionaba `components/`, `lib/`
+ni `assets/`, daba por pendiente el cableado de `cargarBanco()` y no explicaba qué guarda
+la app en el navegador.
+
+Supabase se queda. Sin variables de entorno, Vite evalúa la condición en tiempo de
+compilación, descarta la rama muerta y elimina el import: cero ocurrencias del SDK en
+`dist`. Es una salida de emergencia que no cuesta nada.
+
+### Lo único abierto
+
+Importar el repo en Vercel. Todo lo demás está hecho.

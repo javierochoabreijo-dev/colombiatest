@@ -1,7 +1,7 @@
 import React, { useState, useRef, useLayoutEffect } from "react";
 import ImagenAtribuida from "../components/ImagenAtribuida";
 import { FAUNA_IMAGENES } from "../data/faunaImagenes";
-import { urlAncho } from "../lib/imagenes";
+import { miniaturaLocal } from "../lib/imagenes";
 
 /* ============================================================
    DATOS — extraídos y resumidos de la Guía Cancillería (cap. Geografía)
@@ -477,6 +477,7 @@ function DetailPanel({ regionKey, onClose }) {
                 <div className="grid grid-cols-3 gap-2">
                   {cat.items.map((sp) => {
                     const img = FAUNA_IMAGENES[sp.nombre];
+                    const mini = miniaturaLocal(img);
                     const Wrapper = img ? "button" : "div";
                     return (
                       <Wrapper
@@ -484,15 +485,20 @@ function DetailPanel({ regionKey, onClose }) {
                         onClick={img ? () => setEspecieAbierta(sp.nombre) : undefined}
                         className="rounded-card p-2 flex flex-col items-center text-center gap-1 bg-raised transition-transform active:scale-95"
                       >
-                        {img ? (
+                        {mini ? (
+                          /* Si la miniatura fallara, se cae al icono en vez de
+                             dejar el hueco roto del navegador. */
                           <img
-                            src={urlAncho(img.url, 96)}
+                            src={mini}
                             alt={sp.nombre}
                             loading="lazy"
                             decoding="async"
                             width="36"
                             height="36"
                             className="w-9 h-9 rounded-full object-cover border border-rule"
+                            onError={(e) => { e.currentTarget.replaceWith(
+                              Object.assign(document.createElement("span"),
+                                { className: "text-2xl leading-none", textContent: sp.icono })); }}
                           />
                         ) : (
                           <span className="text-2xl leading-none">{sp.icono}</span>

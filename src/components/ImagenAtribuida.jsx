@@ -12,12 +12,16 @@ export default function ImagenAtribuida({ imagen, alt, className = "", ancho = 6
 
   return (
     <figure className={className}>
+      {/* Esta sí sale a Commons: se abre de una en una. Si no llega, la
+          figura entera se oculta y queda la ficha sin foto, en vez del
+          hueco roto del navegador. */}
       <img
         src={urlAncho(url, ancho)}
         alt={alt}
         loading="lazy"
         decoding="async"
         className="w-full max-h-56 object-cover rounded-lg border border-rule"
+        onError={(e) => { const f = e.currentTarget.closest("figure"); if (f) f.style.display = "none"; }}
       />
       <figcaption className="text-[10px] text-ink-soft mt-1 leading-snug">
         {autor && `Foto: ${autor}`}

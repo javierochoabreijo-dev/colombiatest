@@ -603,6 +603,21 @@ export default function App() {
           />
         )}
         </div>
+
+        {/* Firma: va en el shell, no en cada vista, para que aparezca en todas
+            (inicio, módulos y tests). El enlace sale de la app a un sitio de
+            terceros, así que se abre en pestaña nueva y sin opener. */}
+        <footer className="text-center text-xs text-ink-soft mt-6">
+          Creado con <span role="img" aria-label="robot">🤖</span> por{" "}
+          <a
+            href="https://javifinance.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center min-h-[44px] underline underline-offset-2 hover:text-ink transition-colors"
+          >
+            JaviFinance
+          </a>
+        </footer>
       </div>
     </div>
   );

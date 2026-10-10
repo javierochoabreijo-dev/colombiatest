@@ -17,12 +17,33 @@ function vacio() {
   return {};
 }
 
+/* Lo que hay en localStorage no es de fiar: lo pudo escribir una versión
+   anterior, el usuario con las herramientas de desarrollo o un fallo a medias.
+   Cada entrada tiene que ser {pct, ok, total} numéricos y coherentes; las que no
+   lo sean se descartan en silencio, porque pintarlas daba "NaN %" y "/". */
+const esNumero = (n) => typeof n === "number" && Number.isFinite(n);
+
+function limpiar(datos) {
+  const limpio = {};
+  for (const [area, p] of Object.entries(datos)) {
+    if (!p || typeof p !== "object") continue;
+    const { pct, ok, total, fecha } = p;
+    if (!esNumero(pct) || !esNumero(ok) || !esNumero(total)) continue;
+    if (pct < 0 || pct > 100 || total <= 0 || ok < 0 || ok > total) continue;
+    // sin fecha válida se omite la clave: haceCuanto(undefined) devuelve null
+    limpio[area] = typeof fecha !== "string" || Number.isNaN(new Date(fecha).getTime())
+      ? { pct, ok, total }
+      : { pct, ok, total, fecha };
+  }
+  return limpio;
+}
+
 export function leerProgreso() {
   try {
     const crudo = localStorage.getItem(CLAVE);
     if (!crudo) return vacio();
     const datos = JSON.parse(crudo);
-    return datos && typeof datos === "object" ? datos : vacio();
+    return datos && typeof datos === "object" ? limpiar(datos) : vacio();
   } catch (e) {
     // modo privado, almacenamiento bloqueado o JSON corrupto
     return vacio();

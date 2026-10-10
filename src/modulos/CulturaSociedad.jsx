@@ -479,7 +479,7 @@ function Flashcards({ onSalir }) {
               className="tipo-display min-h-[44px] px-4 rounded-full text-[12.5px]"
               style={{ backgroundColor: "var(--danger)", color: "var(--on-danger)" }}
             >
-              Repasar solo las {falladas.length} falladas
+              {falladas.length === 1 ? "Repasar la fallada" : `Repasar las ${falladas.length} falladas`}
             </button>
           )}
           <button

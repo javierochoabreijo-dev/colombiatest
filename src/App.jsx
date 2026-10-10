@@ -390,7 +390,9 @@ function Inicio({ irAModulo, irATest, irASimulacro, progreso, onProgreso }) {
           </p>
         )}
       </div>
-      <div className="grid grid-cols-2 gap-3 mb-6">
+      {/* Una columna por debajo de 360 px: a 320 la mitad de la tarjeta no da
+          para "Estudiar" + "Test" y el texto del botón se cortaba. */}
+      <div className="grid grid-cols-1 min-[360px]:grid-cols-2 gap-3 mb-6">
         {MODULOS.map((m, i) => {
           const Icono = ICONOS_AREA[m.key];
           const p = progreso[m.key];
@@ -436,10 +438,10 @@ function Inicio({ irAModulo, irATest, irASimulacro, progreso, onProgreso }) {
                   un barrido de brillo al pasar por encima. Ver .boton-brillo
                   y .boton-relleno en index.css. */}
               <div className="flex gap-1.5">
-                <BotonRelleno area={m} className="flex-1 px-3" onClick={() => irAModulo(m.key)}>
+                <BotonRelleno area={m} className="flex-1 px-2.5" onClick={() => irAModulo(m.key)}>
                   Estudiar
                 </BotonRelleno>
-                <BotonFantasma area={m} className="min-w-[44px] px-4" onClick={() => irATest(m.key)}>
+                <BotonFantasma area={m} className="min-w-[44px] px-3" onClick={() => irATest(m.key)}>
                   Test
                 </BotonFantasma>
               </div>

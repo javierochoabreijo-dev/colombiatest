@@ -20,7 +20,7 @@ import React from "react";
    ============================================================ */
 
 const base =
-  "boton-brillo tipo-display inline-flex items-center justify-center rounded-full text-[12.5px] min-h-[44px]";
+  "boton-brillo tipo-display inline-flex items-center justify-center whitespace-nowrap rounded-full text-[12.5px] min-h-[44px]";
 
 function Boton({ area, variante, className = "", ...props }) {
   return (

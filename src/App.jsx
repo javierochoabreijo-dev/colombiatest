@@ -176,7 +176,7 @@ function Test({ area, banco, onSalir, onRepasar, onProgreso }) {
             </p>
 
             <div className="flex flex-col gap-2">
-              {filas.map(({ area: m, r }) => {
+              {filas.map(({ area: m, r }, idx) => {
                 const Icono = ICONOS_AREA[m.key];
                 const falladas = r.total - r.ok;
                 const perfecta = falladas === 0;
@@ -185,7 +185,11 @@ function Test({ area, banco, onSalir, onRepasar, onProgreso }) {
                   <div
                     key={m.key}
                     className="rounded-xl border border-rule bg-surface px-3.5 py-3 flex items-center gap-3"
-                    style={floja ? { borderLeft: `3px solid ${m.color}` } : undefined}
+                    style={{
+                      ...(floja ? { borderLeft: `3px solid ${m.color}` } : null),
+                      // cascada corta: 4 filas como mucho, 40 ms entre ellas
+                      animation: `filaEntra 200ms cubic-bezier(0.22, 0.61, 0.36, 1) ${Math.min(idx, 3) * 40}ms both`,
+                    }}
                   >
                     <span className="shrink-0 flex items-center" style={{ color: perfecta ? "var(--text-ok)" : m.texto }}>
                       {perfecta ? (

@@ -478,6 +478,12 @@ h3.tipo-display {
 .vista-dentro { animation: entraDentro 0.2s cubic-bezier(0.22, 0.61, 0.36, 1); }
 .vista-fuera  { animation: entraFuera  0.2s cubic-bezier(0.22, 0.61, 0.36, 1); }
 
+/* --- resultados: las filas de "Qué repasar" entran en cascada --- */
+@keyframes filaEntra {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
 /* --- veredicto de una respuesta --- */
 /* El destello sustituye a la espera: en vez de retener al usuario para que
    "vea" el resultado, la tarjeta se tiñe mientras ya está saliendo. */
@@ -529,5 +535,8 @@ h3.tipo-display {
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
+    /* sin esto un retraso escalonado seguiría dejando el elemento oculto */
+    animation-delay: 0ms !important;
+    transition-delay: 0ms !important;
   }
 }

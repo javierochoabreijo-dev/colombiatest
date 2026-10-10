@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import Pill, { BarraPills } from "../components/Pill";
 import EnlaceGuia from "../components/EnlaceGuia";
+import { reduceMovimiento } from "../lib/util";
 
 /* Historia: el módulo entero se identifica con el color de su área. */
 const ACENTO = "var(--text-his)";
@@ -312,14 +313,18 @@ const EVENTOS = [
    ============================================================ */
 function EventoCard({ ev, expanded, onToggle, index }) {
   const ref = useRef(null);
-  const [visible, setVisible] = useState(false);
+  // Con movimiento reducido las tarjetas nacen visibles: sin recorrido y sin
+  // esperas (el retraso inline no lo anula la regla global de reduced-motion).
+  const [visible, setVisible] = useState(reduceMovimiento);
 
   useEffect(() => {
     const el = ref.current;
-    if (!el) return;
+    if (!el || visible) return;
     const obs = new IntersectionObserver(
       ([entry]) => { if (entry.isIntersecting) { setVisible(true); obs.disconnect(); } },
-      { threshold: 0.15 }
+      // el margen inferior arranca el reveal un poco antes de entrar en
+      // pantalla: con scroll rápido no se ven huecos en blanco
+      { threshold: 0.15, rootMargin: "0px 0px 10% 0px" }
     );
     obs.observe(el);
     return () => obs.disconnect();
@@ -331,8 +336,11 @@ function EventoCard({ ev, expanded, onToggle, index }) {
       className="relative pl-12 pb-6"
       style={{
         opacity: visible ? 1 : 0,
-        transform: visible ? "translateY(0)" : "translateY(16px)",
-        transition: `opacity .5s ease-out ${index * 0.03}s, transform .5s ease-out ${index * 0.03}s`,
+        transform: visible ? "translateY(0)" : "translateY(8px)",
+        // El escalonado es solo para las primeras tarjetas de la pantalla
+        // (máx. 160 ms). Antes crecía con el índice: la 40.ª tardaba ~1,2 s
+        // en aparecer aunque ya estuvieras mirándola.
+        transition: `opacity 280ms cubic-bezier(0.22, 0.61, 0.36, 1) ${Math.min(index, 4) * 40}ms, transform 280ms cubic-bezier(0.22, 0.61, 0.36, 1) ${Math.min(index, 4) * 40}ms`,
       }}
     >
       {/* punto sobre la línea */}

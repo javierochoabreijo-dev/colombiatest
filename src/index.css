@@ -99,6 +99,10 @@
   --weave-a: #F5EFE6;
   --weave-b: #17120E;
 
+  /* Una sola curva de salida para toda la app. Antes estaba escrita a mano
+     en cada sitio; así hay un único lugar donde ajustarla. */
+  --ease-out: cubic-bezier(0.22, 0.61, 0.36, 1);
+
   color-scheme: dark;
 }
 
@@ -351,7 +355,7 @@ h3.tipo-display {
     transparent 60%
   );
   transform: translateX(-130%);
-  transition: transform 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
+  transition: transform 0.3s var(--ease-out);
 }
 
 .boton-brillo:focus-visible::after {
@@ -362,23 +366,6 @@ h3.tipo-display {
   .boton-brillo:hover::after {
     transform: translateX(130%);
   }
-}
-
-/* En móvil no hay hover, así que el barrido también se lanza al aparecer
-   la pantalla y al pulsar. Sin fill-mode a propósito: al acabar vuelve al
-   reposo del bloque de arriba (fuera de cuadro por la izquierda) y el
-   :hover de escritorio sigue funcionando. */
-@keyframes barrido {
-  from { transform: translateX(-130%); }
-  to   { transform: translateX(130%); }
-}
-
-.boton-brillo.brillo-entrada::after {
-  animation: barrido 0.75s cubic-bezier(0.22, 0.61, 0.36, 1) var(--retardo, 0s);
-}
-
-.boton-brillo.brillo-pulsado::after {
-  animation: barrido 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
 .boton-brillo:active {
@@ -475,8 +462,23 @@ h3.tipo-display {
   to   { opacity: 1; transform: translateX(0); }
 }
 
-.vista-dentro { animation: entraDentro 0.2s cubic-bezier(0.22, 0.61, 0.36, 1); }
-.vista-fuera  { animation: entraFuera  0.2s cubic-bezier(0.22, 0.61, 0.36, 1); }
+.vista-dentro { animation: entraDentro 0.2s var(--ease-out); }
+.vista-fuera  { animation: entraFuera  0.2s var(--ease-out); }
+
+/* --- velo del modal: el fondo oscuro también aparece con fundido --- */
+@keyframes velo {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* --- mapa: callout y puntos. Viven aquí (no en el <style> del componente)
+       para que reduced-motion pueda redefinirlos. --- */
+@keyframes drawCallout { to { stroke-dashoffset: 0; } }
+/* nunca desde scale(0): un punto con tamaño ya parece existir */
+@keyframes popDot {
+  from { transform: scale(0.6); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
 
 /* --- resultados: las filas de "Qué repasar" entran en cascada --- */
 @keyframes filaEntra {
@@ -505,10 +507,10 @@ h3.tipo-display {
    progreso visible durante el test. */
 @keyframes saltoContador {
   0%   { transform: scale(1); }
-  45%  { transform: scale(1.32); }
+  45%  { transform: scale(1.12); }
   100% { transform: scale(1); }
 }
-.contador-sube { animation: saltoContador 0.34s cubic-bezier(0.34, 1.56, 0.64, 1); }
+.contador-sube { animation: saltoContador 0.2s var(--ease-out); }
 
 /* --- desplegar una tarjeta --- */
 /* 0fr → 1fr anima hacia alto automático sin medir nada en JS. El hijo
@@ -516,7 +518,7 @@ h3.tipo-display {
 .desplegable {
   display: grid;
   grid-template-rows: 0fr;
-  transition: grid-template-rows 0.24s cubic-bezier(0.22, 0.61, 0.36, 1);
+  transition: grid-template-rows 0.24s var(--ease-out);
 }
 .desplegable[data-abierto="true"] {
   grid-template-rows: 1fr;
@@ -530,13 +532,30 @@ h3.tipo-display {
   outline-offset: 2px;
 }
 
+/* ------------------------------------------------------------
+   Movimiento reducido = menos y más suave, no cero. Se quitan los
+   desplazamientos y las escalas, y se conservan los fundidos de opacidad
+   y de color, que ayudan a entender que algo cambió.
+   ------------------------------------------------------------ */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
-    transition-duration: 0.01ms !important;
-    animation-duration: 0.01ms !important;
+    /* las transiciones de posición, tamaño o trazo pasan a ser instantáneas;
+       las de opacidad y color siguen con su duración */
+    transition-property: opacity, color, background-color, border-color, box-shadow !important;
     animation-iteration-count: 1 !important;
     /* sin esto un retraso escalonado seguiría dejando el elemento oculto */
     animation-delay: 0ms !important;
     transition-delay: 0ms !important;
   }
+
+  /* mismas animaciones, solo fundido */
+  @keyframes fadeIn      { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes entraDentro { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes entraFuera  { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes filaEntra   { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes popDot      { from { opacity: 0; } to { opacity: 1; } }
+
+  .contador-sube { animation: none; }
+  /* el trazo del callout aparece ya dibujado */
+  svg line[stroke-dasharray] { animation-duration: 0.01ms !important; }
 }

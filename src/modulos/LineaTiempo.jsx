@@ -340,7 +340,7 @@ function EventoCard({ ev, expanded, onToggle, index }) {
         // El escalonado es solo para las primeras tarjetas de la pantalla
         // (máx. 160 ms). Antes crecía con el índice: la 40.ª tardaba ~1,2 s
         // en aparecer aunque ya estuvieras mirándola.
-        transition: `opacity 280ms cubic-bezier(0.22, 0.61, 0.36, 1) ${Math.min(index, 4) * 40}ms, transform 280ms cubic-bezier(0.22, 0.61, 0.36, 1) ${Math.min(index, 4) * 40}ms`,
+        transition: `opacity 280ms var(--ease-out) ${Math.min(index, 4) * 40}ms, transform 280ms var(--ease-out) ${Math.min(index, 4) * 40}ms`,
       }}
     >
       {/* punto sobre la línea */}
@@ -355,8 +355,13 @@ function EventoCard({ ev, expanded, onToggle, index }) {
       <button
         onClick={onToggle}
         aria-expanded={expanded}
-        className="w-full text-left rounded-card border bg-surface px-4 py-3 transition-all hover:shadow-md active:scale-[.99]"
-        style={{ borderColor: expanded ? ACENTO : "var(--rule)", borderWidth: expanded ? 2 : 1 }}
+        className="w-full text-left rounded-card border bg-surface px-4 py-3 transition-[transform,box-shadow,border-color] duration-[160ms] hover:shadow-md active:scale-[.99]"
+        // anillo con box-shadow en vez de pasar el borde de 1 a 2 px: el
+        // grosor del borde mueve el contenido 1 px en cada apertura
+        style={{
+          borderColor: expanded ? ACENTO : "var(--rule)",
+          boxShadow: expanded ? `0 0 0 1px ${ACENTO}` : undefined,
+        }}
       >
         <div className="flex items-center gap-2 mb-1">
           <span

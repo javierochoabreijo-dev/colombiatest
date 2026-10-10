@@ -18,8 +18,13 @@ export default function TarjetaExpandible({ item, acento, cabecera, children }) 
     <button
       onClick={() => setAbierto(!abierto)}
       aria-expanded={abierto}
-      className="w-full text-left rounded-card border bg-surface px-4 py-3 transition-all hover:shadow-md active:scale-[.99]"
-      style={{ borderColor: abierto ? acento : "var(--rule)", borderWidth: abierto ? 2 : 1 }}
+      className="w-full text-left rounded-card border bg-surface px-4 py-3 transition-[transform,box-shadow,border-color] duration-[160ms] hover:shadow-md active:scale-[.99]"
+      // anillo con box-shadow en vez de pasar el borde de 1 a 2 px: el
+      // grosor del borde mueve el contenido 1 px en cada apertura
+      style={{
+        borderColor: abierto ? acento : "var(--rule)",
+        boxShadow: abierto ? `0 0 0 1px ${acento}` : undefined,
+      }}
     >
       <div className="flex items-center gap-2.5">
         <span className="text-2xl">{item.icono}</span>
@@ -36,7 +41,7 @@ export default function TarjetaExpandible({ item, acento, cabecera, children }) 
             aria-hidden="true"
             style={{
               transform: abierto ? "rotate(180deg)" : "rotate(0deg)",
-              transition: "transform .22s cubic-bezier(.22,.61,.36,1)",
+              transition: "transform .22s var(--ease-out)",
             }}
           >
             <path d="M6 9 L12 15 L18 9" />

@@ -231,7 +231,7 @@ function DiagramaRamas({ ramaActiva, setRamaActiva }) {
               key={r.key}
               onClick={() => setRamaActiva(activa ? null : r.key)}
               aria-pressed={activa}
-              className="rounded-card p-3 min-h-[44px] text-center transition-all active:scale-95 border-[1.5px]"
+              className="rounded-card p-3 min-h-[44px] text-center transition-[transform,background-color,border-color,color] duration-[160ms] active:scale-[.97] border-[1.5px]"
               style={{
                 backgroundColor: activa ? RELLENO : "transparent",
                 borderColor: activa ? RELLENO : "var(--rule)",

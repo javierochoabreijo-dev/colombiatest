@@ -271,9 +271,9 @@ function CalloutLine({ dept, color }) {
         style={{ animation: "drawCallout .45s ease-out forwards" }}
       />
       <circle cx={cx} cy={cy} r="7" fill={color} stroke="var(--ground)" strokeWidth="2.5"
-        style={{ animation: "popDot .3s ease-out .1s backwards" }} />
+        style={{ animation: "popDot .3s var(--ease-out) .1s backwards" }} />
       <circle cx={lx} cy={ly} r="7" fill={color} stroke="var(--ground)" strokeWidth="2.5"
-        style={{ animation: "popDot .3s ease-out .35s backwards" }} />
+        style={{ animation: "popDot .3s var(--ease-out) .35s backwards" }} />
       <g style={{ animation: "fadeIn .3s ease-out .35s backwards" }}>
         <rect x={boxX} y={ly - 36} width={boxWidth} height="58" rx="12" fill="var(--surface)" stroke={color} strokeWidth="2" strokeOpacity="0.75" />
         <text ref={titleRef} x={lx + labelPad} y={ly - 10} textAnchor={anchor} fontSize="25" fontWeight="700" fill="var(--ink)">
@@ -291,8 +291,6 @@ function ColombiaMap({ selected, hovered, pinnedDept, onSelect, onHover }) {
   return (
     <svg viewBox="-150 -75 860 910" className="w-full h-full max-h-[620px] overflow-visible" role="img" aria-label="Mapa de las regiones de Colombia">
       <style>{`
-        @keyframes drawCallout { to { stroke-dashoffset: 0; } }
-        @keyframes popDot { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
         circle { transform-box: fill-box; transform-origin: center; }
         path:focus, g:focus { outline: none; }
       `}</style>
@@ -458,7 +456,7 @@ function DetailPanel({ regionKey, onClose }) {
             {r.flora.map((it) => (
               <div
                 key={it.nombre}
-                className="rounded-card p-3 flex flex-col items-center text-center gap-1 bg-raised transition-transform active:scale-95"
+                className="rounded-card p-3 flex flex-col items-center text-center gap-1 bg-raised transition-transform duration-[160ms] active:scale-[.98]"
               >
                 <span className="text-3xl leading-none">{it.icono}</span>
                 <p className="tipo-display text-[12px] text-ink leading-tight">{it.nombre}</p>
@@ -484,7 +482,7 @@ function DetailPanel({ regionKey, onClose }) {
                       <Wrapper
                         key={sp.nombre}
                         onClick={img ? () => setEspecieAbierta(sp.nombre) : undefined}
-                        className="rounded-card p-2 flex flex-col items-center text-center gap-1 bg-raised transition-transform active:scale-95"
+                        className="rounded-card p-2 flex flex-col items-center text-center gap-1 bg-raised transition-transform duration-[160ms] active:scale-[.98]"
                       >
                         {mini ? (
                           /* Si la miniatura fallara, se cae al icono en vez de
@@ -522,7 +520,7 @@ function DetailPanel({ regionKey, onClose }) {
     {especieAbierta && FAUNA_IMAGENES[especieAbierta] && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center p-4"
-          style={{ backgroundColor: "var(--overlay)" }}
+          style={{ backgroundColor: "var(--overlay)", animation: "velo 200ms var(--ease-out)" }}
           onClick={() => setEspecieAbierta(null)}
         >
           <div

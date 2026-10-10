@@ -508,16 +508,21 @@ function Flashcards({ onSalir }) {
         <span className="tipo-display text-xs" style={{ color: "var(--text-ok)" }}>✓ {aciertos}</span>
       </div>
       {/* barra de progreso */}
-      <div className="w-full h-1.5 rounded-full mb-4 bg-raised">
+      <div className="w-full h-1.5 rounded-full mb-4 bg-raised overflow-hidden">
         <div
-          className="h-1.5 rounded-full transition-all"
-          style={{ width: `${(i / mazo.length) * 100}%`, backgroundColor: "var(--cta)" }}
+          className="h-1.5 w-full"
+          style={{
+            transform: `scaleX(${i / mazo.length})`,
+            transformOrigin: "left",
+            transition: "transform 200ms var(--ease-out)",
+            backgroundColor: "var(--cta)",
+          }}
         />
       </div>
 
       <div
         onClick={() => setRevelada(true)}
-        className="rounded-card border border-rule bg-surface px-5 py-8 min-h-[200px] flex flex-col items-center justify-center text-center cursor-pointer transition-all"
+        className="rounded-card border border-rule bg-surface px-5 py-8 min-h-[200px] flex flex-col items-center justify-center text-center cursor-pointer transition-transform duration-[160ms] active:scale-[.99]"
       >
         <span
           className="tipo-display inline-flex items-center gap-1.5 text-[12px] px-2.5 py-1.5 rounded-full mb-3 bg-raised"

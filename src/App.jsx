@@ -188,7 +188,7 @@ function Test({ area, banco, onSalir, onRepasar, onProgreso }) {
                     style={{
                       ...(floja ? { borderLeft: `3px solid ${m.color}` } : null),
                       // cascada corta: 4 filas como mucho, 40 ms entre ellas
-                      animation: `filaEntra 200ms cubic-bezier(0.22, 0.61, 0.36, 1) ${Math.min(idx, 3) * 40}ms both`,
+                      animation: `filaEntra 200ms var(--ease-out) ${Math.min(idx, 3) * 40}ms both`,
                     }}
                   >
                     <span className="shrink-0 flex items-center" style={{ color: perfecta ? "var(--text-ok)" : m.texto }}>
@@ -268,10 +268,17 @@ function Test({ area, banco, onSalir, onRepasar, onProgreso }) {
           </span>
         )}
       </div>
-      <div className="w-full h-1.5 rounded-full mb-4 bg-raised">
+      {/* scaleX en vez de width: no fuerza layout y va fluida aunque el
+          navegador esté ocupado */}
+      <div className="w-full h-1.5 rounded-full mb-4 bg-raised overflow-hidden">
         <div
-          className="h-1.5 rounded-full transition-all"
-          style={{ width: `${(i / preguntas.length) * 100}%`, backgroundColor: "var(--cta)" }}
+          className="h-1.5 w-full"
+          style={{
+            transform: `scaleX(${i / preguntas.length})`,
+            transformOrigin: "left",
+            transition: "transform 200ms var(--ease-out)",
+            backgroundColor: "var(--cta)",
+          }}
         />
       </div>
 
@@ -407,7 +414,7 @@ function Inicio({ irAModulo, irATest, irASimulacro, progreso, onProgreso }) {
                       style={{
                         width: `${p.pct}%`,
                         backgroundColor: m.color,
-                        transition: "width .5s cubic-bezier(.22,.61,.36,1)",
+                        transition: "width .5s var(--ease-out)",
                       }}
                     />
                   </div>
@@ -429,10 +436,10 @@ function Inicio({ irAModulo, irATest, irASimulacro, progreso, onProgreso }) {
                   un barrido de brillo al pasar por encima. Ver .boton-brillo
                   y .boton-relleno en index.css. */}
               <div className="flex gap-1.5">
-                <BotonRelleno area={m} entrada={0.35 + i * 0.12} className="flex-1 px-3" onClick={() => irAModulo(m.key)}>
+                <BotonRelleno area={m} className="flex-1 px-3" onClick={() => irAModulo(m.key)}>
                   Estudiar
                 </BotonRelleno>
-                <BotonFantasma area={m} entrada={0.42 + i * 0.12} className="min-w-[44px] px-4" onClick={() => irATest(m.key)}>
+                <BotonFantasma area={m} className="min-w-[44px] px-4" onClick={() => irATest(m.key)}>
                   Test
                 </BotonFantasma>
               </div>

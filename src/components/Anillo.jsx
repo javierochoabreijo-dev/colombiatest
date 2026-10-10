@@ -82,7 +82,7 @@ export default function Anillo({ pct, color, tamano = 200, grosor = 14 }) {
           strokeDasharray={circunferencia}
           strokeDashoffset={recorrido}
           transform={`rotate(-90 ${tamano / 2} ${tamano / 2})`}
-          style={{ transition: `stroke-dashoffset ${DURACION}ms cubic-bezier(.22,.61,.36,1)` }}
+          style={{ transition: `stroke-dashoffset ${DURACION}ms var(--ease-out)` }}
         />
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">

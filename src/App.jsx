@@ -501,7 +501,7 @@ export default function App() {
 
   if (!banco) {
     return (
-      <div className="min-h-screen w-full flex items-center justify-center bg-ground">
+      <div className="min-h-dvh w-full flex items-center justify-center bg-ground">
         <div className="text-center">
           <Bandera width={40} className="mx-auto" />
           <p className="text-ink-soft text-sm mt-2">Cargando banco de preguntas…</p>
@@ -511,8 +511,19 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen w-full bg-ground text-ink">
-      <div className="mx-auto px-4 py-6" style={{ maxWidth: ancho }}>
+    <div className="min-h-dvh w-full bg-ground text-ink">
+      <div
+        className="mx-auto"
+        style={{
+          maxWidth: ancho,
+          // con viewport-fit=cover la página llega bajo la muesca y la barra
+          // de inicio: el contenido se aparta de ellas, el fondo no
+          paddingTop: "max(1.5rem, env(safe-area-inset-top))",
+          paddingBottom: "max(1.5rem, env(safe-area-inset-bottom))",
+          paddingLeft: "max(1rem, env(safe-area-inset-left))",
+          paddingRight: "max(1rem, env(safe-area-inset-right))",
+        }}
+      >
 
         {/* barra superior: navegación a la izquierda, tema a la derecha */}
         <div className="flex items-center justify-between mb-4 gap-3">

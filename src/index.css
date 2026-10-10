@@ -246,6 +246,26 @@
    ============================================================ */
 html {
   background-color: var(--ground);
+  /* plataforma móvil: sin destello gris al tocar (el feedback lo dan los
+     :active), sin inflado de texto en horizontal y sin rebote de página */
+  -webkit-tap-highlight-color: transparent;
+  -webkit-text-size-adjust: 100%;
+  overscroll-behavior: none;
+}
+
+/* iOS hace zoom al enfocar un campo de menos de 16 px y no vuelve solo.
+   Va fuera de @layer a propósito: gana a utilidades como text-sm. */
+input, textarea, select {
+  font-size: 16px;
+}
+
+/* Los controles no se seleccionan al mantener pulsado ni abren el menú
+   contextual; el contenido (párrafos, respuestas) sigue siendo seleccionable. */
+button, [role="button"] {
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
 }
 
 body {
@@ -293,10 +313,12 @@ h3.tipo-display {
   color: var(--t);
 }
 
-.boton-fantasma:hover {
-  background-color: var(--f);
-  border-color: var(--f);
-  color: var(--s);
+@media (hover: hover) and (pointer: fine) {
+  .boton-fantasma:hover {
+    background-color: var(--f);
+    border-color: var(--f);
+    color: var(--s);
+  }
 }
 
 /* ------------------------------------------------------------
@@ -332,9 +354,14 @@ h3.tipo-display {
   transition: transform 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
-.boton-brillo:hover::after,
 .boton-brillo:focus-visible::after {
   transform: translateX(130%);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .boton-brillo:hover::after {
+    transform: translateX(130%);
+  }
 }
 
 /* En móvil no hay hover, así que el barrido también se lanza al aparecer
@@ -379,22 +406,26 @@ h3.tipo-display {
     0 1px 3px rgb(0 0 0 / 0.28);
 }
 
-.boton-relleno:hover {
-  filter: brightness(1.07) saturate(1.05);
-  transform: translateY(-1px);
-  box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.26),
-    inset 0 -1px 0 rgb(0 0 0 / 0.18),
-    0 6px 16px rgb(0 0 0 / 0.3);
+@media (hover: hover) and (pointer: fine) {
+  .boton-relleno:hover {
+    filter: brightness(1.07) saturate(1.05);
+    transform: translateY(-1px);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.26),
+      inset 0 -1px 0 rgb(0 0 0 / 0.18),
+      0 6px 16px rgb(0 0 0 / 0.3);
+  }
 }
 
 .boton-relleno:active {
   box-shadow: inset 0 2px 4px rgb(0 0 0 / 0.3);
 }
 
-.boton-fantasma:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 14px rgb(0 0 0 / 0.22);
+@media (hover: hover) and (pointer: fine) {
+  .boton-fantasma:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgb(0 0 0 / 0.22);
+  }
 }
 
 .boton-fantasma:active {

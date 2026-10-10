@@ -2,7 +2,11 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content" />
+    <!-- Barra de estado = color del fondo (--ground) de cada tema. Si el
+         usuario fuerza un tema con el botón, tema.js reescribe estas dos. -->
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#F2EADB" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#17120E" />
     <title>ColombiaTest · Prepárate para el examen de nacionalidad</title>
 
     <!-- Se aplica el tema ANTES del primer pintado: si esto viviera en React,
@@ -13,7 +17,13 @@
       (function () {
         try {
           var t = localStorage.getItem("vueltiao-tema");
-          if (t === "dark" || t === "light") document.documentElement.dataset.theme = t;
+          if (t === "dark" || t === "light") {
+            document.documentElement.dataset.theme = t;
+            var c = t === "light" ? "#F2EADB" : "#17120E";
+            document.querySelectorAll('meta[name="theme-color"]').forEach(function (m) {
+              m.setAttribute("content", c);
+            });
+          }
         } catch (e) {}
       })();
     </script>

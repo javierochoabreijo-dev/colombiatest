@@ -320,8 +320,8 @@ function ColombiaMap({ selected, hovered, pinnedDept, onSelect, onHover }) {
               transition: "transform 300ms ease-out, filter 300ms ease-out, fill-opacity 300ms ease-out",
             }}
             onClick={() => onSelect(dept)}
-            onMouseEnter={() => onHover(dept.region)}
-            onMouseLeave={() => onHover(null)}
+            onPointerEnter={(e) => e.pointerType === "mouse" && onHover(dept.region)}
+            onPointerLeave={(e) => e.pointerType === "mouse" && onHover(null)}
             tabIndex={0}
             onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") onSelect(dept); }}
           />
@@ -333,8 +333,8 @@ function ColombiaMap({ selected, hovered, pinnedDept, onSelect, onHover }) {
         className="cursor-pointer outline-none focus:outline-none"
         style={{ outline: "none" }}
         onClick={() => onSelect({ name: "San Andrés y Providencia", region: "caribe", capital: "San Andrés", cx: 32, cy: -19 })}
-        onMouseEnter={() => onHover("caribe")}
-        onMouseLeave={() => onHover(null)}
+        onPointerEnter={(e) => e.pointerType === "mouse" && onHover("caribe")}
+        onPointerLeave={(e) => e.pointerType === "mouse" && onHover(null)}
       >
         <rect
           x="-46" y="-58" width="156" height="78" rx="12"
@@ -563,8 +563,8 @@ export default function MapaRegiones() {
           <button
             key={key}
             onClick={() => { setSelected(key); setPinnedDept(null); }}
-            onMouseEnter={() => setHovered(key)}
-            onMouseLeave={() => setHovered(null)}
+            onPointerEnter={(e) => e.pointerType === "mouse" && setHovered(key)}
+            onPointerLeave={(e) => e.pointerType === "mouse" && setHovered(null)}
             className="tipo-display min-h-[44px] px-3.5 rounded-full text-[12px] border-[1.5px] transition-colors"
             style={
               selected === key

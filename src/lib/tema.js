@@ -18,6 +18,16 @@ function temaDelSistema() {
   return window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
 }
 
+// La barra de estado del móvil toma su color de <meta name="theme-color">.
+// Con un tema forzado, el `media` del sistema ya no manda: se fija el mismo
+// color en las dos metas para que la barra siga al botón, no al sistema.
+const FONDO = { light: "#F2EADB", dark: "#17120E" };
+function pintarBarra(tema) {
+  document
+    .querySelectorAll('meta[name="theme-color"]')
+    .forEach((m) => m.setAttribute("content", FONDO[tema]));
+}
+
 function temaActual() {
   return document.documentElement.dataset.theme || temaDelSistema();
 }
@@ -38,6 +48,7 @@ export function useTema() {
   const alternar = useCallback(() => {
     const siguiente = temaActual() === "dark" ? "light" : "dark";
     document.documentElement.dataset.theme = siguiente;
+    pintarBarra(siguiente);
     try {
       localStorage.setItem(CLAVE, siguiente);
     } catch (e) {

@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import MapaRegiones from "./modulos/MapaRegiones";
 import LineaTiempo from "./modulos/LineaTiempo";
 import Constitucion from "./modulos/Constitucion";
 import CulturaSociedad from "./modulos/CulturaSociedad";
 import { cargarBanco } from "./data/preguntas";
+import { DISTRACTORES } from "./data/distractores";
 import { shuffle, reduceMovimiento } from "./lib/util";
 import { ICONOS_AREA, Bandera } from "./components/Iconos";
 import BotonTema from "./components/BotonTema";
@@ -11,7 +12,7 @@ import EnlaceGuia from "./components/EnlaceGuia";
 import { BotonRelleno, BotonFantasma } from "./components/BotonArea";
 import NotaProgreso from "./components/NotaProgreso";
 import Anillo from "./components/Anillo";
-import { leerProgreso, registrarResultado, mediaProgreso, haceCuanto } from "./lib/progreso";
+import { leerProgreso, registrarResultado, resultadoVisible, mediaProgreso, haceCuanto } from "./lib/progreso";
 
 /* ============================================================
    ColombiaTest · HUB / SHELL DE NAVEGACIÓN
@@ -61,9 +62,19 @@ const MODULOS = [
 ];
 
 /* ============================================================
-   TEST DE PRÁCTICA (respuesta escrita autoevaluada)
+   TEST DE PRÁCTICA
+   ------------------------------------------------------------
+   Dos modos, y el usuario elige:
+   · "opciones": selección simple, 3 opciones (1 correcta + 2 falsas de
+     data/distractores.js). La nota es objetiva. Es el modo por defecto
+     porque escribir en el móvil es lo que más fricción mete.
+   · "escrita": el usuario escribe y se autoevalúa. Es el formato del
+     examen real, así que sigue disponible también en el simulacro.
+   Una pregunta sin opciones en distractores.js (p. ej. si el banco viene
+   de Supabase con enunciados nuevos) se muestra en modo escrita.
+   Al fallar se espera a "Siguiente": hay que poder ver la correcta.
    ============================================================ */
-function Test({ area, banco, onSalir, onRepasar, onProgreso }) {
+function Test({ area, banco, modo, onModo, onSalir, onRepasar, onProgreso }) {
   const esSimulacro = area === "simulacro20" || area === "simulacro80";
   const areaInfo = esSimulacro
     ? {
@@ -87,6 +98,22 @@ function Test({ area, banco, onSalir, onRepasar, onProgreso }) {
     return shuffle(banco.filter((b) => b.area === area));
   }, [area, banco]);
 
+  // Las opciones se mezclan una vez por test, no en cada render: si no, se
+  // reordenarían al elegir una. `corta` evita que una respuesta con
+  // explicación entre paréntesis se delate por larga.
+  const opciones = React.useMemo(
+    () =>
+      preguntas.map((p) => {
+        const d = DISTRACTORES[p.q];
+        if (!d) return null;
+        return shuffle([
+          { texto: d.corta || p.a, correcta: true },
+          ...d.falsas.map((texto) => ({ texto, correcta: false })),
+        ]);
+      }),
+    [preguntas]
+  );
+
   const [i, setI] = useState(0);
   const [entrada, setEntrada] = useState("");
   const [fase, setFase] = useState("responder"); // responder | comparar
@@ -95,8 +122,21 @@ function Test({ area, banco, onSalir, onRepasar, onProgreso }) {
   const [terminado, setTerminado] = useState(false);
   // "acierto" | "fallo" | null — tiñe la tarjeta mientras se cambia de pregunta
   const [veredicto, setVeredicto] = useState(null);
+  // índice de la opción tocada (modo opciones) o null
+  const [elegida, setElegida] = useState(null);
+  // Si alguna pregunta se contestó con selección simple, el resultado cuenta
+  // como de selección simple: es el modo fácil y no debe pasar por escrito.
+  const [huboOpciones, setHuboOpciones] = useState(false);
+  const siguienteRef = useRef(null);
 
   const actual = preguntas[i];
+  const opcionesActual = modo === "opciones" ? opciones[i] : null;
+
+  // Tras responder, el foco pasa a "Siguiente": con teclado o lector de
+  // pantalla no hay que buscarlo.
+  useEffect(() => {
+    if (opcionesActual && fase === "comparar") siguienteRef.current?.focus();
+  }, [fase]);
 
   // Al terminar se guarda el mejor resultado de cada área tocada. El efecto
   // corre después del render que fija `terminado`, así que porArea y aciertos
@@ -104,45 +144,63 @@ function Test({ area, banco, onSalir, onRepasar, onProgreso }) {
   useEffect(() => {
     if (!terminado) return;
     let ultimo = null;
+    const modoResultado = huboOpciones ? "opciones" : "escrita";
     if (esSimulacro) {
       MODULOS.forEach((m) => {
         const r = porArea[m.key];
-        if (r) ultimo = registrarResultado(m.key, r.ok, r.total);
+        if (r) ultimo = registrarResultado(m.key, r.ok, r.total, modoResultado);
       });
     } else {
-      ultimo = registrarResultado(area, aciertos, preguntas.length);
+      ultimo = registrarResultado(area, aciertos, preguntas.length, modoResultado);
     }
     if (ultimo) onProgreso(ultimo);
   }, [terminado]);
 
   const revelar = () => setFase("comparar");
 
-  const evaluar = (acerto) => {
+  const registrar = (acerto) => {
     setPorArea((prev) => {
       const k = actual.area;
       const cur = prev[k] || { ok: 0, total: 0 };
       return { ...prev, [k]: { ok: cur.ok + (acerto ? 1 : 0), total: cur.total + 1 } };
     });
     if (acerto) setAciertos((n) => n + 1);
+  };
 
-    const avanzar = () => {
-      setVeredicto(null);
-      if (i + 1 < preguntas.length) {
-        setI(i + 1); setEntrada(""); setFase("responder");
-      } else {
-        setTerminado(true);
-      }
-    };
+  const avanzar = () => {
+    setVeredicto(null);
+    setElegida(null);
+    if (i + 1 < preguntas.length) {
+      setI(i + 1); setEntrada(""); setFase("responder");
+    } else {
+      setTerminado(true);
+    }
+  };
 
-    // 220 ms: lo justo para que el destello se vea como respuesta al toque y
-    // no como una espera. En un simulacro de 80 preguntas este gesto se repite
-    // 80 veces, así que cualquier cosa más larga acaba estorbando.
+  // Modo escrita: autoevaluación. 220 ms: lo justo para que el destello se
+  // vea como respuesta al toque y no como una espera. En un simulacro de 80
+  // preguntas este gesto se repite 80 veces, así que cualquier cosa más larga
+  // acaba estorbando.
+  const evaluar = (acerto) => {
+    registrar(acerto);
     if (reduceMovimiento()) {
       avanzar();
     } else {
       setVeredicto(acerto ? "acierto" : "fallo");
       setTimeout(avanzar, 220);
     }
+  };
+
+  // Modo opciones: se corrige al tocar y NO se avanza solo; el destello tiñe
+  // la tarjeta y se espera a "Siguiente".
+  const elegir = (k) => {
+    if (fase !== "responder") return;
+    const acerto = opcionesActual[k].correcta;
+    setElegida(k);
+    setHuboOpciones(true);
+    setFase("comparar");
+    registrar(acerto);
+    if (!reduceMovimiento()) setVeredicto(acerto ? "acierto" : "fallo");
   };
 
   if (terminado) {
@@ -164,6 +222,11 @@ function Test({ area, banco, onSalir, onRepasar, onProgreso }) {
           <p className="text-[13.5px] text-ink-soft mt-3.5">
             {aciertos} de {preguntas.length} · el umbral es 70%
           </p>
+          {huboOpciones && (
+            <p className="text-[12.5px] text-ink-soft mt-1.5 text-center max-w-[40ch] leading-snug">
+              En selección simple adivinando se acierta 1 de cada 3. Mídete por escrito para saber cómo irías en el examen.
+            </p>
+          )}
         </div>
 
         <div className="tejido h-2.5 rounded-full" aria-hidden="true" />
@@ -250,6 +313,23 @@ function Test({ area, banco, onSalir, onRepasar, onProgreso }) {
 
   return (
     <div>
+      <div className="grid grid-cols-2 gap-2 mb-4" role="group" aria-label="Modo de respuesta">
+        {[["opciones", "Selección simple"], ["escrita", "Respuesta escrita"]].map(([k, texto]) => (
+          <button
+            key={k}
+            type="button"
+            onClick={() => onModo(k)}
+            aria-pressed={modo === k}
+            disabled={fase === "comparar"}
+            className="tipo-display min-h-[44px] px-3 rounded-full text-[12.5px] border-[1.5px] transition-colors disabled:opacity-50"
+            style={modo === k
+              ? { backgroundColor: "var(--cta)", color: "var(--on-cta)", borderColor: "var(--cta)" }
+              : { backgroundColor: "transparent", color: "var(--ink-soft)", borderColor: "var(--rule)" }}
+          >
+            {texto}
+          </button>
+        ))}
+      </div>
       <div className="flex items-center justify-between mb-2">
         <span className="text-sm text-ink-soft">Pregunta {i + 1} / {preguntas.length}</span>
         {!esSimulacro && (
@@ -299,29 +379,90 @@ function Test({ area, banco, onSalir, onRepasar, onProgreso }) {
           {actual.q}
         </p>
 
-        <textarea
-          value={entrada}
-          onChange={(e) => setEntrada(e.target.value)}
-          placeholder="Escribe tu respuesta…"
-          rows={3}
-          disabled={fase === "comparar"}
-          className="w-full mt-3 rounded-xl border border-rule bg-raised p-3 text-sm text-ink placeholder:text-ink-soft outline-none focus:border-cta"
-        />
-
-        {fase === "comparar" && (
-          <div
-            className="mt-3 rounded-lg px-3 py-2.5 text-sm bg-raised text-ink border-l-[3px]"
-            style={{ borderColor: "var(--text-ok)", animation: "fadeIn .2s ease-out" }}
-          >
-            <span className="tipo-display block text-[12px] mb-1" style={{ color: "var(--text-ok)" }}>
-              Respuesta esperada
-            </span>
-            {actual.a}
+        {opcionesActual ? (
+          <div role="group" aria-label="Opciones de respuesta" className="mt-3 flex flex-col gap-2">
+            {opcionesActual.map((o, k) => {
+              const contestada = fase === "comparar";
+              const estado = !contestada ? null : o.correcta ? "ok" : elegida === k ? "mal" : "neutra";
+              const color =
+                estado === "ok" ? "var(--text-ok)" : estado === "mal" ? "var(--text-danger)" : "var(--ink-soft)";
+              return (
+                <button
+                  key={k}
+                  type="button"
+                  onClick={() => elegir(k)}
+                  aria-disabled={contestada}
+                  className={`tipo-display w-full text-left rounded-xl border-[1.5px] bg-raised px-3.5 py-3 min-h-[48px] text-[14px] leading-snug text-ink flex items-start gap-2.5 transition-[transform,border-color,opacity] duration-[160ms] ${
+                    contestada ? "cursor-default" : "hover:border-cta active:scale-[.99]"
+                  }`}
+                  style={{
+                    borderColor: estado === "ok" || estado === "mal" ? color : "var(--rule)",
+                    opacity: estado === "neutra" ? 0.55 : 1,
+                  }}
+                >
+                  <span aria-hidden="true" className="shrink-0 w-4 text-center" style={{ color }}>
+                    {estado === "ok" ? "✓" : estado === "mal" ? "✕" : "○"}
+                  </span>
+                  <span className="flex-1 min-w-0 [overflow-wrap:anywhere]">
+                    {o.texto}
+                    {estado === "ok" && <span className="sr-only"> (correcta)</span>}
+                    {estado === "mal" && <span className="sr-only"> (incorrecta)</span>}
+                  </span>
+                </button>
+              );
+            })}
+            {/* La respuesta completa se enseña al fallar, o si la opción
+                correcta era la versión corta de una respuesta con explicación. */}
+            {fase === "comparar" && (!opcionesActual[elegida].correcta || opcionesActual.some((o) => o.correcta && o.texto !== actual.a)) && (
+              <div
+                className="mt-1 rounded-lg px-3 py-2.5 text-sm bg-raised text-ink border-l-[3px]"
+                style={{ borderColor: "var(--text-ok)", animation: "fadeIn .2s ease-out" }}
+              >
+                <span className="tipo-display block text-[12px] mb-1" style={{ color: "var(--text-ok)" }}>
+                  Respuesta esperada
+                </span>
+                {actual.a}
+              </div>
+            )}
           </div>
+        ) : (
+          <>
+            <textarea
+              value={entrada}
+              onChange={(e) => setEntrada(e.target.value)}
+              placeholder="Escribe tu respuesta…"
+              rows={3}
+              disabled={fase === "comparar"}
+              className="w-full mt-3 rounded-xl border border-rule bg-raised p-3 text-sm text-ink placeholder:text-ink-soft outline-none focus:border-cta"
+            />
+
+            {fase === "comparar" && (
+              <div
+                className="mt-3 rounded-lg px-3 py-2.5 text-sm bg-raised text-ink border-l-[3px]"
+                style={{ borderColor: "var(--text-ok)", animation: "fadeIn .2s ease-out" }}
+              >
+                <span className="tipo-display block text-[12px] mb-1" style={{ color: "var(--text-ok)" }}>
+                  Respuesta esperada
+                </span>
+                {actual.a}
+              </div>
+            )}
+          </>
         )}
       </div>
 
-      {fase === "responder" ? (
+      {opcionesActual ? (
+        fase === "comparar" && (
+          <button
+            ref={siguienteRef}
+            onClick={avanzar}
+            className="tipo-display w-full mt-4 min-h-[48px] px-4 rounded-full text-[12.5px]"
+            style={{ backgroundColor: "var(--cta)", color: "var(--on-cta)" }}
+          >
+            {i + 1 < preguntas.length ? "Siguiente" : "Ver resultados"}
+          </button>
+        )
+      ) : fase === "responder" ? (
         <button
           onClick={revelar}
           disabled={!entrada.trim()}
@@ -379,7 +520,7 @@ function Inicio({ irAModulo, irATest, irASimulacro, progreso, onProgreso }) {
       {/* El progreso ya no es una sección aparte: es un atributo de cada área,
           así que vive dentro de su tarjeta. El panel que había aquí repetía los
           mismos botones que las tarjetas de abajo y ocupaba media pantalla. */}
-      <div className="flex items-baseline justify-between mb-2.5">
+      <div className="flex flex-wrap items-baseline justify-between gap-x-3 mb-2.5">
         <p className="tipo-display text-[12px] text-ink-soft">Explora las 4 áreas</p>
         {resumen && (
           <p className="text-[12px] text-ink-soft">
@@ -387,6 +528,7 @@ function Inicio({ irAModulo, irATest, irASimulacro, progreso, onProgreso }) {
             <span className="font-semibold" style={{ color: resumen.media >= 70 ? "var(--text-ok)" : "var(--text-danger)" }}>
               {resumen.media}%
             </span>
+            {resumen.conSeleccion && " · incluye selección simple"}
           </p>
         )}
       </div>
@@ -395,9 +537,10 @@ function Inicio({ irAModulo, irATest, irASimulacro, progreso, onProgreso }) {
       <div className="grid grid-cols-1 min-[360px]:grid-cols-2 gap-3 mb-6">
         {MODULOS.map((m, i) => {
           const Icono = ICONOS_AREA[m.key];
-          const p = progreso[m.key];
+          const p = resultadoVisible(progreso[m.key]);
           const dias = p ? (Date.now() - new Date(p.fecha).getTime()) / 86400000 : 0;
           const viejo = p && dias > 7 ? haceCuanto(p.fecha) : null;
+          const notas = [p?.modo === "opciones" && "selección simple", viejo].filter(Boolean).join(" · ");
           return (
             <div key={m.key} className="rounded-card border border-rule bg-surface p-3.5 flex flex-col gap-2">
               <div className="flex items-center gap-2.5">
@@ -431,7 +574,7 @@ function Inicio({ irAModulo, irATest, irASimulacro, progreso, onProgreso }) {
 
               {/* La fecha solo aparece cuando envejece. "Hoy" en las cuatro
                   tarjetas es ruido; "hace 2 meses" es un aviso. */}
-              {viejo && <p className="text-[11px] text-ink-soft -mt-1">{viejo}</p>}
+              {notas && <p className="text-[11px] text-ink-soft -mt-1">{notas}</p>}
 
               <p className="text-xs text-ink-soft leading-snug flex-1">{m.desc}</p>
               {/* El relleno plano dejaba el color opaco: ahora lleva bisel y
@@ -459,7 +602,7 @@ function Inicio({ irAModulo, irATest, irASimulacro, progreso, onProgreso }) {
         <div className="p-5 text-center">
           <h3 className="tipo-display text-[19px] text-ink">Simulacro</h3>
           <p className="text-[13px] leading-snug mt-1.5 mb-4 text-ink-soft max-w-[42ch] mx-auto">
-            Practica en condiciones de examen: sin respuestas hasta el final y con diagnóstico por área.
+            Preguntas de las cuatro áreas y diagnóstico por área al final. Para acercarte al examen real, responde por escrito.
           </p>
           <div className="grid grid-cols-2 gap-2">
             <button
@@ -475,7 +618,7 @@ function Inicio({ irAModulo, irATest, irASimulacro, progreso, onProgreso }) {
               className="tipo-display min-h-[56px] px-3 rounded-full text-[13px] flex flex-col items-center justify-center leading-tight border-[1.5px] bg-raised text-ink border-rule transition-colors hover:border-cta active:scale-[.97]"
             >
               Completo · 80
-              <span className="block text-[12px] font-normal text-ink-soft mt-0.5">como el examen real</span>
+              <span className="block text-[12px] font-normal text-ink-soft mt-0.5">20 por área</span>
             </button>
           </div>
         </div>
@@ -500,6 +643,9 @@ export default function App() {
   const [vista, setVista] = useState({ tipo: "inicio", direccion: "dentro" });
   const [banco, setBanco] = useState(null);
   const [progreso, setProgreso] = useState(leerProgreso);
+  // Modo de respuesta de los tests. Solo vive en la sesión: no se guarda, la
+  // app sigue guardando únicamente el tema y el progreso.
+  const [modoTest, setModoTest] = useState("opciones");
 
   useEffect(() => {
     cargarBanco().then(setBanco);
@@ -597,6 +743,8 @@ export default function App() {
           <Test
             area={vista.area}
             banco={banco}
+            modo={modoTest}
+            onModo={setModoTest}
             onSalir={volver}
             onRepasar={(k) => setVista({ tipo: "modulo", area: k, direccion: "dentro" })}
             onProgreso={setProgreso}

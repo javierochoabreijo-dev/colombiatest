@@ -200,7 +200,7 @@ visuales antes de implementar.
 - Tarea pendiente del plan original: despliegue en Vercel. (La integración de pagos con
   Wompi se descartó el 25 de septiembre: la app va a ser gratuita entera.)
 - Reglas de contenido que no deben romperse: 5 regiones naturales (nunca 6); el examen real
-  es de respuesta escrita (nunca opción múltiple en el simulacro); la independencia se
+  es de respuesta escrita (el modo de respuesta escrita debe seguir disponible, también en el simulacro; la selección simple es un modo añadido, por defecto, con 3 opciones); la independencia se
   consolida en Boyacá (1819); 4 áreas × 20 preguntas = 80.
 
 ---

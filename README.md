@@ -2,8 +2,8 @@
 
 App web para preparar el examen de conocimientos de la nacionalidad colombiana.
 Cubre las 4 áreas oficiales (Geografía, Historia, Constitución y Cultura) con
-módulos interactivos, tests de práctica de respuesta escrita y simulacros en
-condiciones de examen.
+módulos interactivos, tests de práctica y simulacros. Los tests se pueden
+responder por selección simple (3 opciones, el modo por defecto) o por escrito.
 
 Sin cuentas, sin servidor y sin llamadas a terceros: es un sitio estático.
 
@@ -49,11 +49,15 @@ sin empaquetar y no representa lo que verá el usuario.
 
 Todo sale de la [guía oficial de estudio de la
 Cancillería](https://www.cancilleria.gov.co/sites/default/files/DOCUMENTOS-2026/naturalizacion/Guia_de_estudio_ajustada.pdf)
-(PDF, 61 MB). El banco son 80 preguntas, 20 por área, en formato de respuesta
-escrita con autoevaluación, acorde con el examen real (Resolución 3596 de 2020).
+(PDF, 61 MB). El banco son 80 preguntas, 20 por área. Cada una tiene dos opciones
+falsas en `src/data/distractores.js` para el modo de selección simple; el modo de
+respuesta escrita con autoevaluación es el que reproduce el examen real
+(Resolución 3596 de 2020).
 
 Reglas de contenido que no deben romperse: 5 regiones naturales (nunca 6); el
-examen es de respuesta escrita (nunca opción múltiple en el simulacro); la
+examen real es de respuesta escrita (el modo de respuesta escrita debe seguir
+disponible, también en el simulacro); toda opción falsa tiene que ser incorrecta
+según la guía, nunca defendible; la
 independencia se consolida en Boyacá (1819); 4 áreas × 20 preguntas = 80.
 
 Historia cubre 44 eventos en 6 eras.
@@ -74,7 +78,7 @@ Dos cosas, ninguna sale del dispositivo y no hay cuenta ni servidor detrás:
 | Clave | Qué es |
 |---|---|
 | `vueltiao-tema` | el tema elegido, claro u oscuro |
-| `colombiatest-progreso` | el mejor resultado de cada área |
+| `colombiatest-progreso` | el mejor resultado de cada área, por separado para respuesta escrita y selección simple |
 
 El progreso se puede borrar desde el pie de la portada. Nada de la app depende
 de él: si se pierde, se pierden unos números, no el acceso a nada.

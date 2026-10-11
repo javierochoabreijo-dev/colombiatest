@@ -147,6 +147,18 @@
   }
 }
 
+/* Logo de la marca: dos versiones (letras claras para fondo oscuro, oscuras para
+   fondo claro) y se muestra la del tema activo con las mismas reglas que los
+   tokens de color. Oculta con display:none, la otra sale del árbol de
+   accesibilidad, así que el lector de pantalla oye "ColombiaTest" una sola vez. */
+.logo-claro { display: none; }
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) .logo-oscuro { display: none; }
+  :root:not([data-theme="dark"]) .logo-claro { display: block; }
+}
+:root[data-theme="light"] .logo-oscuro { display: none; }
+:root[data-theme="light"] .logo-claro { display: block; }
+
 /* El data-theme que escribe el botón manda sobre la preferencia del sistema.
    Los dos bloques se repiten enteros a propósito: un token que faltara en uno
    se heredaría del otro tema y rompería el contraste en silencio. */

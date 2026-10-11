@@ -31,7 +31,8 @@ sin empaquetar y no representa lo que verá el usuario.
 ## Estructura
 
 ```
-├─ index.html              # aplica el tema antes del primer pintado
+├─ index.html              # aplica el tema antes del primer pintado; favicon y metadatos sociales
+├─ public/brand/           # logos (oscuro y claro), favicon, iconos PWA, imagen social
 ├─ vercel.json             # preset Vite + rewrite SPA
 ├─ vite.config.js          # Vite + React + Tailwind v4, sin inlining de assets
 └─ src/

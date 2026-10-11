@@ -509,10 +509,30 @@ function Inicio({ irAModulo, irATest, irASimulacro, progreso, onProgreso }) {
   return (
     <div>
       <header className="mb-6 text-center">
-        <Bandera width={40} className="mx-auto" />
-        <h1 className="tipo-display text-4xl text-ink mt-2">ColombiaTest</h1>
-        <p className="text-ink-soft text-sm mt-1">
-          Prepárate para el examen de conocimientos de la nacionalidad colombiana.
+        {/* El logo cambia con el tema real de la página (ver .logo-oscuro y
+            .logo-claro en index.css): sin JS, así que también sigue al botón de
+            tema. El <h1> se queda: es el título del documento, y el alt del
+            logo es el nombre de la marca. */}
+        <h1 className="m-0">
+          <img
+            src="/brand/lockup-vertical-dark.svg"
+            alt="ColombiaTest"
+            width="228"
+            height="107"
+            className="logo-oscuro block mx-auto w-full max-w-[13.5rem] h-auto"
+          />
+          <img
+            src="/brand/lockup-vertical-light.svg"
+            alt="ColombiaTest"
+            width="228"
+            height="107"
+            className="logo-claro mx-auto w-full max-w-[13.5rem] h-auto"
+          />
+        </h1>
+        {/* El eslogan va fuera del logo (que aquí es solo libro + nombre) para
+            que sea texto de la página: se lee, se selecciona y se traduce. */}
+        <p className="text-ink-soft text-sm mt-3 text-balance">
+          Prepárate para tu examen de nacionalidad colombiana.
         </p>
         <div className="tejido h-2.5 rounded-full mt-4" aria-hidden="true" />
       </header>

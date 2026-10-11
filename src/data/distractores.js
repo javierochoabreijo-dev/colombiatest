@@ -5,6 +5,18 @@
 //   falsas: 2 opciones incorrectas, de la misma forma que la correcta.
 //   corta:  versión breve de la correcta cuando `a` lleva una explicación entre
 //           paréntesis que la delataría por largo.
+//
+// Respuestas que se evitaron como opción falsa porque son defendibles:
+//   · Virreinato de la Nueva Granada (1717): no usar 1739, cuando se restableció.
+//   · Voto de la mujer (plebiscito de 1957): no usar 1954, cuando se reconoció el derecho.
+//   · Himno nacional (proclamado en 1920): no usar 1887, cuando se compuso.
+//   · Carnaval patrimonio de la UNESCO: el de Pasto (Negros y Blancos) también lo es,
+//     así que no sirve de falsa; se usaron dos ferias que no lo son.
+//   · "Deporte rey" (la guía dice ciclismo): no usar el fútbol, que en el mundo
+//     también lleva ese título y confundiría.
+//   · Región más lluviosa (Pacífica): la Amazonía también llueve mucho; las falsas
+//     son Caribe y Orinoquía.
+// Toda falsa debe ser incorrecta según la guía oficial, nunca defendible.
 export const DISTRACTORES = {
   "¿Cuántas regiones naturales (biogeográficas) tiene Colombia y cuáles son?": { falsas: ["6: Caribe, Andina, Pacífica, Orinoquía, Amazónica e Insular.", "4: Caribe, Andina, Pacífica y Amazónica."] },
   "¿Cuál es el pico más alto de Colombia y dónde está?": { falsas: ["El Nevado del Huila, en la cordillera Central (región Andina).", "El Nevado del Tolima, en la cordillera Central (región Andina)."] },

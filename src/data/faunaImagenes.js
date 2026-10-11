@@ -4,11 +4,13 @@
 // simplemente muestra su icono (sin imagen ni atribución).
 //
 // Cada entrada tiene DOS fuentes de imagen:
-//   · `archivo`: la miniatura de 144 px, descargada y servida con la app
+//   · `archivo`: la miniatura de 160 px, descargada y servida con la app
 //     desde src/assets/fauna/. Es la que se ve en la rejilla, once a la
 //     vez, y por eso no puede depender de un tercero.
-//   · `url`: el original en Commons, para la ficha ampliada. Se abre de
-//     una en una, así que ahí sí sale a pedirla.
+//   · La ficha ampliada usa la foto de 800 px que vive en
+//     src/assets/fauna/grande/ con el MISMO nombre de fichero (ver
+//     imagenGrande en lib/imagenes.js).
+//   · `url`: el original en Commons, solo como procedencia.
 // `autor`, `licencia` y `fuente` sostienen la atribución CC, que es
 // obligatoria tanto si la imagen se enlaza como si se redistribuye.
 export const FAUNA_IMAGENES = {

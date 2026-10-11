@@ -38,6 +38,17 @@ const CULTURA = import.meta.glob("../assets/cultura/*.{jpg,png}", {
   query: "?url",
   import: "default",
 });
+// Fauna a 800 px de ancho, para la ficha ampliada. La rejilla usa la miniatura
+// de arriba (160 px); si se abriera la miniatura a tamaño de ficha se vería
+// pixelada. Se piden de una en una, al abrir la especie, y con hash para la caché.
+const FAUNA_GRANDE = import.meta.glob("../assets/fauna/grande/*.jpg", {
+  eager: true,
+  query: "?url",
+  import: "default",
+});
+const GRANDE_POR_NOMBRE = Object.fromEntries(
+  Object.entries(FAUNA_GRANDE).map(([ruta, url]) => [ruta.split("/").pop(), url])
+);
 
 // Clave = "<carpeta>/<fichero>", para que dos carpetas puedan compartir nombre.
 const POR_RUTA = Object.fromEntries(
@@ -46,6 +57,13 @@ const POR_RUTA = Object.fromEntries(
     url,
   ])
 );
+
+/* La versión grande de una foto de fauna, o null si esa entrada no la tiene.
+   Quien la use debe caer a `imagenLocal` cuando devuelva null. */
+export function imagenGrande(imagen) {
+  if (!imagen?.archivo?.startsWith("fauna/")) return null;
+  return GRANDE_POR_NOMBRE[imagen.archivo.split("/").pop()] || null;
+}
 
 /* La imagen servida con la app. null si esa entrada no tiene fichero:
    quien llama decide qué pintar en su lugar. */

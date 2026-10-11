@@ -1,5 +1,5 @@
 import React from "react";
-import { imagenLocal } from "../lib/imagenes";
+import { imagenLocal, imagenGrande } from "../lib/imagenes";
 
 /* ============================================================
    Imagen libre (Wikimedia Commons) con atribución al pie.
@@ -11,7 +11,8 @@ import { imagenLocal } from "../lib/imagenes";
    pide en tiempo de uso: la atribución se apoya en `fuente`.
    ============================================================ */
 export default function ImagenAtribuida({ imagen, alt, className = "" }) {
-  const src = imagenLocal(imagen);
+  // Ficha ampliada: la versión grande si existe; si no, la local de siempre.
+  const src = imagenGrande(imagen) || imagenLocal(imagen);
   if (!src) return null;
 
   const { autor, licencia, fuente, ajuste } = imagen;

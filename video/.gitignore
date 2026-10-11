@@ -1,0 +1,9 @@
+# Dependencias del render
+node_modules/
+package-lock.json
+# Lo que se genera: videos, audio y fotogramas
+out/
+# Música de terceros: su licencia no permite redistribuirla en el repositorio
+*.mp3
+*.wav
+*.m4a

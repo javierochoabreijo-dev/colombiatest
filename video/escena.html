@@ -1,0 +1,868 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<title>ColombiaTest · video</title>
+<!--
+  Video promocional de ColombiaTest. Cada fotograma es una función del tiempo:
+  renderAt(t) deja la página exactamente como debe verse en el segundo t, sin
+  transiciones CSS ni temporizadores. Así el render fotograma a fotograma es
+  determinista. Parámetros: ?fmt=v (1080×1920) | h (1920×1080) y ?texto=1 | 0.
+-->
+<style>
+@font-face {
+  font-family: "Instrument Sans";
+  font-weight: 400 700;
+  src: url("../src/assets/fuentes/instrument-sans-latin.woff2") format("woff2");
+}
+:root {
+  --ground:#17120E; --surface:#221B15; --raised:#2C2318; --ink:#F5EFE6; --ink-soft:#B8A894; --rule:#3A2E24;
+  --cta:#F2B705; --on-cta:#2A1F02; --danger:#C1195A; --text-danger:#D66893; --ok:#1B998B; --text-ok:#239D8F;
+  --area-geo:#1B998B; --on-geo:#12100C; --text-geo:#2FBFAE;
+  --area-his:#E4572E; --on-his:#12100C; --text-his:#FF7A52;
+  --area-con:#9270C3; --on-con:#12100C; --text-con:#B294E0;
+  --area-cul:#C1195A; --on-cul:#FFF0F5; --text-cul:#F2699F;
+  --reg-caribe:#3A97CC; --reg-andina:#9B7BD0; --reg-pacifica:#46A469; --reg-orinoquia:#C9A227; --reg-amazonia:#D47153; --on-reg:#12100C;
+  --overlay:rgb(0 0 0 / .66); --weave-a:#F5EFE6; --weave-b:#17120E;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { background: var(--ground); overflow: hidden; }
+body { font-family: "Instrument Sans", system-ui, sans-serif; color: var(--ink); -webkit-font-smoothing: antialiased; }
+#stage { position: absolute; left: 0; top: 0; overflow: hidden;
+  background: radial-gradient(ellipse 80% 60% at 50% 38%, #241C15 0%, #17120E 70%); }
+.capa { position: absolute; inset: 0; }
+.td { font-weight: 600; letter-spacing: -0.005em; }
+.h { font-weight: 700; letter-spacing: -0.02em; }
+
+/* ---------------- rótulos ---------------- */
+#rot { position: absolute; }
+.rotulo { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; opacity: 0; }
+.rotulo .es { font-weight: 700; letter-spacing: -0.025em; line-height: 1.06; color: var(--ink); text-wrap: balance; }
+.rotulo .en { font-weight: 500; color: var(--ink-soft); margin-top: .5em; text-wrap: balance; }
+.rotulo em { font-style: normal; color: var(--cta); }
+
+/* ---------------- móvil ---------------- */
+#tel { position: absolute; width: 418px; height: 872px; transform-origin: 50% 50%; }
+.marco { width: 418px; height: 872px; border-radius: 64px; padding: 14px; background: #0B0907;
+  box-shadow: 0 0 0 2px #3A2E24, 0 50px 120px rgb(0 0 0 / .6), 0 10px 30px rgb(0 0 0 / .4); }
+#pant { position: relative; width: 390px; height: 844px; border-radius: 50px; overflow: hidden; background: var(--ground); }
+.estado { position: absolute; left: 0; right: 0; top: 0; height: 46px; z-index: 30; display: flex; align-items: center;
+  justify-content: space-between; padding: 6px 30px 0 34px; font-weight: 600; font-size: 15px; color: var(--ink); background: var(--ground); }
+.isla { position: absolute; left: 50%; top: 11px; width: 116px; height: 33px; margin-left: -58px; border-radius: 20px; background: #000; z-index: 31; }
+.iconos { display: flex; gap: 6px; align-items: center; }
+.iconos i { display: block; background: var(--ink); border-radius: 2px; }
+/* barra del navegador: deja claro que es una web, no una app que se descarga */
+.navegador { position: absolute; left: 0; right: 0; top: 46px; height: 54px; z-index: 30; background: var(--ground);
+  padding: 4px 14px 10px; border-bottom: 1px solid var(--rule); }
+.navegador .url { height: 40px; border-radius: 12px; background: var(--raised); display: flex; align-items: center; justify-content: center;
+  gap: 7px; font-size: 15px; color: var(--ink); font-weight: 500; }
+.navegador .url svg { width: 13px; height: 13px; }
+.vista { position: absolute; inset: 0; padding: 112px 16px 0; overflow: hidden; }
+.contenido { will-change: transform; }
+
+/* app: piezas comunes */
+.barra { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+.barra .marca, .barra .volver { font-weight: 600; font-size: 12px; color: var(--ink-soft); }
+.tema { display: inline-flex; gap: 8px; align-items: center; height: 40px; padding: 0 14px; border-radius: 999px;
+  border: 1px solid var(--rule); background: var(--surface); font-weight: 600; font-size: 12px; }
+.sol { width: 16px; height: 16px; border-radius: 50%; background: var(--cta); box-shadow: inset 0 0 0 3px var(--surface), 0 0 0 1.5px var(--cta); }
+.tejido { background: repeating-linear-gradient(135deg, var(--weave-a) 0 8px, var(--weave-b) 8px 16px); }
+.btn { height: 42px; border-radius: 999px; font-weight: 600; font-size: 12.5px; display: inline-flex; align-items: center;
+  justify-content: center; padding: 0 12px; white-space: nowrap; }
+.rel { background: var(--f); color: var(--s); flex: 1;
+  background-image: linear-gradient(to bottom, rgb(255 255 255 / .14) 0%, rgb(255 255 255 / 0) 45%, rgb(0 0 0 / 0) 62%, rgb(0 0 0 / .07) 100%);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / .2), inset 0 -1px 0 rgb(0 0 0 / .16), 0 1px 3px rgb(0 0 0 / .28); }
+.fan { background: var(--raised); border: 1.5px solid var(--t); color: var(--t); }
+.ico { width: 30px; height: 30px; border-radius: 50%; background: var(--raised); display: grid; place-items: center; flex-shrink: 0; }
+.ico svg { width: 17px; height: 17px; }
+
+/* inicio */
+.lockup { display: block; margin: 2px auto 0; width: 196px; height: auto; }
+.eslogan { color: var(--ink-soft); font-size: 14px; text-align: center; margin-top: 12px; text-wrap: balance; }
+.hdr .tejido { height: 10px; border-radius: 999px; margin-top: 16px; }
+.fila-tit { margin: 22px 0 10px; font-weight: 600; font-size: 12px; color: var(--ink-soft); }
+.grid4 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.area { border: 1px solid var(--rule); background: var(--surface); border-radius: 16px; padding: 14px; display: flex; flex-direction: column; gap: 8px; }
+.area .cab { display: flex; align-items: center; gap: 10px; }
+.area h2 { font-size: 15px; line-height: 1.1; }
+.area p { font-size: 12px; color: var(--ink-soft); line-height: 1.35; flex: 1; }
+.botones { display: flex; gap: 6px; }
+.simu { margin-top: 24px; border: 1px solid var(--rule); background: var(--surface); border-radius: 16px; overflow: hidden; }
+.simu .tj { height: 6px; }
+.simu .in { padding: 20px; text-align: center; }
+.simu h3 { font-size: 19px; }
+.simu p { font-size: 13px; color: var(--ink-soft); line-height: 1.35; margin: 6px auto 16px; max-width: 42ch; }
+.simu .dos { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.simu .dos div { min-height: 56px; border-radius: 999px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: 600; font-size: 13px; line-height: 1.2; }
+.simu .dos span { font-weight: 400; font-size: 12px; opacity: .8; margin-top: 2px; }
+
+/* geografía */
+.cab-mod { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+.cab-mod h1 { font-size: 20px; }
+.cab-mod .ico { width: 32px; height: 32px; }
+.hacer { margin-left: auto; height: 44px; padding: 0 16px; border-radius: 999px; display: grid; place-items: center; font-weight: 600; font-size: 12px; }
+.intro { font-size: 14px; color: var(--ink-soft); margin-bottom: 16px; line-height: 1.4; }
+.pills { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+.pill { height: 44px; padding: 0 14px; border-radius: 999px; border: 1.5px solid var(--rule); font-weight: 600; font-size: 12px; display: inline-flex; align-items: center; }
+.mapa-card { background: var(--surface); border: 1px solid var(--rule); border-radius: 16px; padding: 12px; }
+.mapa-card svg { display: block; width: 100%; height: auto; overflow: visible; }
+.panel { position: relative; margin-top: 24px; border-radius: 16px; overflow: hidden; border: 1px solid; background: var(--surface); box-shadow: 0 20px 25px -5px rgb(0 0 0 / .25); }
+.panel-cab { padding: 16px 20px; color: var(--on-reg); }
+.panel-cab h2 { font-size: 20px; }
+.panel-cab p { font-size: 14px; margin-top: 4px; line-height: 1.35; }
+.tabs { padding: 12px 20px 8px; display: flex; flex-wrap: wrap; gap: 6px; border-bottom: 1px solid var(--rule); }
+.tab { height: 44px; padding: 0 14px; border-radius: 999px; border: 1.5px solid var(--rule); font-weight: 600; font-size: 12px; display: inline-flex; align-items: center; }
+.panel-cuerpo { padding: 16px 20px 20px; }
+.panel-cuerpo .txt { font-size: 16px; line-height: 1.6; color: var(--ink); }
+.cat { font-weight: 600; font-size: 12px; margin: 0 0 6px; display: flex; gap: 6px; align-items: center; }
+.cat + .rej { margin-bottom: 16px; }
+.rej { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.esp { border-radius: 16px; padding: 8px; background: var(--raised); display: flex; flex-direction: column; align-items: center; text-align: center; gap: 4px; }
+.esp img { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 1px solid var(--rule); }
+.esp p { font-size: 12px; line-height: 1.15; }
+.modal { position: absolute; inset: 0; z-index: 20; display: flex; align-items: center; justify-content: center; padding: 16px; opacity: 0; }
+.modal .velo { position: absolute; inset: 0; background: var(--overlay); }
+.modal .caja { position: relative; width: 100%; background: var(--surface); border: 1px solid var(--rule); border-radius: 16px; padding: 16px; }
+.modal .caja .t { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-weight: 600; font-size: 14px; }
+.modal .caja .x { font-size: 26px; color: var(--ink-soft); line-height: 1; width: 44px; text-align: right; }
+.modal img { display: block; width: 100%; height: 224px; object-fit: cover; border-radius: 8px; border: 1px solid var(--rule); }
+.modal .cred { font-size: 10px; color: var(--ink-soft); margin-top: 4px; }
+.modal .cred u { text-decoration: underline; }
+
+/* test */
+.toggle { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; }
+.tg { height: 44px; border-radius: 999px; border: 1.5px solid var(--rule); font-weight: 600; font-size: 12.5px; display: grid; place-items: center; color: var(--ink-soft); }
+.tg.on { background: var(--cta); color: var(--on-cta); border-color: var(--cta); }
+.prog-tit { font-size: 14px; color: var(--ink-soft); margin-bottom: 8px; }
+.prog { height: 6px; border-radius: 999px; background: var(--raised); overflow: hidden; margin-bottom: 16px; }
+.prog i { display: block; height: 100%; width: 100%; background: var(--cta); transform-origin: left; }
+.preg { position: relative; }
+.qbloque { position: absolute; left: 0; right: 0; top: 0; }
+.qcard { border: 1px solid var(--rule); background: var(--surface); border-radius: 16px; padding: 20px; }
+.chip { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; font-size: 12px; padding: 6px 10px; border-radius: 999px; background: var(--raised); }
+.chip svg { width: 14px; height: 14px; }
+.q { font-weight: 600; font-size: 17px; line-height: 1.22; margin-top: 12px; letter-spacing: -0.005em; }
+.opts { margin-top: 12px; display: flex; flex-direction: column; gap: 8px; }
+.opt { display: flex; gap: 10px; align-items: flex-start; padding: 12px 14px; min-height: 48px; border-radius: 12px; border: 1.5px solid var(--rule); background: var(--raised); font-weight: 600; font-size: 14px; line-height: 1.35; }
+.opt .m { width: 16px; text-align: center; flex-shrink: 0; color: var(--ink-soft); }
+.esperada { margin-top: 4px; border-radius: 8px; padding: 10px 12px; font-size: 14px; background: var(--raised); border-left: 3px solid var(--text-ok); opacity: 0; }
+.esperada b { display: block; font-weight: 600; font-size: 12px; color: var(--text-ok); margin-bottom: 4px; }
+.siguiente { margin-top: 16px; height: 48px; border-radius: 999px; background: var(--cta); color: var(--on-cta); font-weight: 600; font-size: 12.5px; display: grid; place-items: center; opacity: 0; }
+.salir { margin-top: 8px; height: 44px; display: grid; place-items: center; font-size: 14px; color: var(--ink-soft); }
+
+/* resultados */
+.anillo { position: relative; width: 200px; height: 200px; margin: 4px auto 0; }
+.anillo .num { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.anillo .num b { font-weight: 600; font-size: 54px; line-height: 1; letter-spacing: -0.04em; }
+.anillo .num span { color: var(--ink-soft); font-size: 15px; margin-top: 4px; }
+.res-sub { text-align: center; font-size: 13.5px; color: var(--ink-soft); margin-top: 14px; }
+.res-aviso { text-align: center; font-size: 12.5px; color: var(--ink-soft); margin: 6px auto 0; max-width: 40ch; line-height: 1.35; }
+.res-tj { height: 10px; border-radius: 999px; margin-top: 20px; }
+.res-h { font-size: 20px; margin-top: 20px; }
+.res-p { font-size: 12.5px; color: var(--ink-soft); margin: 2px 0 12px; }
+.filas { display: flex; flex-direction: column; gap: 8px; }
+.fila { border: 1px solid var(--rule); background: var(--surface); border-radius: 12px; padding: 12px 14px; display: flex; align-items: center; gap: 12px; }
+.fila svg { width: 19px; height: 19px; flex-shrink: 0; }
+.fila .n { font-weight: 600; font-size: 14.5px; }
+.fila .d { font-size: 12.5px; margin-top: 1px; }
+.fila .btn { padding: 0 16px; flex: none; }
+
+/* toque */
+#dedo, #onda { position: absolute; z-index: 40; border-radius: 50%; pointer-events: none; opacity: 0; }
+#dedo { width: 46px; height: 46px; margin: -23px 0 0 -23px; background: rgb(255 255 255 / .28); box-shadow: 0 0 0 2px rgb(255 255 255 / .55); }
+#onda { width: 46px; height: 46px; margin: -23px 0 0 -23px; border: 3px solid rgb(255 255 255 / .8); }
+
+/* ---------------- escenas sin móvil ---------------- */
+#hook svg { position: absolute; overflow: visible; }
+#pdf { position: absolute; width: 560px; height: 720px; transform-origin: 50% 50%; }
+.hoja { width: 100%; height: 100%; border-radius: 22px; background: #F7F1E6; color: #241A12; overflow: hidden; box-shadow: 0 40px 100px rgb(0 0 0 / .55); display: flex; flex-direction: column; }
+.hoja .cabh { display: flex; align-items: center; gap: 14px; padding: 22px 26px; background: #EDE4D6; border-bottom: 1px solid #DFD2BE; }
+.hoja .pdfb { background: #C8352E; color: #fff; font-weight: 700; font-size: 18px; padding: 8px 10px; border-radius: 8px; }
+.hoja .nom { font-weight: 600; font-size: 22px; }
+.hoja .peso { margin-left: auto; background: #241A12; color: var(--cta); font-weight: 700; font-size: 22px; padding: 8px 14px; border-radius: 999px; }
+.hoja .cuerpo { position: relative; flex: 1; overflow: hidden; padding: 0 40px; }
+.hoja .lineas { position: absolute; left: 40px; right: 40px; top: 0; }
+.hoja .lineas i { display: block; height: 12px; border-radius: 6px; background: #D9CCB8; margin-top: 18px; }
+.hoja .lineas i.t { height: 20px; background: #B9A88F; margin-top: 40px; width: 55%; }
+.hoja .barrita { position: absolute; right: 10px; top: 20px; width: 6px; height: 80px; border-radius: 3px; background: #B9A88F; }
+
+#fin { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+#fin .pieza { opacity: 0; }
+#fin .lk { display: block; }
+#fin .esl { color: var(--ink-soft); }
+#fin .lema { font-weight: 600; color: var(--ink); }
+#fin .lema-en { color: var(--ink-soft); }
+#fin .url { font-weight: 700; color: var(--cta); letter-spacing: -0.02em; }
+#fin .qr { border-radius: 18px; overflow: hidden; background: #F5EFE6; }
+#fin .qr img { display: block; width: 100%; height: 100%; }
+#fin .aviso { color: var(--ink-soft); opacity: .85; }
+#fin .accion { display: flex; align-items: center; justify-content: center; }
+
+#barrido { position: absolute; top: 0; height: 100%; z-index: 100; display: flex; }
+#barrido .b { height: 100%; background: repeating-linear-gradient(135deg, var(--weave-a) 0 26px, var(--weave-b) 26px 52px); }
+#barrido .s { height: 100%; background: var(--ground); }
+</style>
+</head>
+<body>
+<div id="stage">
+
+  <!-- 1 · gancho: el mapa -->
+  <div class="capa" id="hook"></div>
+
+  <!-- 2 · el PDF de 61 MB -->
+  <div class="capa" id="esc-pdf">
+    <div id="pdf"><div class="hoja">
+      <div class="cabh"><span class="pdfb">PDF</span><span class="nom">Guía de estudio · Cancillería</span><span class="peso">61 MB</span></div>
+      <div class="cuerpo"><div class="lineas" id="lineas"></div><div class="barrita" id="barrita"></div></div>
+    </div></div>
+  </div>
+
+  <!-- 3–5 · la app en el móvil -->
+  <div id="tel"><div class="marco"><div id="pant">
+    <div class="estado"><span>10:30</span><span class="iconos"><i style="width:3px;height:6px"></i><i style="width:3px;height:9px"></i><i style="width:3px;height:12px"></i><i style="width:24px;height:12px;border-radius:4px;margin-left:4px"></i></span></div>
+    <div class="isla"></div>
+    <div class="navegador"><div class="url"><svg viewBox="0 0 24 24" fill="none" stroke="#B8A894" stroke-width="2.4" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11 V8 A4 4 0 0 1 16 8 V11"/></svg>colombiatest.vercel.app</div></div>
+
+    <!-- inicio -->
+    <div class="vista" id="vInicio"><div class="contenido">
+      <div class="barra"><span class="marca">ColombiaTest</span><span class="tema"><i class="sol"></i>Oscuro</span></div>
+      <header class="hdr">
+        <img class="lockup" src="../public/brand/lockup-vertical-dark.svg" width="228" height="107" alt="ColombiaTest" />
+        <p class="eslogan">Prepárate para tu examen de nacionalidad colombiana.</p>
+        <div class="tejido"></div>
+      </header>
+      <p class="fila-tit">Explora las 4 áreas</p>
+      <div class="grid4" id="grid4"></div>
+      <div class="simu"><div class="tj tejido"></div><div class="in">
+        <h3 class="h">Simulacro</h3>
+        <p>Preguntas de las cuatro áreas y diagnóstico por área al final. Para acercarte al examen real, responde por escrito.</p>
+        <div class="dos"><div style="background:var(--cta);color:var(--on-cta)">Breve · 20<span>5 por área, rotan</span></div><div style="background:var(--raised);border:1.5px solid var(--rule)">Completo · 80<span style="color:var(--ink-soft)">20 por área</span></div></div>
+      </div></div>
+    </div></div>
+
+    <!-- geografía -->
+    <div class="vista" id="vGeo"><div class="contenido" id="geoCont">
+      <div class="barra"><span class="volver">← Inicio</span><span class="tema"><i class="sol"></i>Oscuro</span></div>
+      <div class="cab-mod"><span class="ico" id="icoGeo"></span><h1 class="h">Geografía</h1><span class="hacer" style="background:var(--area-geo);color:var(--on-geo)">Hacer test</span></div>
+      <p class="intro">Toca una región del mapa para explorar su geografía, flora, fauna y gente.</p>
+      <div class="pills" id="pills"></div>
+      <div class="mapa-card"><svg id="mapaApp" viewBox="-150 -75 860 910"></svg></div>
+      <div class="panel" id="panel">
+        <div class="panel-cab" id="panelCab"><h2 class="h" id="panelNom"></h2><p id="panelTag"></p></div>
+        <div class="tabs" id="tabs"></div>
+        <div class="panel-cuerpo">
+          <p class="txt" id="panelGeo"></p>
+          <div id="panelFauna" style="display:none"></div>
+        </div>
+      </div>
+    </div>
+    <div class="modal" id="modal"><div class="velo" id="velo"></div><div class="caja" id="caja">
+      <div class="t"><span>Jaguar</span><span class="x">×</span></div>
+      <img src="../src/assets/fauna/grande/jaguar.jpg" alt="Jaguar" />
+      <p class="cred">Foto: CHUCAO · CC BY-SA 3.0 · <u>Wikimedia Commons</u></p>
+    </div></div>
+    </div>
+
+    <!-- test -->
+    <div class="vista" id="vTest"><div class="contenido">
+      <div class="barra"><span class="volver">← Inicio</span><span class="tema"><i class="sol"></i>Oscuro</span></div>
+      <div class="toggle"><div class="tg on">Selección simple</div><div class="tg">Respuesta escrita</div></div>
+      <p class="prog-tit" id="progTit">Pregunta 4 / 20</p>
+      <div class="prog"><i id="progBar"></i></div>
+      <div class="preg" id="preg"></div>
+    </div></div>
+
+    <!-- resultados -->
+    <div class="vista" id="vRes"><div class="contenido" id="resCont">
+      <div class="barra"><span class="volver">← Inicio</span><span class="tema"><i class="sol"></i>Oscuro</span></div>
+      <div class="anillo"><svg width="200" height="200" viewBox="0 0 200 200">
+        <circle cx="100" cy="100" r="91" fill="none" stroke="var(--raised)" stroke-width="14" />
+        <circle id="arco" cx="100" cy="100" r="91" fill="none" stroke="var(--text-ok)" stroke-width="14" stroke-linecap="round" transform="rotate(-90 100 100)" />
+      </svg><div class="num"><b id="pct">0</b><span>por ciento</span></div></div>
+      <p class="res-sub">17 de 20 · el umbral es 70%</p>
+      <p class="res-aviso">En selección simple adivinando se acierta 1 de cada 3. Mídete por escrito para saber cómo irías en el examen.</p>
+      <div class="res-tj tejido"></div>
+      <h3 class="res-h h">Qué repasar</h3>
+      <p class="res-p">De lo más flojo a lo que ya dominas.</p>
+      <div class="filas" id="filas"></div>
+    </div></div>
+
+    <div id="dedo"></div><div id="onda"></div>
+  </div></div></div>
+
+  <!-- rótulos -->
+  <div id="rot"></div>
+
+  <!-- 6 · cierre -->
+  <div id="fin"></div>
+
+  <div id="barrido"><div class="b"></div><div class="s"></div><div class="b"></div></div>
+</div>
+
+<script src="datos-mapa.js"></script>
+<script>
+/* ============================================================ parámetros */
+const Q = new URLSearchParams(location.search);
+const FMT = Q.get("fmt") === "h" ? "h" : "v";
+const TEXTO = Q.get("texto") !== "0";
+const MUSICA = Q.get("musica") === "1"; // añade el crédito de la pista (CC BY obliga a atribuir)
+const W = FMT === "v" ? 1080 : 1920;
+const H = FMT === "v" ? 1920 : 1080;
+window.DURACION = 30;
+
+const LAY = {
+  // tel: escala, centro horizontal y borde superior del móvil. Con texto, el móvil
+  // es grande y se sale por abajo (se lee mejor la app); sin texto cabe entero.
+  v1: { vis: { x: 0, y: 470, w: 1080, h: 1450 }, cap: { x: 80, y: 110, w: 920, h: 380, align: "center", es: 70, en: 36 }, tel: { s: 1.95, cx: 540, top: 500 } },
+  v0: { vis: { x: 0, y: 0, w: 1080, h: 1920 }, tel: { s: 2.08, cx: 540, top: 53 } },
+  h1: { vis: { x: 1000, y: 0, w: 860, h: 1080 }, cap: { x: 150, y: 0, w: 780, h: 1080, align: "left", es: 80, en: 38 }, tel: { s: 1.42, cx: 1400, top: 80 } },
+  h0: { vis: { x: 0, y: 0, w: 1920, h: 1080 }, tel: { s: 1.2, cx: 960, top: 17 } },
+}[FMT + (TEXTO ? 1 : 0)];
+const VIS = LAY.vis;
+const VCX = VIS.x + VIS.w / 2, VCY = VIS.y + VIS.h / 2;
+
+const $ = (id) => document.getElementById(id);
+const stage = $("stage");
+stage.style.width = W + "px";
+stage.style.height = H + "px";
+
+/* ============================================================ curvas */
+function bezier(x1, y1, x2, y2) {
+  return (t) => {
+    if (t <= 0) return 0;
+    if (t >= 1) return 1;
+    let x = t;
+    for (let i = 0; i < 10; i++) {
+      const fx = 3 * x1 * x * (1 - x) ** 2 + 3 * x2 * x * x * (1 - x) + x ** 3 - t;
+      const dx = 3 * x1 * (1 - x) ** 2 + 6 * (x2 - x1) * x * (1 - x) + 3 * (1 - x2) * x * x;
+      if (Math.abs(fx) < 1e-6) break;
+      x = Math.min(1, Math.max(0, x - fx / (dx || 1e-6)));
+    }
+    return 3 * y1 * x * (1 - x) ** 2 + 3 * y2 * x * x * (1 - x) + x ** 3;
+  };
+}
+const eo = bezier(0.22, 0.61, 0.36, 1);      // la curva de la app
+const eio = bezier(0.77, 0, 0.175, 1);
+const cubOut = (x) => 1 - Math.pow(1 - x, 3);
+const p = (t, a, b) => Math.min(1, Math.max(0, (t - a) / (b - a)));
+const lerp = (a, b, k) => a + (b - a) * k;
+
+/* ============================================================ iconos */
+const ICO = {
+  geografia: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><path d="M3 19 L9 8 L13 14 L16.5 10 L21 19 Z"/></svg>',
+  historia: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="12" cy="12" r="8.2"/><path d="M12 7 V12 L15.6 14.2"/></svg>',
+  constitucion: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5 V19 M5 9 H19 M5 9 L2.8 14 H7.2 Z M19 9 L16.8 14 H21.2 Z M8 19 H16"/></svg>',
+  cultura: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M3.5 16.5 H20.5 M6.5 16.5 A5.5 5.5 0 0 1 17.5 16.5"/></svg>',
+  ok: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5 L9.5 18 L20 6.5"/></svg>',
+};
+const AREAS = [
+  { k: "geografia", n: "Geografía", f: "var(--area-geo)", s: "var(--on-geo)", t: "var(--text-geo)", d: "Regiones, relieve, clima, flora, fauna y demografía." },
+  { k: "historia", n: "Historia", f: "var(--area-his)", s: "var(--on-his)", t: "var(--text-his)", d: "Del poblamiento indígena al postconflicto." },
+  { k: "constitucion", n: "Constitución", f: "var(--area-con)", s: "var(--on-con)", t: "var(--text-con)", d: "Principios, derechos, mecanismos y estructura del Estado." },
+  { k: "cultura", n: "Cultura", f: "var(--area-cul)", s: "var(--on-cul)", t: "var(--text-cul)", d: "Símbolos, gastronomía, fiestas, arte, deporte y turismo." },
+];
+const A = Object.fromEntries(AREAS.map((a) => [a.k, a]));
+
+/* ============================================================ inicio */
+$("grid4").innerHTML = AREAS.map((a) => `
+  <div class="area"><div class="cab"><span class="ico" style="color:${a.t}">${ICO[a.k]}</span><h2 class="h">${a.n}</h2></div>
+  <p>${a.d}</p>
+  <div class="botones"><span class="btn rel" ${a.k === "geografia" ? 'id="btnEstudiar"' : ""} style="--f:${a.f};--s:${a.s}">Estudiar</span><span class="btn fan" style="--t:${a.t}">Test</span></div></div>`).join("");
+
+/* ============================================================ mapa */
+const REG = {
+  caribe: { c: "var(--reg-caribe)", n: "Caribe" },
+  andina: { c: "var(--reg-andina)", n: "Andina" },
+  pacifica: { c: "var(--reg-pacifica)", n: "Pacífica" },
+  orinoquia: { c: "var(--reg-orinoquia)", n: "Orinoquía" },
+  amazonia: { c: "var(--reg-amazonia)", n: "Amazónica" },
+};
+const ORDEN = ["caribe", "andina", "pacifica", "orinoquia", "amazonia"];
+const NS = "http://www.w3.org/2000/svg";
+
+// centro de cada región (media de los centroides de sus departamentos)
+const CENTRO = {};
+ORDEN.forEach((r) => {
+  const ds = DEPTS.filter((d) => d.region === r);
+  CENTRO[r] = { x: ds.reduce((s, d) => s + d.cx, 0) / ds.length, y: ds.reduce((s, d) => s + d.cy, 0) / ds.length };
+});
+
+// mapa del gancho
+const hookSvg = document.createElementNS(NS, "svg");
+hookSvg.setAttribute("viewBox", "5 0 550 765");
+const hookG = {};
+ORDEN.forEach((r) => {
+  const g = document.createElementNS(NS, "g");
+  g.style.transformBox = "view-box";
+  g.style.transformOrigin = `${CENTRO[r].x}px ${CENTRO[r].y}px`;
+  DEPTS.filter((d) => d.region === r).forEach((d) => {
+    const pa = document.createElementNS(NS, "path");
+    pa.setAttribute("d", d.d);
+    pa.setAttribute("fill", REG[r].c);
+    pa.setAttribute("stroke", "#17120E");
+    pa.setAttribute("stroke-width", "1.2");
+    pa.setAttribute("stroke-linejoin", "round");
+    g.appendChild(pa);
+  });
+  hookSvg.appendChild(g);
+  hookG[r] = g;
+});
+$("hook").appendChild(hookSvg);
+{
+  const ar = 550 / 765;
+  let h = Math.min(VIS.h * 0.86, (VIS.w * 0.86) / ar);
+  if (!TEXTO) h = Math.min(H * 0.8, (W * 0.8) / ar);
+  const w = h * ar;
+  hookSvg.style.width = w + "px";
+  hookSvg.style.height = h + "px";
+  hookSvg.style.left = VCX - w / 2 + "px";
+  hookSvg.style.top = VCY - h / 2 + "px";
+}
+
+// mapa de la app (como MapaRegiones.jsx)
+const mapa = $("mapaApp");
+const deptEls = DEPTS.map((d) => {
+  const pa = document.createElementNS(NS, "path");
+  pa.setAttribute("d", d.d);
+  pa.setAttribute("fill", REG[d.region].c);
+  pa.setAttribute("stroke", "#17120E");
+  pa.setAttribute("stroke-linejoin", "round");
+  pa.style.transformBox = "view-box";
+  pa.style.transformOrigin = `${d.cx}px ${d.cy}px`;
+  mapa.appendChild(pa);
+  return { d, el: pa };
+});
+// recuadro de San Andrés
+mapa.insertAdjacentHTML("beforeend", `
+  <g id="sanAndres"><rect x="-46" y="-58" width="156" height="78" rx="12" fill="var(--reg-caribe)" fill-opacity=".62" stroke="#17120E" stroke-width="1.5"/>
+  <text x="32" y="-32" text-anchor="middle" font-size="20" fill="var(--on-reg)" font-weight="600">San Andrés,</text>
+  <text x="32" y="-8" text-anchor="middle" font-size="20" fill="var(--on-reg)" font-weight="600">Providencia y</text>
+  <text x="32" y="16" text-anchor="middle" font-size="20" fill="var(--on-reg)" font-weight="600">Sta. Catalina</text></g>`);
+// callout de Caquetá (geometría calculada con outwardLabelPoint de la app)
+const CQ = DEPTS.find((d) => d.name === "Caquetá");
+const LBL = { x: 106.8, y: 783 };
+const LEN = Math.hypot(LBL.x - CQ.cx, LBL.y - CQ.cy);
+mapa.insertAdjacentHTML("beforeend", `
+  <g id="callout">
+    <line id="coLinea" x1="${CQ.cx}" y1="${CQ.cy}" x2="${LBL.x}" y2="${LBL.y}" stroke="var(--reg-amazonia)" stroke-width="3" stroke-dasharray="${LEN}" stroke-dashoffset="${LEN}"/>
+    <circle id="coP1" cx="${CQ.cx}" cy="${CQ.cy}" r="7" fill="var(--reg-amazonia)" stroke="#17120E" stroke-width="2.5" style="transform-box:fill-box;transform-origin:center"/>
+    <circle id="coP2" cx="${LBL.x}" cy="${LBL.y}" r="7" fill="var(--reg-amazonia)" stroke="#17120E" stroke-width="2.5" style="transform-box:fill-box;transform-origin:center"/>
+    <g id="coEtq"><rect x="${LBL.x - 236 + 10}" y="${LBL.y - 36}" width="236" height="58" rx="12" fill="var(--surface)" stroke="var(--reg-amazonia)" stroke-width="2" stroke-opacity=".75"/>
+      <text x="${LBL.x - 18}" y="${LBL.y - 10}" text-anchor="end" font-size="25" font-weight="700" fill="var(--ink)">Caquetá</text>
+      <text x="${LBL.x - 18}" y="${LBL.y + 15}" text-anchor="end" font-size="21" fill="var(--ink-soft)">Capital: Florencia</text></g>
+  </g>`);
+
+// pastillas de región
+$("pills").innerHTML = ORDEN.map((r) => `<span class="pill" data-r="${r}">${REG[r].n}</span>`).join("");
+const pillEls = [...document.querySelectorAll(".pill")];
+$("icoGeo").innerHTML = ICO.geografia;
+$("icoGeo").style.color = "var(--text-geo)";
+
+// panel
+const PANEL = {
+  andina: { n: "Región Andina", tag: "Tres cordilleras, el corazón poblado de Colombia", geo: "Centro-occidente del país, atravesada por las cordilleras Occidental, Central y Oriental. Clima variado: templado en las alturas, cálido en los valles." },
+  amazonia: { n: "Región Amazónica", tag: "42% del territorio nacional, la selva más biodiversa", geo: "Sur del país, al sur de la línea ecuatorial. Frontera con Ecuador, Perú y Brasil. Clima húmedo y cálido todo el año." },
+};
+const TABS = ["Geografía", "Relieve", "Flora", "Fauna", "Gente"];
+$("tabs").innerHTML = TABS.map((t) => `<span class="tab" data-t="${t}">${t}</span>`).join("");
+const tabEls = [...document.querySelectorAll(".tab")];
+const FAUNA = [
+  ["🐆", "Mamíferos", [["Jaguar", "jaguar"], ["Delfín rosado", "delfin-rosado"], ["Mono araña", "mono-arana"], ["Nutria gigante", "nutria-gigante"]]],
+  ["🦜", "Aves", [["Guacamayo escarlata", "guacamayo-escarlata"], ["Águila arpía", "aguila-arpia"], ["Tucán", "tucan"], ["Hoatzin", "hoatzin"]]],
+];
+$("panelFauna").innerHTML = FAUNA.map(([ic, cat, items]) => `
+  <p class="cat"><span style="font-size:16px">${ic}</span> ${cat}</p>
+  <div class="rej">${items.map(([n, f]) => `<div class="esp" ${f === "jaguar" ? 'id="espJaguar"' : ""}><img src="../src/assets/fauna/${f}.jpg" alt=""/><p>${n}</p></div>`).join("")}</div>`).join("");
+
+function pintarRegion(sel, k) {
+  // k: avance 0..1 de andina → amazonía (la transición de 300 ms de la app)
+  deptEls.forEach(({ d, el }) => {
+    const a = d.region === "andina" ? lerp(1, 0.62, k) : d.region === "amazonia" ? lerp(0.62, 1, k) : 0.62;
+    el.setAttribute("fill-opacity", a.toFixed(3));
+    const pin = d.name === "Caquetá";
+    el.setAttribute("stroke-width", pin ? lerp(1, 2.5, k) : d.region === sel ? 2 : 1);
+    el.style.transform = pin ? `scale(${lerp(1, 1.06, k)})` : "";
+    el.style.filter = pin && k > 0 ? `drop-shadow(0 5px 12px rgba(0,0,0,${(0.3 * k).toFixed(2)}))` : "";
+  });
+  pillEls.forEach((el) => {
+    const on = el.dataset.r === sel;
+    const c = REG[el.dataset.r].c;
+    el.style.background = on ? c : "transparent";
+    el.style.color = on ? "var(--on-reg)" : c;
+    el.style.borderColor = on ? c : "var(--rule)";
+  });
+  const P = PANEL[sel];
+  const c = REG[sel].c;
+  $("panel").style.borderColor = c;
+  $("panelCab").style.background = c;
+  $("panelNom").textContent = P.n;
+  $("panelTag").textContent = P.tag;
+  $("panelGeo").textContent = P.geo;
+}
+function pintarTabs(activa) {
+  const c = REG.amazonia.c;
+  tabEls.forEach((el) => {
+    const on = el.dataset.t === activa;
+    el.style.background = on ? c : "transparent";
+    el.style.color = on ? "var(--on-reg)" : c;
+    el.style.borderColor = on ? c : "var(--rule)";
+  });
+}
+
+/* ============================================================ test */
+const PREGS = [
+  { area: "cultura", q: "¿Cuál es el ave nacional de Colombia?", ops: ["La guacamaya roja.", "El cóndor de los Andes.", "El tucán pico iris."], ok: 1, elegida: 1 },
+  { area: "constitucion", q: "¿Qué tribunal integra la Jurisdicción Constitucional?", ops: ["El Consejo de Estado.", "La Corte Suprema de Justicia.", "La Corte Constitucional."], ok: 2, elegida: 0 },
+];
+$("preg").innerHTML = PREGS.map((pr, i) => {
+  const a = A[pr.area];
+  return `<div class="qbloque" id="qb${i}">
+    <div class="qcard" id="qc${i}"><span class="chip" style="color:${a.t}">${ICO[pr.area]}${a.n}</span>
+      <p class="q">${pr.q}</p>
+      <div class="opts">${pr.ops.map((o, k) => `<div class="opt" id="op${i}_${k}"><span class="m">○</span><span>${o}</span></div>`).join("")}
+        ${pr.ok !== pr.elegida ? `<div class="esperada" id="esp${i}"><b>Respuesta esperada</b>La Corte Constitucional. </div>` : ""}
+      </div></div>
+    <div class="siguiente" id="sig${i}">Siguiente</div>
+    <div class="salir">Salir del test</div></div>`;
+}).join("");
+
+function pintarPregunta(i, k, tCorr) {
+  // k: 0 sin responder, 1 respondida; tCorr: segundos desde la corrección
+  const pr = PREGS[i];
+  pr.ops.forEach((_, j) => {
+    const el = $(`op${i}_${j}`);
+    const m = el.firstChild;
+    let estado = null;
+    if (k) estado = j === pr.ok ? "ok" : j === pr.elegida ? "mal" : "neutra";
+    const col = estado === "ok" ? "var(--text-ok)" : estado === "mal" ? "var(--text-danger)" : "var(--ink-soft)";
+    el.style.borderColor = estado === "ok" || estado === "mal" ? col : "var(--rule)";
+    el.style.opacity = estado === "neutra" ? lerp(1, 0.55, p(tCorr, 0, 0.16)) : 1;
+    m.textContent = estado === "ok" ? "✓" : estado === "mal" ? "✕" : "○";
+    m.style.color = col;
+  });
+  // destello de la tarjeta (0,42 s): anillo de 3 px que se apaga
+  const card = $(`qc${i}`);
+  if (k && tCorr < 0.42) {
+    const f = tCorr / 0.42;
+    const w = f < 0.35 ? (f / 0.35) * 3 : 3 * (1 - (f - 0.35) / 0.65);
+    const c = pr.ok === pr.elegida ? "35,157,143" : "214,104,147";
+    card.style.boxShadow = `0 0 0 ${w.toFixed(2)}px rgba(${c},${f < 0.35 ? 1 : 1 - (f - 0.35) / 0.65})`;
+  } else card.style.boxShadow = "none";
+  const esp = $(`esp${i}`);
+  if (esp) {
+    const e = k ? eo(p(tCorr, 0, 0.2)) : 0;
+    esp.style.opacity = e;
+    esp.style.transform = `translateY(${(1 - e) * 6}px)`;
+  }
+  const sig = $(`sig${i}`);
+  sig.style.opacity = k ? eo(p(tCorr, 0, 0.15)) : 0;
+}
+
+/* ============================================================ resultados */
+const FILAS = [
+  { a: "historia", ok: 3, tot: 5 },
+  { a: "constitucion", ok: 4, tot: 5 },
+  { a: "geografia", ok: 5, tot: 5 },
+  { a: "cultura", ok: 5, tot: 5 },
+];
+$("filas").innerHTML = FILAS.map((f) => {
+  const a = A[f.a];
+  const fall = f.tot - f.ok;
+  const perfecta = fall === 0;
+  const floja = f.ok / f.tot < 0.7;
+  return `<div class="fila" style="${floja ? `border-left:3px solid ${a.f}` : ""}">
+    <span style="color:${perfecta ? "var(--text-ok)" : a.t};display:flex">${perfecta ? ICO.ok : ICO[f.a]}</span>
+    <div style="flex:1;min-width:0"><p class="n" style="color:${perfecta ? "var(--ink-soft)" : "var(--ink)"}">${a.n}</p>
+    <p class="d" style="color:${perfecta ? "var(--text-ok)" : floja ? "var(--text-danger)" : "var(--ink-soft)"}">${f.ok} de ${f.tot} · ${perfecta ? "sin fallos" : `${fall} ${fall === 1 ? "fallada" : "falladas"}`}</p></div>
+    ${perfecta ? "" : floja ? `<span class="btn rel" style="--f:${a.f};--s:${a.s}">Repasar</span>` : `<span class="btn fan" style="--t:${a.t}">Repasar</span>`}
+  </div>`;
+}).join("");
+const filaEls = [...document.querySelectorAll(".fila")];
+const CIRC = 2 * Math.PI * 91;
+$("arco").setAttribute("stroke-dasharray", CIRC);
+
+/* ============================================================ PDF */
+{
+  let html = "";
+  for (let i = 0; i < 90; i++) {
+    if (i % 9 === 0) html += '<i class="t"></i>';
+    html += `<i style="width:${70 + ((i * 37) % 30)}%"></i>`;
+  }
+  $("lineas").innerHTML = html;
+  const s = Math.min((VIS.w * 0.72) / 560, (VIS.h * 0.62) / 720, 1.5);
+  $("pdf").style.left = VCX - 280 + "px";
+  $("pdf").style.top = VCY - 360 + "px";
+  $("pdf").dataset.s = s;
+}
+
+/* ============================================================ móvil */
+const TEL_S = LAY.tel.s;
+$("tel").style.left = LAY.tel.cx - 209 + "px";
+$("tel").style.top = LAY.tel.top + (872 * TEL_S) / 2 - 436 + "px";
+// alto de pantalla que se ve (en píxeles de la app) cuando el móvil se sale por abajo
+const VISIBLE_APP = Math.min(844, (H - (LAY.tel.top + 14 * TEL_S)) / TEL_S);
+
+/* ============================================================ rótulos */
+const ROT = [
+  [0.6, 3.7, "¿Quieres la nacionalidad <em>colombiana</em>?", "Want Colombian citizenship?"],
+  [4.3, 6.1, "La guía oficial es un PDF de <em>61 MB</em>", "The official study guide is a 61 MB PDF"],
+  [6.45, 8.3, "Ábrela en tu navegador, <em>gratis</em>", "Open it in your browser, for free"],
+  [8.7, 12.3, "Explora las <em>5 regiones</em> en el mapa", "Explore the 5 regions on the map"],
+  [12.55, 15.35, "Con fotos de su <em>fauna</em>", "With photos of its wildlife"],
+  [15.9, 19.75, "Practica con preguntas de las <em>4 áreas</em>", "Practice questions from all 4 areas"],
+  [19.95, 22.45, "Si fallas, te muestra <em>la respuesta</em>", "Miss one? It shows you the answer"],
+  [22.9, 26.3, "Y te dice <em>qué repasar</em>", "And tells you what to review"],
+];
+const rot = $("rot");
+const rotEls = [];
+if (TEXTO) {
+  const C = LAY.cap;
+  Object.assign(rot.style, { left: C.x + "px", top: C.y + "px", width: C.w + "px", height: C.h + "px" });
+  ROT.forEach(([a, b, es, en]) => {
+    const d = document.createElement("div");
+    d.className = "rotulo";
+    d.style.textAlign = C.align;
+    d.style.alignItems = C.align === "center" ? "center" : "flex-start";
+    d.innerHTML = `<p class="es" style="font-size:${C.es}px">${es}</p><p class="en" style="font-size:${C.en}px">${en}</p>`;
+    rot.appendChild(d);
+    rotEls.push({ a, b, el: d, es: d.children[0], en: d.children[1] });
+  });
+}
+
+/* ============================================================ cierre */
+{
+  const v = FMT === "v";
+  const lk = v ? 460 : 380;
+  const qr = v ? 260 : 230;
+  const piezas = [
+    `<img class="lk pieza" src="../public/brand/lockup-vertical-dark.svg" style="width:${lk}px;height:auto" alt="ColombiaTest"/>`,
+    `<p class="esl pieza" style="font-size:${v ? 34 : 30}px;margin-top:${v ? 28 : 20}px">Prepárate para tu examen de nacionalidad colombiana.</p>`,
+  ];
+  if (TEXTO) piezas.push(
+    `<p class="lema pieza" style="font-size:${v ? 46 : 40}px;margin-top:${v ? 64 : 40}px;max-width:${v ? 940 : 1500}px;text-wrap:balance">Gratis · Sin registro · Sin descargar nada</p>`,
+    `<p class="lema-en pieza" style="font-size:${v ? 30 : 26}px;margin-top:10px">Free · No sign-up · No download needed</p>`);
+  piezas.push(
+    `<div class="accion pieza" style="flex-direction:${v ? "column" : "row"};gap:${v ? 40 : 44}px;margin-top:${v ? 64 : 44}px">
+       <p class="url" style="font-size:${v ? 62 : 58}px">colombiatest.vercel.app</p>
+       <div class="qr" style="width:${qr}px;height:${qr}px"><img src="qr.svg" alt=""/></div></div>`,
+    `<p class="aviso pieza" style="font-size:${v ? 22 : 19}px;margin-top:${v ? 72 : 44}px;max-width:${v ? 860 : 1300}px;line-height:1.45">Basada en la guía oficial de la Cancillería. No es una app oficial del Gobierno.<br/>Fotos de fauna: Wikimedia Commons (licencias CC).${MUSICA ? "<br/>Música: «Sunflower», Sakura Girl (CC BY)." : ""}</p>`);
+  $("fin").innerHTML = piezas.join("");
+}
+const finEls = [...document.querySelectorAll("#fin .pieza")];
+
+/* ============================================================ barrido de tejido */
+const BB = 140;
+document.querySelectorAll("#barrido .b").forEach((e) => (e.style.width = BB + "px"));
+document.querySelector("#barrido .s").style.width = W + "px";
+const BARRIDOS = [3.9, 26.6]; // instante de cobertura total
+
+/* ============================================================ toques */
+const TOQUES = [
+  { t: 8.25, el: () => $("btnEstudiar") },
+  { t: 9.35, el: () => deptEls.find((x) => x.d.name === "Caquetá").el },
+  { t: 11.95, el: () => tabEls[3] },
+  { t: 13.0, el: () => $("espJaguar") },
+  { t: 14.95, el: () => document.querySelector("#caja .x") },
+  { t: 17.1, el: () => $("op0_1") },
+  { t: 18.45, el: () => $("sig0") },
+  { t: 20.0, el: () => $("op1_0") },
+];
+function centroEnPantalla(el) {
+  const pr = $("pant").getBoundingClientRect();
+  const r = el.getBoundingClientRect();
+  const s = pr.width / 390;
+  return { x: (r.left + r.width / 2 - pr.left) / s, y: (r.top + r.height / 2 - pr.top) / s };
+}
+
+/* ============================================================ vistas */
+const VISTAS = { vInicio: [6.3, 8.6], vGeo: [8.5, 15.6], vTest: [15.45, 22.65], vRes: [22.5, 30] };
+function pintarVista(id, t) {
+  const [a, b] = VISTAS[id];
+  const el = $(id);
+  // entra empujando hacia dentro (como .vista-dentro, más amplio para el video)
+  const ent = id === "vInicio" ? 1 : eo(p(t, a, a + 0.35));
+  const sal = 1 - eo(p(t, b - 0.35, b));
+  const vis = t >= a && t < b;
+  el.style.visibility = vis ? "visible" : "hidden";
+  el.style.opacity = vis ? Math.min(ent, sal) : 0;
+  el.style.transform = `translateX(${(1 - ent) * 40 - (1 - sal) * 40}px)`;
+}
+
+/* ============================================================ renderAt */
+window.renderAt = function (t) {
+  // --- 1 · gancho
+  const hookOn = t < BARRIDOS[0];
+  $("hook").style.visibility = hookOn ? "visible" : "hidden";
+  if (hookOn) {
+    ORDEN.forEach((r, i) => {
+      const k = eo(p(t, 0.25 + i * 0.2, 0.25 + i * 0.2 + 0.55));
+      hookG[r].style.opacity = k;
+      hookG[r].style.transform = `scale(${lerp(0.9, 1, k)})`;
+    });
+    hookSvg.style.transform = `scale(${lerp(1, 1.05, eo(p(t, 0, 3.9)))})`;
+  }
+
+  // --- 2 · PDF
+  const pdfOn = t >= BARRIDOS[0] && t < 7.2;
+  $("esc-pdf").style.visibility = pdfOn ? "visible" : "hidden";
+  if (pdfOn) {
+    const s = +$("pdf").dataset.s;
+    const ent = eo(p(t, 3.95, 4.5));
+    const sal = eo(p(t, 6.25, 6.95));
+    $("pdf").style.opacity = Math.min(ent, 1 - sal);
+    $("pdf").style.transform = `translateY(${(1 - ent) * 60 - sal * 120}px) scale(${s * lerp(0.94, 1, ent) * lerp(1, 0.82, sal)})`;
+    const avance = Math.max(0, t - 4.2);
+    $("lineas").style.transform = `translateY(${-avance * 420}px)`;
+    $("barrita").style.transform = `translateY(${(avance * 22) % 560}px)`;
+  }
+
+  // --- móvil
+  const telOn = t >= 6.3 && t < BARRIDOS[1];
+  // display y no visibility: las vistas fijan su propia visibilidad y la heredada no basta
+  $("tel").style.display = telOn ? "block" : "none";
+  if (telOn) {
+    const ent = eo(p(t, 6.3, 7.15));
+    $("tel").style.transform = `translateY(${(1 - ent) * (FMT === "v" ? 900 : 700)}px) scale(${TEL_S})`;
+    $("tel").style.opacity = ent;
+
+    Object.keys(VISTAS).forEach((id) => pintarVista(id, t));
+
+    // inicio: pulsación de Estudiar
+    const pr = t >= 8.2 && t < 8.38 ? 0.975 : 1;
+    $("btnEstudiar").style.transform = `scale(${pr})`;
+
+    // geografía
+    const kSel = eo(p(t, 9.35, 9.65));
+    pintarRegion(t >= 9.35 ? "amazonia" : "andina", kSel);
+    const lin = eo(p(t, 9.35, 9.8));
+    $("coLinea").setAttribute("stroke-dashoffset", (LEN * (1 - lin)).toFixed(2));
+    $("callout").style.visibility = t >= 9.35 ? "visible" : "hidden";
+    const p1 = eo(p(t, 9.45, 9.75)), p2 = eo(p(t, 9.7, 10.0)), et = eo(p(t, 9.7, 10.0));
+    $("coP1").style.opacity = p1; $("coP1").style.transform = `scale(${lerp(0.6, 1, p1)})`;
+    $("coP2").style.opacity = p2; $("coP2").style.transform = `scale(${lerp(0.6, 1, p2)})`;
+    $("coEtq").style.opacity = et; $("coEtq").style.transform = `translateY(${(1 - et) * 6}px)`;
+    // el panel se redibuja con fundido al cambiar de región
+    const pf = t >= 9.35 ? eo(p(t, 9.35, 9.6)) : 1;
+    $("panel").style.opacity = pf;
+    $("panel").style.transform = `translateY(${(1 - pf) * 6}px)`;
+    // desplazamiento hasta el panel
+    const sc = eio(p(t, 10.75, 11.65));
+    $("geoCont").style.transform = `translateY(${-sc * GEO_SCROLL}px)`;
+    // pestaña Fauna
+    const fauna = t >= 11.95;
+    pintarTabs(fauna ? "Fauna" : "Geografía");
+    $("panelGeo").style.display = fauna ? "none" : "block";
+    $("panelFauna").style.display = fauna ? "block" : "none";
+    const ff = eo(p(t, 11.95, 12.2));
+    $("panelFauna").style.opacity = ff;
+    $("panelFauna").style.transform = `translateY(${(1 - ff) * 6}px)`;
+    // modal del jaguar
+    const mo = eo(p(t, 13.05, 13.3)) * (1 - eo(p(t, 15.0, 15.2)));
+    $("modal").style.opacity = t >= 13.05 && t < 15.25 ? 1 : 0;
+    $("velo").style.opacity = mo;
+    $("caja").style.opacity = mo;
+    $("caja").style.transform = `translateY(${(1 - mo) * 6}px)`;
+    $("espJaguar").style.transform = t >= 12.95 && t < 13.12 ? "scale(.98)" : "";
+
+    // test
+    const q2 = t >= 18.55;
+    $("qb0").style.display = q2 ? "none" : "block";
+    $("qb1").style.display = q2 ? "block" : "none";
+    if (!q2) pintarPregunta(0, t >= 17.1 ? 1 : 0, t - 17.1);
+    else {
+      const e = eo(p(t, 18.55, 18.8));
+      $("qb1").style.opacity = e;
+      $("qb1").style.transform = `translateY(${(1 - e) * 6}px)`;
+      pintarPregunta(1, t >= 20.0 ? 1 : 0, t - 20.0);
+    }
+    $("progTit").textContent = q2 ? "Pregunta 5 / 20" : "Pregunta 4 / 20";
+    $("progBar").style.transform = `scaleX(${lerp(3 / 20, 4 / 20, eo(p(t, 18.55, 18.75)))})`;
+    $("sig0").style.transform = t >= 18.4 && t < 18.55 ? "scale(.975)" : "";
+
+    // resultados
+    const ra = cubOut(p(t, 22.85, 24.3));
+    $("pct").textContent = Math.round(85 * ra);
+    $("arco").setAttribute("stroke-dashoffset", (CIRC * (1 - 0.85 * ra)).toFixed(2));
+    filaEls.forEach((el, i) => {
+      const e = eo(p(t, 23.4 + i * 0.04 * 3, 23.4 + i * 0.12 + 0.3));
+      el.style.opacity = e;
+      el.style.transform = `translateY(${(1 - e) * 10}px)`;
+    });
+    const rs = eio(p(t, 24.4, 25.3));
+    $("resCont").style.transform = `translateY(${-rs * RES_SCROLL}px)`;
+
+    // dedo y onda
+    let dx = null;
+    for (const tq of TOQUES) {
+      if (t >= tq.t - 0.28 && t < tq.t + 0.5) { dx = tq; break; }
+    }
+    if (dx) {
+      const c = centroEnPantalla(dx.el());
+      const ap = eo(p(t, dx.t - 0.28, dx.t - 0.08));
+      const des = 1 - p(t, dx.t + 0.15, dx.t + 0.45);
+      const presion = t >= dx.t - 0.05 && t < dx.t + 0.12 ? 0.82 : 1;
+      Object.assign($("dedo").style, { left: c.x + "px", top: c.y + "px", opacity: Math.min(ap, des), transform: `scale(${presion})` });
+      const o = p(t, dx.t, dx.t + 0.5);
+      Object.assign($("onda").style, { left: c.x + "px", top: c.y + "px", opacity: t >= dx.t ? (1 - o) * 0.9 : 0, transform: `scale(${lerp(0.4, 2.2, eo(o))})` });
+    } else {
+      $("dedo").style.opacity = 0;
+      $("onda").style.opacity = 0;
+    }
+  }
+
+  // --- rótulos
+  rotEls.forEach(({ a, b, el, es, en }) => {
+    const on = t >= a - 0.01 && t < b + 0.01;
+    el.style.visibility = on ? "visible" : "hidden";
+    if (!on) return;
+    const e1 = eo(p(t, a, a + 0.5));
+    const e2 = eo(p(t, a + 0.12, a + 0.62));
+    const s = eio(p(t, b - 0.3, b));
+    el.style.opacity = 1 - s;
+    es.style.transform = `translateY(${(1 - e1) * 34 - s * 14}px)`;
+    es.style.opacity = e1;
+    en.style.transform = `translateY(${(1 - e2) * 30 - s * 14}px)`;
+    en.style.opacity = e2;
+  });
+
+  // --- 6 · cierre
+  const finOn = t >= BARRIDOS[1];
+  $("fin").style.visibility = finOn ? "visible" : "hidden";
+  finEls.forEach((el, i) => {
+    const e = eo(p(t, 26.75 + i * 0.15, 26.75 + i * 0.15 + 0.55));
+    el.style.opacity = e;
+    el.style.transform = `translateY(${(1 - e) * 26}px)`;
+  });
+
+  // --- barridos
+  let bx = null;
+  for (const c of BARRIDOS) {
+    if (t >= c - 0.45 && t <= c + 0.45) {
+      const k = eio(p(t, c - 0.45, c + 0.45));
+      bx = lerp(-(W + 2 * BB), W, k);
+    }
+  }
+  $("barrido").style.visibility = bx === null ? "hidden" : "visible";
+  if (bx !== null) $("barrido").style.transform = `translateX(${bx}px)`;
+};
+
+/* ============================================================ preparación */
+let GEO_SCROLL = 0, RES_SCROLL = 0;
+window.listo = (async () => {
+  await document.fonts.ready;
+  await Promise.all([...document.images].map((im) => (im.complete ? im.decode().catch(() => {}) : new Promise((r) => { im.onload = im.onerror = r; }))));
+  // cuánto hay que desplazar para ver el panel / las filas
+  pintarRegion("amazonia", 1);
+  const panel = $("panel");
+  // offsetTop se mide desde .contenido (el will-change lo convierte en referencia),
+  // así que se suma el margen superior de la vista (112 px: estado + navegador)
+  const PAD = 112;
+  GEO_SCROLL = Math.max(0, panel.offsetTop + PAD - 124);
+  const filas = $("filas");
+  RES_SCROLL = Math.max(0, filas.offsetTop + filas.offsetHeight + PAD - VISIBLE_APP + 24);
+  window.renderAt(0);
+  return { GEO_SCROLL, RES_SCROLL };
+})();
+</script>
+</body>
+</html>
